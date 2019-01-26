@@ -401,6 +401,8 @@
     <string name="riceTextureEnhancement_entrySharpen_more">Sharpen more</string>
 
     <string name="gliden64_category_texture_title">Texture</string>
+    <string name="gliden64_threaded_video_title">Threaded video</string>
+    <string name="gliden64_threaded_video_summary">Enable threaded OpenGL video backend</string>
     <string name="gliden64_fxaa_title">FXAA</string>
     <string name="gliden64_fxaa_summary">Enable Fast Approximate Anti-Aliasing FXAA</string>
     <string name="gliden64_bilinear_mode_title">Bilinear filtering mode</string>

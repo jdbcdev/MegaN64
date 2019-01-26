@@ -10,6 +10,9 @@ public class GLideN64Prefs {
 
     public static final int VERSION = 26;
 
+    /** True if threaded OpenGL commands are enabled */
+    public final boolean threadedVideo;
+
     /** Enable/Disable Fast Approximate Anti-Aliasing FXAA */
     public final boolean fxaa;
 
@@ -151,6 +154,7 @@ public class GLideN64Prefs {
     GLideN64Prefs(Context context, final Profile emulationProfile)
     {
         String glesVersion = AppData.getOpenGlEsVersion(context);
+        threadedVideo = emulationProfile.get( "ThreadedVideo", "False" ).equals( "True" );
         bilinearMode = emulationProfile.get( "bilinearMode", "True" ).equals( "True" );
         enableHalosRemoval = emulationProfile.get( "enableHalosRemoval", "True" ).equals( "True" );
         maxAnisotropy = getSafeInt( emulationProfile, "MaxAnisotropy", 0);

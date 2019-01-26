@@ -340,6 +340,8 @@
     <string name="riceTextureEnhancement_entrySharpen">Agudo</string>
     <string name="riceTextureEnhancement_entrySharpen_more">Mas agudo</string>
     <string name="gliden64_category_texture_title">Textura</string>
+    <string name="gliden64_threaded_video_title">Video multi-hilo</string>
+    <string name="gliden64_threaded_video_summary">Habilita backend de OpenGL con multi-hilo</string>
     <string name="gliden64_fxaa_title">FXAA</string>
     <string name="gliden64_fxaa_summary">Habilitar rápido aproximado anti-aliasing de FXAA</string>
     <string name="gliden64_bilinear_mode_title">Modo de filtro bilinear</string>
