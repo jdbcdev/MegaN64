@@ -50,7 +50,7 @@ const u8 * ColorBufferReaderWithEGLImage::_readPixels(const ReadColorBufferParam
 
 	if (!_params.sync) {
 		m_bindTexture->bind(graphics::Parameter(0), graphics::Parameter(GL_TEXTURE_2D), m_pTexture->name);
-		glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, m_image);
+		FunctionWrapper::glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, m_image);
 		m_bindTexture->bind(graphics::Parameter(0), graphics::Parameter(GL_TEXTURE_2D), ObjectHandle());
 
 		m_hardwareBuffer.lock(m_usage, &gpuData);

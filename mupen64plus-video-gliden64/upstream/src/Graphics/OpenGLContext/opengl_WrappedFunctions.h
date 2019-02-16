@@ -4648,6 +4648,70 @@ namespace opengl {
 
 		}
 	};
+
+	class GlEGLImageTargetTexture2DOESCommand : public OpenGlCommand
+	{
+	public:
+		GlEGLImageTargetTexture2DOESCommand(void) :
+				OpenGlCommand(false, false, "glEGLImageTargetTexture2DOES")
+		{
+		}
+
+		static std::shared_ptr<OpenGlCommand> get(GLenum target, void* image)
+		{
+			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
+			auto ptr = getFromPool<GlEGLImageTargetTexture2DOESCommand>(poolId);
+			ptr->set(target, image);
+			return ptr;
+		}
+
+		void commandToExecute(void) override
+		{
+			g_glEGLImageTargetTexture2DOES(m_target, m_image);
+		}
+	private:
+		void set(GLenum target, void* image)
+		{
+			m_target = target;
+			m_image = image;
+		}
+
+		GLenum m_target;
+		void* m_image;
+	};
+
+#if defined(OS_ANDROID)
+    class EglGetNativeClientBufferANDROIDCommand : public OpenGlCommand
+    {
+    public:
+        EglGetNativeClientBufferANDROIDCommand(void) :
+                OpenGlCommand(true, true, "eglGetNativeClientBufferANDROID")
+        {
+        }
+
+        static std::shared_ptr<OpenGlCommand> get(const AHardwareBuffer *buffer, EGLClientBuffer& returnValue)
+        {
+            static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
+            auto ptr = getFromPool<EglGetNativeClientBufferANDROIDCommand>(poolId);
+            ptr->set(buffer, returnValue);
+            return ptr;
+        }
+
+        void commandToExecute(void) override
+        {
+            *m_returnValue = g_eglGetNativeClientBufferANDROID(m_buffer);
+        }
+    private:
+        void set(const AHardwareBuffer *buffer, EGLClientBuffer& returnValue)
+        {
+            m_buffer = buffer;
+            m_returnValue = &returnValue;
+        }
+
+        const struct AHardwareBuffer *m_buffer;
+        EGLClientBuffer* m_returnValue;
+    };
+#endif
 #ifdef MUPENPLUSAPI
 	//Vid ext functions
 	class CoreVideoInitCommand : public OpenGlCommand

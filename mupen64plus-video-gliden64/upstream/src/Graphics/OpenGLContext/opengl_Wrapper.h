@@ -184,6 +184,11 @@ namespace opengl {
 		static void glDrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const u16* indices, GLint basevertex);
 		static void glFlushMappedBufferRange(GLenum target, GLintptr offset, GLsizeiptr length);
 		static void glFinish(void);
+		static void glEGLImageTargetTexture2DOES(GLenum target, void* image);
+
+#if defined(OS_ANDROID)
+		static EGLClientBuffer eglGetNativeClientBufferANDROID(const AHardwareBuffer *buffer);
+#endif
 
 #ifdef MUPENPLUSAPI
 		//Vid_ext functions

@@ -1102,6 +1102,29 @@ namespace opengl {
 			g_glFinish();
 	}
 
+	void FunctionWrapper::glEGLImageTargetTexture2DOES(GLenum target, void* image)
+	{
+		if (m_threaded_wrapper)
+			executeCommand(GlEGLImageTargetTexture2DOESCommand::get(target, image));
+		else
+			g_glEGLImageTargetTexture2DOES(target, image);
+	}
+
+#if defined(OS_ANDROID)
+    EGLClientBuffer FunctionWrapper::eglGetNativeClientBufferANDROID(const AHardwareBuffer *buffer)
+    {
+        EGLClientBuffer returnValue;
+
+        if (m_threaded_wrapper)
+            executeCommand(EglGetNativeClientBufferANDROIDCommand::get(buffer, returnValue));
+        else
+            returnValue = g_eglGetNativeClientBufferANDROID(buffer);
+
+        return returnValue;
+    }
+
+#endif
+
 #ifdef MUPENPLUSAPI
 
 	void FunctionWrapper::CoreVideo_Init(void)
