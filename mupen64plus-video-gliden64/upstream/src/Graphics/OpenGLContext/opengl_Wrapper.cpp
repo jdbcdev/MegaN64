@@ -1,4 +1,5 @@
 #include "opengl_Wrapper.h"
+#include "opengl_WrappedFunctions.h"
 
 namespace opengl {
 
@@ -36,7 +37,7 @@ namespace opengl {
 	void FunctionWrapper::setThreadedMode(u32 _threaded)
 	{
 #ifdef GL_DEBUG
-		_threaded = 0;
+		//_threaded = 0;
 #endif
 
 		if (_threaded == 1) {
@@ -221,13 +222,15 @@ namespace opengl {
 			g_glDrawArrays(mode, first, count);
 	}
 
-	void FunctionWrapper::glDrawArraysUnbuffered(GLenum mode, GLint first, GLsizei count, std::unique_ptr<std::vector<char>> data)
+	void FunctionWrapper::glDrawArraysUnbuffered(GLenum mode, GLint first, GLsizei count)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlDrawArraysUnbufferedCommand::get(mode, first, count, std::move(data)));
-		else {
-			auto command = GlDrawArraysUnbufferedCommand::get(mode, first, count, std::move(data));
-			command->performCommandSingleThreaded();
+		if (m_threaded_wrapper) {
+            auto verticesCopy = std::unique_ptr<std::vector<char>>(new std::vector<char>());
+            const char* ptr = GlVertexAttribPointerManager::getSmallestPtr();
+            verticesCopy->assign(ptr, ptr + (count+1)*GlVertexAttribPointerManager::getStride());
+			executeCommand(GlDrawArraysUnbufferedCommand::get(mode, first, count, std::move(verticesCopy)));
+		}else {
+            g_glDrawArrays(mode, first, count);
 		}
 	}
 
@@ -250,6 +253,59 @@ namespace opengl {
 	void FunctionWrapper::glDrawElementsNotThreadSafe(GLenum mode, GLsizei count, GLenum type, const void *indices)
 	{
 		g_glDrawElements(mode, count, type, indices);
+	}
+
+	void FunctionWrapper::glDrawElementsUnbuffered(GLenum mode, GLsizei count, GLenum type, const void *indices)
+	{
+		if(m_threaded_wrapper)
+        {
+            int typeSizeBytes;
+            unsigned int maxElementIndex;
+
+            switch(type) {
+                case GL_UNSIGNED_BYTE:
+                    typeSizeBytes = 1;
+                    maxElementIndex = 0;
+                    for (int index = 0; index < count; ++index) {
+                        unsigned int value = reinterpret_cast<const uint8_t*>(indices)[index];
+                        if (maxElementIndex < value) maxElementIndex = value;
+                    }
+                    break;
+                case GL_UNSIGNED_SHORT:
+                    typeSizeBytes = 2;
+                    maxElementIndex = 0;
+                    for (int index = 0; index < count; ++index) {
+                        unsigned int value = reinterpret_cast<const uint16_t*>(indices)[index];
+                        if (maxElementIndex < value) maxElementIndex = value;
+                    }
+                    break;
+                case GL_UNSIGNED_INT:
+                    typeSizeBytes = 4;
+                    maxElementIndex = 0;
+                    for (int index = 0; index < count; ++index) {
+                        unsigned int value = reinterpret_cast<const uint32_t*>(indices)[index];
+                        if (maxElementIndex < value) maxElementIndex = value;
+                    }
+                    break;
+                default:
+                    typeSizeBytes = 1;
+                    maxElementIndex = 0;
+                    for (int index = 0; index < count; ++index) {
+                        unsigned int value = reinterpret_cast<const uint8_t*>(indices)[index];
+                        if (maxElementIndex < value) maxElementIndex = value;
+                    }
+            }
+
+            auto verticesCopy = std::unique_ptr<std::vector<char>>(new std::vector<char>());
+            const char* ptr = GlVertexAttribPointerManager::getSmallestPtr();
+            verticesCopy->assign(ptr, ptr + (maxElementIndex+1)*GlVertexAttribPointerManager::getStride());
+
+            std::unique_ptr<u8[]> elementsCopy(new u8[count*typeSizeBytes]);
+            std::copy_n(reinterpret_cast<const u8*>(indices), count*typeSizeBytes, elementsCopy.get());
+            executeCommand(GlDrawElementsUnbufferedCommand::get(mode, count, type, std::move(elementsCopy), std::move(verticesCopy)));
+        }
+		else
+            g_glDrawElements(mode, count, type, indices);
 	}
 
 	void FunctionWrapper::glLineWidth(GLfloat width)
@@ -533,16 +589,20 @@ namespace opengl {
 
 	void FunctionWrapper::glEnableVertexAttribArray(GLuint index)
 	{
-		if (m_threaded_wrapper)
+		if (m_threaded_wrapper) {
+			GlVertexAttribPointerManager::enableVertexAttributeIndex(index);
 			executeCommand(GlEnableVertexAttribArrayCommand::get(index));
+		}
 		else
 			g_glEnableVertexAttribArray(index);
 	}
 
 	void FunctionWrapper::glDisableVertexAttribArray(GLuint index)
 	{
-		if (m_threaded_wrapper)
+		if (m_threaded_wrapper) {
+			GlVertexAttribPointerManager::disableVertexAttributeIndex(index);
 			executeCommand(GlDisableVertexAttribArrayCommand::get(index));
+        }
 		else
 			g_glDisableVertexAttribArray(index);
 	}
@@ -561,15 +621,13 @@ namespace opengl {
 		g_glVertexAttribPointer(index, size, type, normalized, stride, pointer);
 	}
 
-	void FunctionWrapper::glVertexAttribPointerUnbuffered(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
-		std::size_t offset)
+	void FunctionWrapper::glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlVertexAttribPointerUnbufferedCommand::get(index, size, type, normalized, stride, offset));
-		else {
-			auto command = GlVertexAttribPointerUnbufferedCommand::get(index, size, type, normalized, stride, offset);
-			command->performCommandSingleThreaded();
-		}
+        if (m_threaded_wrapper) {
+			GlVertexAttribPointerManager::update(index, size, type, normalized, stride, pointer);
+			executeCommand(GlVertexAttribPointerUnbufferedCommand::get(index, size, type, normalized, stride, pointer));
+		} else
+            g_glVertexAttribPointer(index, size, type, normalized, stride, pointer);
 	}
 
 	void FunctionWrapper::glBindAttribLocation(GLuint program, GLuint index, const std::string& name)

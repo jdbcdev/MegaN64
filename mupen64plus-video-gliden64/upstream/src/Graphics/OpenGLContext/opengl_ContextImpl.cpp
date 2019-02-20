@@ -67,13 +67,13 @@ void ContextImpl::init()
 	}
 
 	{
-		if ((m_glInfo.isGLESX && (m_glInfo.bufferStorage && m_glInfo.majorVersion * 10 + m_glInfo.minorVersion >= 32)) || !m_glInfo.isGLESX) {
-			m_graphicsDrawer.reset(new BufferedDrawer(m_glInfo, m_cachedFunctions->getCachedVertexAttribArray(), m_cachedFunctions->getCachedBindBuffer()));
-		} else if (config.video.threadedVideo) {
+		//if ((m_glInfo.isGLESX && (m_glInfo.bufferStorage && m_glInfo.majorVersion * 10 + m_glInfo.minorVersion >= 32)) || !m_glInfo.isGLESX) {
+		//	m_graphicsDrawer.reset(new BufferedDrawer(m_glInfo, m_cachedFunctions->getCachedVertexAttribArray(), m_cachedFunctions->getCachedBindBuffer()));
+		//} else if (config.video.threadedVideo) {
 			m_graphicsDrawer.reset(new UnbufferedDrawerThreadSafe(m_glInfo, m_cachedFunctions->getCachedVertexAttribArray()));
-		} else {
-			m_graphicsDrawer.reset(new UnbufferedDrawer(m_glInfo, m_cachedFunctions->getCachedVertexAttribArray()));
-		}
+		//} else {
+		//	m_graphicsDrawer.reset(new UnbufferedDrawer(m_glInfo, m_cachedFunctions->getCachedVertexAttribArray()));
+		//}
 	}
 
 	resetCombinerProgramBuilder();

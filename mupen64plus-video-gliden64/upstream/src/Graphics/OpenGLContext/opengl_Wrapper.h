@@ -61,11 +61,10 @@ namespace opengl {
 		static void glTexSubImage2DUnbuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels);
 		static void glTexSubImage2DBuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, std::size_t offset);
 		static void glDrawArrays(GLenum mode, GLint first, GLsizei count);
-		static void glDrawArraysUnbuffered(GLenum mode, GLint first, GLsizei count, std::unique_ptr<std::vector<char>> data);
+		static void glDrawArraysUnbuffered(GLenum mode, GLint first, GLsizei count);
 		static GLenum glGetError(void);
 		static void glDrawElementsNotThreadSafe(GLenum mode, GLsizei count, GLenum type, const void *indices);
-		template <class indiceType>
-		static void glDrawElementsUnbuffered(GLenum mode, GLsizei count, GLenum type, std::unique_ptr<indiceType[]> indices, std::unique_ptr<std::vector<char>> data);
+		static void glDrawElementsUnbuffered(GLenum mode, GLsizei count, GLenum type, const void *indices);
 		static void glLineWidth(GLfloat width);
 		static void glClear(GLbitfield mask);
 		static void glClearBufferfv(GLenum buffer, GLint drawbuffer, std::unique_ptr<GLfloat[]> value);
@@ -106,7 +105,7 @@ namespace opengl {
 		static void glDisableVertexAttribArray(GLuint index);
 		static void glVertexAttribPointerBuffered(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, std::size_t offset);
 		static void glVertexAttribPointerNotThreadSafe(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
-		static void glVertexAttribPointerUnbuffered(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, std::size_t offset);
+		static void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
 		static void glBindAttribLocation(GLuint program, GLuint index, const std::string& name);
 		static void glVertexAttrib1f(GLuint index, GLfloat x);
 		static void glVertexAttrib4f(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
@@ -225,15 +224,6 @@ namespace opengl {
 			executeCommand(GlTexSubImage2DUnbufferedCommand<pixelType>::get(target, level, xoffset, yoffset, width, height, format, type, std::move(pixels)));
 		else
 			g_glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels.get());
-	}
-
-	template <class indiceType>
-	void  FunctionWrapper::glDrawElementsUnbuffered(GLenum mode, GLsizei count, GLenum type, std::unique_ptr<indiceType[]> indices, std::unique_ptr<std::vector<char>> data)
-	{
-		if(m_threaded_wrapper)
-			executeCommand(GlDrawElementsUnbufferedCommand<indiceType>::get(mode, count, type, std::move(indices), std::move(data)));
-		else
-			GlDrawElementsUnbufferedCommand<indiceType>::get(mode, count, type, std::move(indices), std::move(data))->performCommandSingleThreaded();
 	}
 
 	template <class dataType>

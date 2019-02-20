@@ -149,7 +149,7 @@ namespace opengl {
 				if (error != GL_NO_ERROR) {
 					std::stringstream errorString;
 					errorString << " OpenGL error: 0x" << std::hex << error << ", on function: " << m_functionName;
-					LOG(LOG_VERBOSE, errorString.str().c_str());
+					LOG(LOG_ERROR, errorString.str().c_str());
 					throw std::runtime_error(errorString.str().c_str());
 				}
 			}
@@ -1016,67 +1016,185 @@ namespace opengl {
 		GLsizei m_count;
 	};
 
-	class GlVertexAttribPointerUnbufferedCommand : public OpenGlCommand
-	{
-	public:
-		GlVertexAttribPointerUnbufferedCommand(void) :
-			OpenGlCommand(false, false, "glVertexAttribPointer")
-		{
-		}
+	class GlVertexAttribPointerManager
+    {
+    public:
+        struct VertexAttributeData
+        {
+            GLuint m_index;
+            GLint m_size;
+            GLenum m_type;
+            GLboolean m_normalized;
+            GLsizei m_stride;
+            const void* m_pointer;
+            bool m_enabled;
+        };
 
-		static std::shared_ptr<OpenGlCommand> get(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
-			std::size_t offset)
-		{
-			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
-			auto ptr = getFromPool<GlVertexAttribPointerUnbufferedCommand>(poolId);
-			ptr->set(index, size, type, normalized, stride, offset);
-			return ptr;
-		}
+        static void enableVertexAttributeIndexRender(unsigned int index)
+        {
+            VertexAttributeData& attributeData = m_vertexAttributePointersRender[index];
+            attributeData.m_enabled = true;
 
-		void commandToExecute(void) override
-		{
-			static bool attribsDataInitialized = false;
+            updatedSmallestPtrRender();
+        }
 
-			if (!attribsDataInitialized) {
-				m_attribsData.resize(2*1024*1024, 0);
-				attribsDataInitialized = true;
-			}
+        static void disableVertexAttributeIndexRender(unsigned int index)
+        {
+            VertexAttributeData& attributeData = m_vertexAttributePointersRender[index];
+            attributeData.m_enabled = false;
 
-			g_glVertexAttribPointer(m_index, m_size, m_type, m_normalized, m_stride, (const GLvoid *)(m_attribsData.data()+m_offset));
-		}
+            updatedSmallestPtrRender();
+        }
 
-		static std::vector<char>& getDrawingData()
-		{
-			return m_attribsData;
-		}
-	private:
-		void set(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
-			std::size_t offset)
-		{
-			m_index = index;
-			m_size = size;
-			m_type = type;
-			m_normalized = normalized;
-			m_stride = stride;
-			m_offset = offset;
-		}
+        static const std::unordered_map<int, VertexAttributeData>& getVertexAttributesRender()
+        {
+            return m_vertexAttributePointersRender;
+        }
 
-		GLuint m_index;
-		GLint m_size;
-		GLenum m_type;
-		GLboolean m_normalized;
-		GLsizei m_stride;
-		std::size_t m_offset;
+        static void updateRender(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer)
+        {
+            VertexAttributeData &vertexAttributeData = m_vertexAttributePointersRender[index];
+            vertexAttributeData.m_index = index;
+            vertexAttributeData.m_size = size;
+            vertexAttributeData.m_type = type;
+            vertexAttributeData.m_normalized = normalized;
+            vertexAttributeData.m_stride = stride;
+            vertexAttributeData.m_pointer = pointer;
 
-		static std::vector<char> m_attribsData;
-	};
+            updatedSmallestPtrRender();
+        }
+
+        static const char* getSmallestPtrRender() {
+            return reinterpret_cast<const char*>(smallestDataPtrRender);
+        }
+
+        static void enableVertexAttributeIndex(unsigned int index)
+        {
+            VertexAttributeData& attributeData = m_vertexAttributePointers[index];
+            attributeData.m_enabled = true;
+
+            updatedSmallestPtr();
+        }
+
+        static void disableVertexAttributeIndex(int index)
+        {
+            VertexAttributeData& attributeData = m_vertexAttributePointers[index];
+            attributeData.m_enabled = false;
+
+            updatedSmallestPtr();
+        }
+
+        static int getStride()
+        {
+            int stride = 0;
+            for (auto& data : m_vertexAttributePointers) {
+                if (data.second.m_pointer && data.second.m_enabled) {
+                    stride = data.second.m_stride;
+                    break;
+                }
+            }
+
+            return stride;
+        }
+
+        static void update(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer)
+        {
+            VertexAttributeData &vertexAttributeData = m_vertexAttributePointers[index];
+            vertexAttributeData.m_index = index;
+            vertexAttributeData.m_size = size;
+            vertexAttributeData.m_type = type;
+            vertexAttributeData.m_normalized = normalized;
+            vertexAttributeData.m_stride = stride;
+            vertexAttributeData.m_pointer = pointer;
+
+            updatedSmallestPtr();
+        }
+
+        static const char* getSmallestPtr() {
+            return reinterpret_cast<const char*>(smallestDataPtr);
+        }
+    private:
+        static void updatedSmallestPtrRender()
+        {
+            smallestDataPtrRender = nullptr;
+
+            for (auto& data : m_vertexAttributePointersRender) {
+                if (data.second.m_pointer && data.second.m_enabled && (smallestDataPtrRender == nullptr || data.second.m_pointer < smallestDataPtrRender)) {
+                    smallestDataPtrRender = data.second.m_pointer;
+				}
+            }
+        }
+
+        static void updatedSmallestPtr()
+        {
+            smallestDataPtr = nullptr;
+
+            for (auto& data : m_vertexAttributePointers) {
+                if (data.second.m_pointer && data.second.m_enabled && (smallestDataPtr == nullptr || data.second.m_pointer < smallestDataPtr)) {
+                    smallestDataPtr = data.second.m_pointer;
+                }
+            }
+        }
+
+	    static std::unordered_map<int, VertexAttributeData> m_vertexAttributePointersRender;
+        static const void* smallestDataPtrRender;
+
+        static std::unordered_map<int, VertexAttributeData> m_vertexAttributePointers;
+        static const void* smallestDataPtr;
+    };
+
+    class GlVertexAttribPointerUnbufferedCommand : public OpenGlCommand
+    {
+    public:
+        GlVertexAttribPointerUnbufferedCommand() :
+                OpenGlCommand(false, false, "glVertexAttribPointer")
+        {
+        }
+
+        static std::shared_ptr<OpenGlCommand> get(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer)
+        {
+            static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
+            auto ptr = getFromPool<GlVertexAttribPointerUnbufferedCommand>(poolId);
+            ptr->set(index, size, type, normalized, stride, pointer);
+            return ptr;
+        }
+
+        void commandToExecute() override
+        {
+            GlVertexAttribPointerManager::updateRender(m_index, m_size, m_type, m_normalized, m_stride, m_pointer);
+        }
+
+    private:
+        void set(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer)
+        {
+            m_index = index;
+            m_size = size;
+            m_type = type;
+            m_normalized = normalized;
+            m_stride = stride;
+            m_pointer = pointer;
+        }
+
+        GLuint m_index;
+        GLint m_size;
+        GLenum m_type;
+        GLboolean m_normalized;
+        GLsizei m_stride;
+        const void* m_pointer;
+    };
 
 	class GlDrawArraysUnbufferedCommand : public OpenGlCommand
 	{
 	public:
 		GlDrawArraysUnbufferedCommand(void) :
-			OpenGlCommand(false, false, "glDrawArrays")
+			OpenGlCommand(false, false, "glDrawArraysUnbuffered")
 		{
+            static bool attribsDataInitialized = false;
+
+            if (!attribsDataInitialized) {
+                m_attribsData.resize(2*1024*1024, 0);
+                attribsDataInitialized = true;
+            }
 		}
 
 		static std::shared_ptr<OpenGlCommand> get(GLenum mode, GLint first, GLsizei count, std::unique_ptr<std::vector<char>> data)
@@ -1089,8 +1207,18 @@ namespace opengl {
 
 		void commandToExecute(void) override
 		{
-			std::vector<char>& drawingData = GlVertexAttribPointerUnbufferedCommand::getDrawingData();
-			std::copy_n(m_data->begin(), m_data->size(), drawingData.begin());
+            const auto& vertexAttributes = GlVertexAttribPointerManager::getVertexAttributesRender();
+
+            for (auto& data : vertexAttributes) {
+                if (data.second.m_pointer && data.second.m_enabled) {
+
+                    unsigned long ptrOffset = reinterpret_cast<const char*>(data.second.m_pointer) -
+                                              GlVertexAttribPointerManager::getSmallestPtrRender();
+                    g_glVertexAttribPointer(data.second.m_index, data.second.m_size, data.second.m_type, data.second.m_normalized,
+                                            data.second.m_stride, reinterpret_cast<const GLvoid*>(m_attribsData.data() + ptrOffset));
+                }
+            }
+			std::copy_n(m_data->begin(), m_data->size(), m_attribsData.begin());
 			g_glDrawArrays(m_mode, m_first, m_count);
 		}
 	private:
@@ -1106,6 +1234,7 @@ namespace opengl {
 		GLint m_first;
 		GLsizei m_count;
 		std::unique_ptr<std::vector<char>> m_data;
+        static std::vector<char> m_attribsData;
 	};
 
 	class GlGetErrorCommand : public OpenGlCommand
@@ -1137,16 +1266,21 @@ namespace opengl {
 		GLenum* m_returnValue;
 	};
 
-	template <class indiceType>
 	class GlDrawElementsUnbufferedCommand : public OpenGlCommand
 	{
 	public:
 		GlDrawElementsUnbufferedCommand(void) :
 			OpenGlCommand(false, false, "glDrawElementsUnbuffered")
 		{
+            static bool attribsDataInitialized = false;
+
+            if (!attribsDataInitialized) {
+                m_attribsData.resize(2*1024*1024, 0);
+                attribsDataInitialized = true;
+            }
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(GLenum mode, GLsizei count, GLenum type, std::unique_ptr<indiceType[]> indices,
+		static std::shared_ptr<OpenGlCommand> get(GLenum mode, GLsizei count, GLenum type, std::unique_ptr<u8[]> indices,
 			std::unique_ptr<std::vector<char>> data)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
@@ -1157,12 +1291,23 @@ namespace opengl {
 
 		void commandToExecute(void) override
 		{
-			std::vector<char>& drawingData = GlVertexAttribPointerUnbufferedCommand::getDrawingData();
-			std::copy_n(m_data->begin(), m_data->size(), drawingData.begin());
-			g_glDrawElements(m_mode, m_count, m_type, m_indices.get());
+            const auto& vertexAttributes = GlVertexAttribPointerManager::getVertexAttributesRender();
+            int count = 0;
+
+            for (auto& data : vertexAttributes) {
+                if (data.second.m_pointer && data.second.m_enabled) {
+                    unsigned long ptrOffset = reinterpret_cast<const char*>(data.second.m_pointer) -
+                                              GlVertexAttribPointerManager::getSmallestPtrRender();
+                    g_glVertexAttribPointer(data.second.m_index, data.second.m_size, data.second.m_type, data.second.m_normalized,
+                                            data.second.m_stride, reinterpret_cast<const GLvoid*>(m_attribsData.data() + ptrOffset));
+                }
+            }
+
+            std::copy_n(m_data->begin(), m_data->size(), m_attribsData.begin());
+            g_glDrawElements(m_mode, m_count, m_type, m_indices.get());
 		}
 	private:
-		void set(GLenum mode, GLsizei count, GLenum type, std::unique_ptr<indiceType[]> indices,
+		void set(GLenum mode, GLsizei count, GLenum type, std::unique_ptr<u8[]> indices,
 			std::unique_ptr<std::vector<char>> data)
 		{
 			m_mode = mode;
@@ -1175,8 +1320,9 @@ namespace opengl {
 		GLenum m_mode;
 		GLsizei m_count;
 		GLenum m_type;
-		std::unique_ptr<indiceType[]> m_indices;
+		std::unique_ptr<u8[]> m_indices;
 		std::unique_ptr<std::vector<char>> m_data;
+        static std::vector<char> m_attribsData;
 	};
 
 	class GlLineWidthCommand : public OpenGlCommand
@@ -2243,7 +2389,8 @@ namespace opengl {
 
 		void commandToExecute(void) override
 		{
-			g_glEnableVertexAttribArray(m_index);
+            GlVertexAttribPointerManager::enableVertexAttributeIndexRender(m_index);
+            g_glEnableVertexAttribArray(m_index);
 		}
 	private:
 		void set(GLuint index)
@@ -2272,6 +2419,7 @@ namespace opengl {
 
 		void commandToExecute(void) override
 		{
+            GlVertexAttribPointerManager::disableVertexAttributeIndexRender(m_index);
 			g_glDisableVertexAttribArray(m_index);
 		}
 	private:
