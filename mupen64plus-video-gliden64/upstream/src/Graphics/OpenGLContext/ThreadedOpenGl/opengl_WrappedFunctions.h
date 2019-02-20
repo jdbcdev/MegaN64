@@ -13,6 +13,7 @@
 #include <functional>
 #include <unordered_map>
 #include "opengl_Command.h"
+#include "splice-pool.hpp"
 
 
 #ifdef MUPENPLUSAPI
@@ -914,6 +915,15 @@ namespace opengl {
         static const char* getSmallestPtr() {
             return reinterpret_cast<const char*>(smallestDataPtr);
         }
+
+        static splicer::Node<std::vector<char>>* getVectorFromPool() {
+            return m_vectorPool.acquireOne().release();
+        }
+
+        static void releaseVectorFromPool(splicer::Node<std::vector<char>>* node) {
+            m_vectorPool.release(node);
+        }
+
     private:
         static void updatedSmallestPtrRender()
         {
@@ -942,6 +952,8 @@ namespace opengl {
 
         static std::unordered_map<int, VertexAttributeData> m_vertexAttributePointers;
         static const void* smallestDataPtr;
+
+        static splicer::ObjectPool<std::vector<char>> m_vectorPool;
     };
 
     class GlVertexAttribPointerUnbufferedCommand : public OpenGlCommand
@@ -998,11 +1010,11 @@ namespace opengl {
             }
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(GLenum mode, GLint first, GLsizei count, std::unique_ptr<std::vector<char>> data)
+		static std::shared_ptr<OpenGlCommand> get(GLenum mode, GLint first, GLsizei count, splicer::Node<std::vector<char>>* data)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlDrawArraysUnbufferedCommand>(poolId);
-			ptr->set(mode, first, count, std::move(data));
+			ptr->set(mode, first, count, data);
 			return ptr;
 		}
 
@@ -1020,22 +1032,23 @@ namespace opengl {
                     data.second.m_updated = false;
                 }
             }
-			std::copy_n(m_data->begin(), m_data->size(), m_attribsData.begin());
+			std::copy_n(m_data->val().begin(), m_data->val().size(), m_attribsData.begin());
 			g_glDrawArrays(m_mode, m_first, m_count);
+            GlVertexAttribPointerManager::releaseVectorFromPool(m_data);
 		}
 	private:
-		void set(GLenum mode, GLint first, GLsizei count, std::unique_ptr<std::vector<char>> data)
+		void set(GLenum mode, GLint first, GLsizei count, splicer::Node<std::vector<char>>* data)
 		{
 			m_mode = mode;
 			m_first = first;
 			m_count = count;
-			m_data = std::move(data);
+			m_data = data;
 		}
 
 		GLenum m_mode;
 		GLint m_first;
 		GLsizei m_count;
-		std::unique_ptr<std::vector<char>> m_data;
+        splicer::Node<std::vector<char>>* m_data;
         static std::vector<char> m_attribsData;
 	};
 
@@ -1083,7 +1096,7 @@ namespace opengl {
 		}
 
 		static std::shared_ptr<OpenGlCommand> get(GLenum mode, GLsizei count, GLenum type, std::unique_ptr<u8[]> indices,
-			std::unique_ptr<std::vector<char>> data)
+        	splicer::Node<std::vector<char>>* data)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlDrawElementsUnbufferedCommand>(poolId);
@@ -1106,25 +1119,26 @@ namespace opengl {
                 }
             }
 
-            std::copy_n(m_data->begin(), m_data->size(), m_attribsData.begin());
+            std::copy_n(m_data->val().begin(), m_data->val().size(), m_attribsData.begin());
             g_glDrawElements(m_mode, m_count, m_type, m_indices.get());
+            GlVertexAttribPointerManager::releaseVectorFromPool(m_data);
 		}
 	private:
 		void set(GLenum mode, GLsizei count, GLenum type, std::unique_ptr<u8[]> indices,
-			std::unique_ptr<std::vector<char>> data)
+			splicer::Node<std::vector<char>>* data)
 		{
 			m_mode = mode;
 			m_count = count;
 			m_type = type;
 			m_indices = std::move(indices);
-			m_data = std::move(data);
+			m_data = data;
 		}
 
 		GLenum m_mode;
 		GLsizei m_count;
 		GLenum m_type;
 		std::unique_ptr<u8[]> m_indices;
-		std::unique_ptr<std::vector<char>> m_data;
+        splicer::Node<std::vector<char>>* m_data;
         static std::vector<char> m_attribsData;
 	};
 

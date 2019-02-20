@@ -3,6 +3,7 @@
 #include "Graphics/OpenGLContext/GLFunctions.h"
 #include "BlockingQueue.h"
 #include "opengl_WrappedFunctions.h"
+#include "splice-pool.hpp"
 #include <thread>
 
 #ifdef MUPENPLUSAPI

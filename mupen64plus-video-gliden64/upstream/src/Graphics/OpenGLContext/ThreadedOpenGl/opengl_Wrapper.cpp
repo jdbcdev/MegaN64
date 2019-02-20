@@ -11,6 +11,7 @@ namespace opengl {
 	std::condition_variable FunctionWrapper::m_condition;
 	BlockingQueue<std::shared_ptr<OpenGlCommand>> FunctionWrapper::m_commandQueue;
 
+
 	void FunctionWrapper::executeCommand(std::shared_ptr<OpenGlCommand> _command)
 	{
 		m_commandQueue.push(_command);
@@ -225,10 +226,10 @@ namespace opengl {
 	void FunctionWrapper::glDrawArraysUnbuffered(GLenum mode, GLint first, GLsizei count)
 	{
 		if (m_threaded_wrapper) {
-            auto verticesCopy = std::unique_ptr<std::vector<char>>(new std::vector<char>());
+			splicer::Node<std::vector<char>>* node = GlVertexAttribPointerManager::getVectorFromPool();
             const char* ptr = GlVertexAttribPointerManager::getSmallestPtr();
-            verticesCopy->assign(ptr, ptr + (count+1)*GlVertexAttribPointerManager::getStride());
-			executeCommand(GlDrawArraysUnbufferedCommand::get(mode, first, count, std::move(verticesCopy)));
+            node->val().assign(ptr, ptr + (count+1)*GlVertexAttribPointerManager::getStride());
+			executeCommand(GlDrawArraysUnbufferedCommand::get(mode, first, count, node));
 		}else {
             g_glDrawArrays(mode, first, count);
 		}
@@ -296,13 +297,13 @@ namespace opengl {
                     }
             }
 
-            auto verticesCopy = std::unique_ptr<std::vector<char>>(new std::vector<char>());
-            const char* ptr = GlVertexAttribPointerManager::getSmallestPtr();
-            verticesCopy->assign(ptr, ptr + (maxElementIndex+1)*GlVertexAttribPointerManager::getStride());
+			splicer::Node<std::vector<char>>* node = GlVertexAttribPointerManager::getVectorFromPool();
+			const char* ptr = GlVertexAttribPointerManager::getSmallestPtr();
+			node->val().assign(ptr, ptr + (maxElementIndex+1)*GlVertexAttribPointerManager::getStride());
 
             std::unique_ptr<u8[]> elementsCopy(new u8[count*typeSizeBytes]);
             std::copy_n(reinterpret_cast<const u8*>(indices), count*typeSizeBytes, elementsCopy.get());
-            executeCommand(GlDrawElementsUnbufferedCommand::get(mode, count, type, std::move(elementsCopy), std::move(verticesCopy)));
+            executeCommand(GlDrawElementsUnbufferedCommand::get(mode, count, type, std::move(elementsCopy), node));
         }
 		else
             g_glDrawElements(mode, count, type, indices);
