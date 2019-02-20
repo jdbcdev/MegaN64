@@ -10,7 +10,7 @@
 #include <Graphics/ObjectHandle.h>
 #include <Graphics/ShaderProgram.h>
 #include <Graphics/OpenGLContext/opengl_CachedFunctions.h>
-#include <Graphics/OpenGLContext/opengl_Wrapper.h>
+#include <Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h>
 #include "glsl_SpecialShadersFactory.h"
 #include "glsl_ShaderPart.h"
 #include "glsl_FXAA.h"

@@ -7,8 +7,8 @@
 #include <memory>
 #include <vector>
 #include "BlockingQueue.h"
-#include "GLFunctions.h"
-#include "opengl_Attributes.h"
+#include "Graphics/OpenGLContext/GLFunctions.h"
+#include "Graphics/OpenGLContext/opengl_Attributes.h"
 #include <algorithm>
 #include <functional>
 #include <unordered_map>

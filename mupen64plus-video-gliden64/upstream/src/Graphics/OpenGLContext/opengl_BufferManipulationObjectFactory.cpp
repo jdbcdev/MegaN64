@@ -4,7 +4,7 @@
 #include "opengl_CachedFunctions.h"
 #include "opengl_Utils.h"
 #include "opengl_BufferManipulationObjectFactory.h"
-#include "opengl_Wrapper.h"
+#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 #ifdef OS_ANDROID
 #include <Graphics/OpenGLContext/GraphicBuffer/GraphicBufferWrapper.h>

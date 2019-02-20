@@ -2,7 +2,7 @@
 #include <Types.h>
 #include <Log.h>
 #include "opengl_Utils.h"
-#include "opengl_Wrapper.h"
+#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 #include <cstring>
 
 using namespace opengl;

@@ -3,7 +3,7 @@
 #include "GLFunctions.h"
 #include "opengl_GLInfo.h"
 #include "opengl_CachedFunctions.h"
-#include "opengl_Wrapper.h"
+#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 using namespace graphics;
 using namespace opengl;

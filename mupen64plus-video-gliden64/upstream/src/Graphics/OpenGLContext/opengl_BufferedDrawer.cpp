@@ -5,7 +5,7 @@
 #include "GLFunctions.h"
 #include "opengl_Attributes.h"
 #include "opengl_BufferedDrawer.h"
-#include "opengl_Wrapper.h"
+#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 using namespace graphics;
 using namespace opengl;

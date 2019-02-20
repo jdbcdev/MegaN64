@@ -3,7 +3,7 @@
 #include "opengl_Attributes.h"
 #include "opengl_CachedFunctions.h"
 #include "opengl_UnbufferedDrawerThreadSafe.h"
-#include "opengl_Wrapper.h"
+#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 #include <algorithm>
 
 using namespace opengl;

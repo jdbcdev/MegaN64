@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GLFunctions.h"
+#include "Graphics/OpenGLContext/GLFunctions.h"
 #include "BlockingQueue.h"
 #include "opengl_WrappedFunctions.h"
 #include <thread>

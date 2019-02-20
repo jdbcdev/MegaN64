@@ -5,7 +5,7 @@
 #include <Graphics/Parameter.h>
 #include "opengl_GLInfo.h"
 #include "opengl_Attributes.h"
-#include "opengl_Wrapper.h"
+#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 namespace opengl {
 

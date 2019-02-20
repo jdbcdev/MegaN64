@@ -2,7 +2,7 @@
 
 #include "GraphicBufferWrapper.h"
 #include <Graphics/OpenGLContext/GraphicBuffer/PublicApi/android_hardware_buffer_compat.h>
-#include <Graphics/OpenGLContext/opengl_Wrapper.h>
+#include <Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h>
 #include "../GLFunctions.h"
 
 #include <dlfcn.h>

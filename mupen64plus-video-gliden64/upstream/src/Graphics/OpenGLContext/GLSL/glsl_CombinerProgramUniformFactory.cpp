@@ -12,7 +12,7 @@
 #include <gSP.h>
 #include <gDP.h>
 #include <VI.h>
-#include <Graphics/OpenGLContext/opengl_Wrapper.h>
+#include <Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h>
 
 #include <algorithm>
 using namespace opengl;

@@ -61,8 +61,8 @@ set(GLideN64_SOURCES
   Graphics/CombinerProgram.cpp
   Graphics/ObjectHandle.cpp
   Graphics/OpenGLContext/GLFunctions.cpp
-  Graphics/OpenGLContext/opengl_Wrapper.cpp
-  Graphics/OpenGLContext/opengl_WrappedFunctions.cpp
+        Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.cpp
+        Graphics/OpenGLContext/ThreadedOpenGl/opengl_WrappedFunctions.cpp
   Graphics/OpenGLContext/opengl_Attributes.cpp
   Graphics/OpenGLContext/opengl_BufferedDrawer.cpp
   Graphics/OpenGLContext/opengl_BufferManipulationObjectFactory.cpp

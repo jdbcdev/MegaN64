@@ -4,7 +4,7 @@
 #include <Combiner.h>
 #include <Graphics/OpenGLContext/opengl_CachedFunctions.h>
 #include <Graphics/OpenGLContext/opengl_Utils.h>
-#include <Graphics/OpenGLContext/opengl_Wrapper.h>
+#include <Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h>
 #include "glsl_Utils.h"
 #include "glsl_CombinerProgramImpl.h"
 

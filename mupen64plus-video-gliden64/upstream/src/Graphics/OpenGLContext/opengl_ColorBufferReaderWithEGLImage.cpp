@@ -3,7 +3,7 @@
 #include <GBI.h>
 #include <Graphics/Context.h>
 #include "opengl_ColorBufferReaderWithEGLImage.h"
-#include "opengl_Wrapper.h"
+#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 using namespace opengl;
 using namespace graphics;

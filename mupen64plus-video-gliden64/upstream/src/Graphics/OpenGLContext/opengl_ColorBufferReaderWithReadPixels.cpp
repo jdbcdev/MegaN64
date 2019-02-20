@@ -1,6 +1,6 @@
 #include <Graphics/Context.h>
 #include "opengl_ColorBufferReaderWithReadPixels.h"
-#include "opengl_Wrapper.h"
+#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 #include <algorithm>
 
 using namespace graphics;

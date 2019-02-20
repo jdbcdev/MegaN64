@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <Log.h>
 #include <Graphics/OpenGLContext/opengl_Attributes.h>
-#include <Graphics/OpenGLContext/opengl_Wrapper.h>
+#include <Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h>
 #include "glsl_Utils.h"
 
 using namespace glsl;

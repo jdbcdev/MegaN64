@@ -7,7 +7,7 @@
 #include "glsl_CombinerProgramImpl.h"
 #include "glsl_CombinerProgramBuilder.h"
 #include "glsl_CombinerProgramUniformFactory.h"
-#include "Graphics/OpenGLContext/opengl_Wrapper.h"
+#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 using namespace glsl;
 using namespace opengl;

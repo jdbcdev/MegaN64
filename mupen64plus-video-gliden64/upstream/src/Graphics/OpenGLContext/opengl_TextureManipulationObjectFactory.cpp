@@ -5,7 +5,7 @@
 #include "opengl_CachedFunctions.h"
 #include "opengl_Utils.h"
 #include "opengl_TextureManipulationObjectFactory.h"
-#include "opengl_Wrapper.h"
+#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 #include <algorithm>
 
 #ifndef GL_EXT_texture_filter_anisotropic

@@ -1,7 +1,7 @@
 #include <Config.h>
 #include <Graphics/Context.h>
 #include "opengl_ColorBufferReaderWithPixelBuffer.h"
-#include "opengl_Wrapper.h"
+#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 using namespace graphics;
 using namespace opengl;

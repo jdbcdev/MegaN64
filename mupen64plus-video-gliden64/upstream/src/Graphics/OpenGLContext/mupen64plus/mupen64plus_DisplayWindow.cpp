@@ -3,7 +3,7 @@
 #include <Graphics/Context.h>
 #include <Graphics/OpenGLContext/GLFunctions.h>
 #include <Graphics/OpenGLContext/opengl_Utils.h>
-#include <Graphics/OpenGLContext/opengl_Wrapper.h>
+#include <Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h>
 #include <mupenplus/GLideN64_mupenplus.h>
 #include <GLideN64.h>
 #include <Config.h>

@@ -3,7 +3,7 @@
 #include "opengl_Utils.h"
 #include "opengl_GLInfo.h"
 #include <regex>
-#include "opengl_Wrapper.h"
+#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 #ifdef EGL
 #include <EGL/egl.h>
 #endif

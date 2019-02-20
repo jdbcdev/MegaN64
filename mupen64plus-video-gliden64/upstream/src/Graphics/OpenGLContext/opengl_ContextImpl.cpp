@@ -14,7 +14,7 @@
 #include "GLSL/glsl_CombinerProgramBuilder.h"
 #include "GLSL/glsl_SpecialShadersFactory.h"
 #include "GLSL/glsl_ShaderStorage.h"
-#include "opengl_Wrapper.h"
+#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 #ifdef OS_ANDROID
 #include <Graphics/OpenGLContext/GraphicBuffer/GraphicBufferWrapper.h>
