@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <functional>
 #include <unordered_map>
+#include "opengl_Command.h"
 
 
 #ifdef MUPENPLUSAPI
@@ -21,208 +22,6 @@
 #endif
 
 namespace opengl {
-
-	class PoolObject {
-	public:
-
-		PoolObject(void):
-			m_inUse(false)
-			, m_poolId(0)
-			, m_objectId(0)
-		{
-		}
-
-		bool isInUse(void)
-		{
-			return m_inUse;
-		}
-
-		void setInUse(bool _inUse)
-		{
-			m_inUse = _inUse;
-		}
-
-		int getPoolId(void)
-		{
-			return m_poolId;
-		}
-
-		void setPoolId(int _poolId)
-		{
-			m_poolId = _poolId;
-		}
-
-		int getObjectId(void)
-		{
-			return m_objectId;
-		}
-
-		void setObjectId(int _objectId)
-		{
-			m_objectId = _objectId;
-		}
-	private:
-
-		bool m_inUse;
-		int m_poolId;
-		int m_objectId;
-	};
-
-	class OpenGlCommandPool
-	{
-	public:
-		static OpenGlCommandPool& get(void)
-		{
-			static OpenGlCommandPool commandPool;
-			return commandPool;
-		}
-
-		int getNextAvailablePool(void)
-		{
-			m_objectPool.push_back(std::vector<std::shared_ptr<PoolObject>>());
-			m_objectPoolIndex.push_back(0);
-			return m_objectPool.size() - 1;
-		}
-
-		std::shared_ptr<PoolObject> getAvailableObject(int _poolId)
-		{
-			auto& currentPool = m_objectPool[_poolId];
-			auto& currentIndex = m_objectPoolIndex[_poolId];
-
-			if (currentPool.size() == 0) {
-				return nullptr;
-			}
-			else if (!currentPool[currentIndex]->isInUse()) {
-				int objectId = currentIndex;
-				++currentIndex;
-
-				if (currentIndex == currentPool.size()) {
-					currentIndex = 0;
-				}
-
-				return currentPool[objectId];
-
-			}
-			else {
-				bool found = false;
-				unsigned int index;
-				//Not found in most common case, so go ahead and search
-				for (index = currentIndex; index < currentPool.size() && !found; ++index)
-				{
-					found = !currentPool[index]->isInUse();
-				}
-
-				if (found) {
-					--index;
-					currentIndex = index;
-					return currentPool[index];
-				}
-				else {
-					return nullptr;
-				}
-			}
-		}
-
-		void addObjectToPool(int _poolId, std::shared_ptr<PoolObject> _object)
-		{
-			_object->setPoolId(_poolId);
-			_object->setObjectId(m_objectPool[_poolId].size());
-			m_objectPool[_poolId].push_back(_object);
-		}
-
-	private:
-		std::vector<std::vector<std::shared_ptr<PoolObject>>> m_objectPool;
-		std::vector<int> m_objectPoolIndex;
-	};
-
-	class OpenGlCommand : public PoolObject
-	{
-	public:
-		void performCommandSingleThreaded(void)
-		{
-			commandToExecute();
-
-			setInUse(false);
-#ifdef GL_DEBUG
-			if (m_isGlCommand) {
-				auto error = g_glGetError();
-				if (error != GL_NO_ERROR) {
-					std::stringstream errorString;
-					errorString << " OpenGL error: 0x" << std::hex << error << ", on function: " << m_functionName;
-					LOG(LOG_ERROR, errorString.str().c_str());
-					throw std::runtime_error(errorString.str().c_str());
-				}
-			}
-#endif
-		}
-
-		void performCommand(void) {
-			std::unique_lock<std::mutex> lock(m_condvarMutex);
-			performCommandSingleThreaded();
-			if (m_synced) {
-#ifdef GL_DEBUG
-				if (m_logIfSynced) {
-					std::stringstream errorString;
-					errorString << " Executing synced: " << m_functionName;
-					LOG(LOG_VERBOSE, errorString.str().c_str());
-				}
-#endif
-				m_executed = true;
-				m_condition.notify_all();
-			}
-		}
-
-		void waitOnCommand(void) {
-			std::unique_lock<std::mutex> lock(m_condvarMutex);
-
-			if (m_synced && !m_executed) {
-				m_condition.wait(lock, [this]{return m_executed;});
-			}
-
-			m_executed = false;
-		}
-
-	protected:
-		OpenGlCommand(bool _synced, bool _logIfSynced, const std::string& _functionName,
-			bool _isGlCommand = true) :
-			m_synced(_synced)
-			, m_executed(false)
-#ifdef GL_DEBUG
-			, m_logIfSynced(_logIfSynced)
-			, m_functionName(std::move(_functionName))
-			, m_isGlCommand(_isGlCommand)
-#endif
-		{
-		}
-
-		virtual void commandToExecute(void) = 0;
-
-		template<typename CoomandType>
-		static std::shared_ptr<CoomandType> getFromPool(int _poolId)
-		{
-			auto poolObject = OpenGlCommandPool::get().getAvailableObject(_poolId);
-			if (poolObject == nullptr) {
-				poolObject = std::shared_ptr<CoomandType>(new CoomandType);
-				OpenGlCommandPool::get().addObjectToPool(_poolId, poolObject);
-			}
-
-			poolObject->setInUse(true);
-			return std::static_pointer_cast<CoomandType>(poolObject);
-		}
-
-	protected:
-#ifdef GL_DEBUG
-		const bool m_logIfSynced;
-		const std::string m_functionName;
-		const bool m_isGlCommand;
-#endif
-
-	private:
-		std::atomic<bool> m_synced;
-		bool m_executed;
-		std::mutex m_condvarMutex;
-		std::condition_variable m_condition;
-	};
 
 	class GlBlendFuncCommand : public OpenGlCommand
 	{
@@ -1028,6 +827,7 @@ namespace opengl {
             GLsizei m_stride;
             const void* m_pointer;
             bool m_enabled;
+            bool m_updated = false;
         };
 
         static void enableVertexAttributeIndexRender(unsigned int index)
@@ -1046,7 +846,7 @@ namespace opengl {
             updatedSmallestPtrRender();
         }
 
-        static const std::unordered_map<int, VertexAttributeData>& getVertexAttributesRender()
+        static std::unordered_map<int, VertexAttributeData>& getVertexAttributesRender()
         {
             return m_vertexAttributePointersRender;
         }
@@ -1060,6 +860,7 @@ namespace opengl {
             vertexAttributeData.m_normalized = normalized;
             vertexAttributeData.m_stride = stride;
             vertexAttributeData.m_pointer = pointer;
+            vertexAttributeData.m_updated = true;
 
             updatedSmallestPtrRender();
         }
@@ -1207,15 +1008,16 @@ namespace opengl {
 
 		void commandToExecute(void) override
 		{
-            const auto& vertexAttributes = GlVertexAttribPointerManager::getVertexAttributesRender();
+            auto& vertexAttributes = GlVertexAttribPointerManager::getVertexAttributesRender();
 
             for (auto& data : vertexAttributes) {
-                if (data.second.m_pointer && data.second.m_enabled) {
+                if (data.second.m_updated && data.second.m_enabled) {
 
                     unsigned long ptrOffset = reinterpret_cast<const char*>(data.second.m_pointer) -
                                               GlVertexAttribPointerManager::getSmallestPtrRender();
                     g_glVertexAttribPointer(data.second.m_index, data.second.m_size, data.second.m_type, data.second.m_normalized,
                                             data.second.m_stride, reinterpret_cast<const GLvoid*>(m_attribsData.data() + ptrOffset));
+                    data.second.m_updated = false;
                 }
             }
 			std::copy_n(m_data->begin(), m_data->size(), m_attribsData.begin());
@@ -1291,15 +1093,16 @@ namespace opengl {
 
 		void commandToExecute(void) override
 		{
-            const auto& vertexAttributes = GlVertexAttribPointerManager::getVertexAttributesRender();
+            auto& vertexAttributes = GlVertexAttribPointerManager::getVertexAttributesRender();
             int count = 0;
 
             for (auto& data : vertexAttributes) {
-                if (data.second.m_pointer && data.second.m_enabled) {
+                if (data.second.m_updated && data.second.m_enabled) {
                     unsigned long ptrOffset = reinterpret_cast<const char*>(data.second.m_pointer) -
                                               GlVertexAttribPointerManager::getSmallestPtrRender();
                     g_glVertexAttribPointer(data.second.m_index, data.second.m_size, data.second.m_type, data.second.m_normalized,
                                             data.second.m_stride, reinterpret_cast<const GLvoid*>(m_attribsData.data() + ptrOffset));
+                    data.second.m_updated = false;
                 }
             }
 
