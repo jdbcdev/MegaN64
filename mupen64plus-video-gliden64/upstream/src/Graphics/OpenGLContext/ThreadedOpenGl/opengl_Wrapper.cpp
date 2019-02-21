@@ -169,9 +169,13 @@ namespace opengl {
 		if(m_threaded_wrapper) {
 			std::unique_ptr<u8[]> data(nullptr);
 			int totalBytes = getFormatBytesPerPixel(format, type)*width*height;
-			if(totalBytes != 0 && pixels != nullptr) {
+			if(totalBytes > 0 && pixels != nullptr) {
 				data = std::unique_ptr<u8[]>(new u8[totalBytes]);
 				std::copy_n(reinterpret_cast<const char*>(pixels), totalBytes, data.get());
+			}
+
+			if (totalBytes < 0) {
+                LOG(LOG_ERROR, "INVALID TEXTURE: format=%d type=%d total=%d", format, type, totalBytes);
 			}
 
 			executeCommand(GlTexImage2DCommand::get(target, level, internalformat, width, height, border,
@@ -212,17 +216,14 @@ namespace opengl {
 	void FunctionWrapper::glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void *pixels)
 	{
 		if (m_threaded_wrapper)
-			executeCommand(GlReadPixelsCommand::get(x, y, width, height, format, type, pixels));
+			if (pixels == nullptr) {
+                GlReadPixelsAsyncCommand::setBoundBuffer(GlBindBufferCommand::getBoundBuffer(GL_PIXEL_PACK_BUFFER));
+				executeCommand(GlReadPixelsAsyncCommand::get(x, y, width, height, format, type));
+			} else {
+				executeCommand(GlReadPixelsCommand::get(x, y, width, height, format, type, pixels));
+			}
 		else
 			g_glReadPixels(x, y, width, height, format, type, pixels);
-	}
-
-	void FunctionWrapper::glReadPixelsAsync(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type)
-	{
-		if (m_threaded_wrapper)
-			executeCommand(GlReadPixelsAsyncCommand::get(x, y, width, height, format, type));
-		else
-			g_glReadPixels(x, y, width, height, format, type, nullptr);
 	}
 
 	void  FunctionWrapper::glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
@@ -230,10 +231,15 @@ namespace opengl {
 		if(m_threaded_wrapper) {
 			int totalBytes = getFormatBytesPerPixel(format, type)*width*height;
 			std::unique_ptr<u8[]> data(nullptr);
-			if(totalBytes != 0 && pixels != nullptr) {
+			if(totalBytes > 0 && pixels != nullptr) {
 				data = std::unique_ptr<u8[]>(new u8[totalBytes]);
 				std::copy_n(reinterpret_cast<const char*>(pixels), totalBytes, data.get());
 			}
+
+            if (totalBytes < 0) {
+                LOG(LOG_ERROR, "INVALID TEXTURE: format=%d type=%d total=%d", format, type, totalBytes);
+            }
+
 			executeCommand(GlTexSubImage2DUnbufferedCommand::get(target, level, xoffset, yoffset, width, height, format, type, std::move(data)));
 		}
 		else
@@ -838,9 +844,10 @@ namespace opengl {
 
 	void FunctionWrapper::glBindBuffer(GLenum target, GLuint buffer)
 	{
-		if (m_threaded_wrapper)
+		if (m_threaded_wrapper) {
+			GlBindBufferCommand::setBoundBuffer(target, buffer);
 			executeCommand(GlBindBufferCommand::get(target, buffer));
-		else
+		} else
 			g_glBindBuffer(target, buffer);
 	}
 
@@ -852,17 +859,26 @@ namespace opengl {
 			g_glMapBuffer(target, access);
 	}
 
-	void* FunctionWrapper::glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access)
-	{
-		GLubyte* returnValue;
+    void* FunctionWrapper::glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access)
+    {
+        void* returnValue;
 
-		if (m_threaded_wrapper)
-			executeCommand(GlMapBufferRangeCommand::get(target, offset, length, access, returnValue));
-		else
-			returnValue = reinterpret_cast<GLubyte*>(g_glMapBufferRange(target, offset, length, access));
+        if (m_threaded_wrapper) {
+            GLuint boundPixelBuffer = GlReadPixelsAsyncCommand::getBoundBuffer();
+            if (target == GL_PIXEL_PACK_BUFFER && access == GL_MAP_READ_BIT &&
+                GlBindBufferCommand::getBoundBuffer(GL_PIXEL_PACK_BUFFER) != boundPixelBuffer) {
+                executeCommand(GlMapBufferRangeReadAsyncCommand::get(target, offset, length, access));
+                GLuint buffer = GlBindBufferCommand::getBoundBuffer(target);
+                returnValue = GlMapBufferRangeReadAsyncCommand::getData(buffer, length)->data();
+            } else {
+                executeCommand(GlMapBufferRangeCommand::get(target, offset, length, access, returnValue));
+            }
+        } else {
+            returnValue = g_glMapBufferRange(target, offset, length, access);
+        }
 
-		return returnValue;
-	}
+        return returnValue;
+    }
 
 	void FunctionWrapper::glMapBufferRangeWriteAsync(GLenum target, GLuint buffer, GLintptr offset, u32 length, GLbitfield access, std::unique_ptr<u8[]> data)
 	{
@@ -872,17 +888,6 @@ namespace opengl {
 			auto command = GlMapBufferRangeWriteAsyncCommand::get(target, buffer, offset, length, access, std::move(data));
 			command->performCommandSingleThreaded();
 		}
-	}
-
-	std::shared_ptr<std::vector<u8>> FunctionWrapper::glMapBufferRangeReadAsync(GLenum target, GLuint buffer, GLintptr offset, u32 length, GLbitfield access)
-	{
-		if (m_threaded_wrapper)
-			executeCommand(GlMapBufferRangeReadAsyncCommand::get(target, buffer, offset, length, access));
-		else {
-			auto command = GlMapBufferRangeReadAsyncCommand::get(target, buffer, offset, length, access);
-			command->performCommandSingleThreaded();
-		}
-		return GlMapBufferRangeReadAsyncCommand::getData(buffer, length);
 	}
 
 	GLboolean FunctionWrapper::glUnmapBuffer(GLenum target)
@@ -1081,11 +1086,16 @@ namespace opengl {
 	{
 		if(m_threaded_wrapper) {
 			std::unique_ptr<u8[]> data(nullptr);
+
 			int totalBytes = getFormatBytesPerPixel(format, type)*width*height;
-			if(totalBytes != 0 && pixels != nullptr) {
+			if(totalBytes > 0 && pixels != nullptr) {
 				data = std::unique_ptr<u8[]>(new u8[totalBytes]);
 				std::copy_n(reinterpret_cast<const char*>(pixels), totalBytes, data.get());
 			}
+
+            if (totalBytes < 0) {
+                LOG(LOG_ERROR, "INVALID TEXTURE: format=%d type=%d total=%d", format, type, totalBytes);
+            }
 
 			executeCommand(GlTextureSubImage2DUnbufferedCommand::get(texture, level, xoffset, yoffset,
 															  width, height, format, type,

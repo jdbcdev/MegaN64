@@ -57,7 +57,6 @@ namespace opengl {
 		static const GLubyte* glGetString(GLenum name);
 
 		static void glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void *pixels);
-		static void glReadPixelsAsync(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type);
 		static void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
 		static void glDrawArrays(GLenum mode, GLint first, GLsizei count);
         static GLenum glGetError();
@@ -133,7 +132,6 @@ namespace opengl {
 		static void glMapBuffer(GLenum target, GLenum access);
 		static void* glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
 		static void glMapBufferRangeWriteAsync(GLenum target, GLuint buffer, GLintptr offset, u32 length, GLbitfield access, std::unique_ptr<u8[]> data);
-		static std::shared_ptr<std::vector<u8>> glMapBufferRangeReadAsync(GLenum target, GLuint buffer, GLintptr offset, u32 length, GLbitfield access);
 		static GLboolean glUnmapBuffer(GLenum target);
 		static void glUnmapBufferAsync(GLenum target);
 		static void glDeleteBuffers(GLsizei n, std::unique_ptr<GLuint[]> buffers);

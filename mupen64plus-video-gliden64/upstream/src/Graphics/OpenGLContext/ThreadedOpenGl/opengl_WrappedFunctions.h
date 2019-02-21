@@ -668,6 +668,17 @@ namespace opengl {
 		{
 			g_glReadPixels(m_x, m_y, m_width, m_height, m_format, m_type, nullptr);
 		}
+
+        static GLuint getBoundBuffer()
+        {
+            return m_readPixelsBoundBuffer;
+        }
+
+        static void setBoundBuffer(GLuint buffer)
+        {
+            m_readPixelsBoundBuffer = buffer;
+        }
+
 	private:
 		void set(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type)
 		{
@@ -685,6 +696,7 @@ namespace opengl {
 		GLsizei m_height;
 		GLenum m_format;
 		GLenum m_type;
+		static GLuint m_readPixelsBoundBuffer;
 	};
 
 	class GlTexSubImage2DUnbufferedCommand : public OpenGlCommand
@@ -3057,9 +3069,25 @@ namespace opengl {
 			return ptr;
 		}
 
+		static GLuint getBoundBufferRender(GLenum target)
+		{
+			return m_boundBuffersRender[target];
+		}
+
+        static void setBoundBuffer(GLenum target, GLuint buffer)
+        {
+            m_boundBuffers[target] = buffer;
+        }
+
+        static GLuint getBoundBuffer(GLenum target)
+        {
+            return m_boundBuffers[target];
+        }
+
 		void commandToExecute() override
 		{
 			g_glBindBuffer(m_target, m_buffer);
+            m_boundBuffersRender[m_target] = m_buffer;
 		}
 	private:
 		void set(GLenum target, GLuint buffer)
@@ -3070,6 +3098,9 @@ namespace opengl {
 
 		GLenum m_target;
 		GLuint m_buffer;
+
+		static std::unordered_map<GLenum, GLuint> m_boundBuffersRender;
+        static std::unordered_map<GLenum, GLuint> m_boundBuffers;
 	};
 
 	template <class dataType>
@@ -3148,7 +3179,7 @@ namespace opengl {
 		}
 
 		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access,
-			GLubyte*& returnValue)
+			void*& returnValue)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlMapBufferRangeCommand>(poolId);
@@ -3158,11 +3189,11 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			*m_returnValue = reinterpret_cast<GLubyte*>(g_glMapBufferRange(m_target, m_offset, m_length, m_access));
+			*m_returnValue = g_glMapBufferRange(m_target, m_offset, m_length, m_access);
 		}
 	private:
 		void set(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access,
-			GLubyte*& returnValue)
+			void*& returnValue)
 		{
 			m_target = target;
 			m_offset = offset;
@@ -3175,7 +3206,7 @@ namespace opengl {
 		GLintptr m_offset;
 		GLsizeiptr m_length;
 		GLbitfield m_access;
-		GLubyte** m_returnValue;
+		void** m_returnValue;
 	};
 
 	class GlMapBufferRangeWriteAsyncCommand : public OpenGlCommand
@@ -3230,24 +3261,24 @@ namespace opengl {
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLuint buffer, GLintptr offset, u32 length,
+		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLintptr offset, u32 length,
 			GLbitfield access)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlMapBufferRangeReadAsyncCommand>(poolId);
-			ptr->set(target, buffer, offset, length, access);
+			ptr->set(target, offset, length, access);
 			return ptr;
 		}
 
 		void commandToExecute() override
 		{
-			g_glBindBuffer(m_target, m_buffer);
 			void* buffer_pointer = g_glMapBufferRange(m_target, m_offset, m_length, m_access);
 
 			if (buffer_pointer != nullptr) {
 				std::unique_lock<std::mutex> lock(m_mapMutex);
-				verifyBuffer(m_buffer, m_length);
-				auto data = m_data[m_buffer];
+				GLuint buffer = GlBindBufferCommand::getBoundBufferRender(m_target);
+				verifyBuffer(buffer, m_length);
+				auto data = m_data[buffer];
 				memcpy(data->data(), buffer_pointer, m_length);
 			}
 		}
@@ -3260,11 +3291,9 @@ namespace opengl {
 		}
 		
 	private:
-		void set(GLenum target, GLuint buffer, GLintptr offset, u32 length,
-			GLbitfield access)
+		void set(GLenum target, GLintptr offset, u32 length, GLbitfield access)
 		{
 			m_target = target;
-			m_buffer = buffer;
 			m_offset = offset;
 			m_length = length;
 			m_access = access;
@@ -3278,12 +3307,10 @@ namespace opengl {
 		}
 		
 		GLenum m_target;
-		GLuint m_buffer;
 		GLintptr m_offset;
 		u32 m_length;
 		GLbitfield m_access;
 		static std::unordered_map<int, std::shared_ptr<std::vector<u8>>> m_data;
-		static std::unordered_map<int, u32> m_sizes;
 		static std::mutex m_mapMutex;
 	};
 

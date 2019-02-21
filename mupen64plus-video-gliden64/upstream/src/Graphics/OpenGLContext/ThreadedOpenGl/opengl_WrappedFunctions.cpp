@@ -11,4 +11,7 @@ namespace opengl {
     std::unordered_map<int, GlVertexAttribPointerManager::VertexAttributeData> GlVertexAttribPointerManager::m_vertexAttributePointersRender;
     const void* GlVertexAttribPointerManager::smallestDataPtrRender = nullptr;
 	splicer::ObjectPool<std::vector<char>> GlVertexAttribPointerManager::m_vectorPool(1024);
+	std::unordered_map<GLenum, GLuint> GlBindBufferCommand::m_boundBuffersRender;
+	std::unordered_map<GLenum, GLuint> GlBindBufferCommand::m_boundBuffers;
+    GLuint GlReadPixelsAsyncCommand::m_readPixelsBoundBuffer = 0;
 }

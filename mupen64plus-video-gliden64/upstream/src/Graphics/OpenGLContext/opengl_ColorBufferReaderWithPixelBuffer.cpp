@@ -54,29 +54,24 @@ void ColorBufferReaderWithPixelBuffer::_initBuffers()
 const u8 * ColorBufferReaderWithPixelBuffer::_readPixels(const ReadColorBufferParams& _params, u32& _heightOffset,
 	u32& _stride)
 {
-	GLenum format = GLenum(_params.colorFormat);
-	GLenum type = GLenum(_params.colorType);
+    GLenum format = GLenum(_params.colorFormat);
+    GLenum type = GLenum(_params.colorType);
 
-	_heightOffset = 0;
-	_stride = m_pTexture->realWidth;
+    m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[m_curIndex]));
+    FunctionWrapper::glReadPixels(_params.x0,
+            _params.y0, m_pTexture->realWidth, _params.height, format, type, 0);
+    // If Sync, read pixels from the buffer, copy them to RDRAM.
+    // If not Sync, read pixels from the buffer, copy pixels from the previous buffer to RDRAM.
+    if (!_params.sync) {
+        m_curIndex = (m_curIndex + 1) % m_numPBO;
+        m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[m_curIndex]));
+    }
 
-	// If Sync, read pixels from the buffer, copy them to RDRAM.
-	// If not Sync, read pixels from the buffer, copy pixels from the previous buffer to RDRAM.
-	if (!_params.sync) {
-		m_curIndex = (m_curIndex + 1) % m_numPBO;
-		m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[m_curIndex]));
-		FunctionWrapper::glReadPixelsAsync(_params.x0, _params.y0, m_pTexture->realWidth, _params.height, format, type);
-		m_localData = FunctionWrapper::glMapBufferRangeReadAsync(GL_PIXEL_PACK_BUFFER, m_PBO[m_curIndex], 0,
-			m_pTexture->realWidth * _params.height * _params.colorFormatBytes, GL_MAP_READ_BIT);
-		return m_localData->data();
-	} else {
-		GLubyte* pixelData = nullptr;
-		m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[m_numPBO -1]));
-		FunctionWrapper::glReadPixels(_params.x0, _params.y0, m_pTexture->realWidth, _params.height, format, type, 0);
-		pixelData = (GLubyte*)FunctionWrapper::glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0,
-			m_pTexture->realWidth * _params.height * _params.colorFormatBytes, GL_MAP_READ_BIT);
-		return reinterpret_cast<u8*>(pixelData);
-	}
+    _heightOffset = 0;
+    _stride = m_pTexture->realWidth;
+
+    return reinterpret_cast<u8*>(FunctionWrapper::glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0,
+                                                  m_pTexture->realWidth * _params.height * _params.colorFormatBytes, GL_MAP_READ_BIT));
 
 }
 
