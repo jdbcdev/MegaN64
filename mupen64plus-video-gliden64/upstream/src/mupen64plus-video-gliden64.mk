@@ -84,7 +84,6 @@ MY_LOCAL_SRC_FILES :=                                                           
     $(SRCDIR)/Graphics/OpenGLContext/opengl_Parameters.cpp                         \
     $(SRCDIR)/Graphics/OpenGLContext/opengl_TextureManipulationObjectFactory.cpp   \
     $(SRCDIR)/Graphics/OpenGLContext/opengl_UnbufferedDrawer.cpp                   \
-    $(SRCDIR)/Graphics/OpenGLContext/opengl_UnbufferedDrawerThreadSafe.cpp         \
     $(SRCDIR)/Graphics/OpenGLContext/opengl_Utils.cpp                              \
     $(SRCDIR)/Graphics/OpenGLContext/GLSL/glsl_CombinerInputs.cpp                  \
     $(SRCDIR)/Graphics/OpenGLContext/GLSL/glsl_CombinerProgramBuilder.cpp          \

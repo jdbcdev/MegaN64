@@ -6,6 +6,7 @@ namespace opengl {
 	bool FunctionWrapper::m_threaded_wrapper = false;
 	bool FunctionWrapper::m_shutdown = false;
 	int FunctionWrapper::m_swapBuffersQueued = 0;
+	bool FunctionWrapper::m_fastVertexAttributes = false;
 	std::thread FunctionWrapper::m_commandExecutionThread;
 	std::mutex FunctionWrapper::m_condvarMutex;
 	std::condition_variable FunctionWrapper::m_condition;
@@ -217,19 +218,14 @@ namespace opengl {
 
 	void FunctionWrapper::glDrawArrays(GLenum mode, GLint first, GLsizei count)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlDrawArraysCommand::get(mode, first, count));
-		else
-			g_glDrawArrays(mode, first, count);
-	}
-
-	void FunctionWrapper::glDrawArraysUnbuffered(GLenum mode, GLint first, GLsizei count)
-	{
 		if (m_threaded_wrapper) {
-			splicer::Node<std::vector<char>>* node = GlVertexAttribPointerManager::getVectorFromPool();
-            const char* ptr = GlVertexAttribPointerManager::getSmallestPtr();
-            node->val().assign(ptr, ptr + (count+1)*GlVertexAttribPointerManager::getStride());
-			executeCommand(GlDrawArraysUnbufferedCommand::get(mode, first, count, node));
+			if (m_fastVertexAttributes) {
+				executeCommand(GlDrawArraysCommand::get(mode, first, count));
+			} else {
+				splicer::Node<std::vector<char>>* node = GlVertexAttribPointerManager::getVectorFromPool();
+				const char* ptr = GlVertexAttribPointerManager::getSmallestPtr();
+				node->val().assign(ptr, ptr + (count+1)*GlVertexAttribPointerManager::getStride());
+				executeCommand(GlDrawArraysUnbufferedCommand::get(mode, first, count, node));			}
 		}else {
             g_glDrawArrays(mode, first, count);
 		}
@@ -251,12 +247,7 @@ namespace opengl {
 #endif
 	}
 
-	void FunctionWrapper::glDrawElementsNotThreadSafe(GLenum mode, GLsizei count, GLenum type, const void *indices)
-	{
-		g_glDrawElements(mode, count, type, indices);
-	}
-
-	void FunctionWrapper::glDrawElementsUnbuffered(GLenum mode, GLsizei count, GLenum type, const void *indices)
+	void FunctionWrapper::glDrawElements(GLenum mode, GLsizei count, GLenum type, const void *indices)
 	{
 		if(m_threaded_wrapper)
         {
@@ -608,28 +599,18 @@ namespace opengl {
 			g_glDisableVertexAttribArray(index);
 	}
 
-	void FunctionWrapper::glVertexAttribPointerBuffered(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, std::size_t offset)
-	{
-		if (m_threaded_wrapper)
-			executeCommand(GlVertexAttribPointerBufferedCommand::get(index, size, type, normalized, stride, offset));
-		else
-			g_glVertexAttribPointer(index, size, type, normalized, stride, (const GLvoid *)(offset));
-	}
-
-	void FunctionWrapper::glVertexAttribPointerNotThreadSafe(GLuint index, GLint size, GLenum type, GLboolean normalized,
-		GLsizei stride, const void *pointer)
-	{
-		g_glVertexAttribPointer(index, size, type, normalized, stride, pointer);
-	}
-
 	void FunctionWrapper::glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer)
 	{
         if (m_threaded_wrapper) {
-			GlVertexAttribPointerManager::update(index, size, type, normalized, stride, pointer);
-			executeCommand(GlVertexAttribPointerUnbufferedCommand::get(index, size, type, normalized, stride, pointer));
+			if (m_fastVertexAttributes) {
+				executeCommand(GlVertexAttribPointerBufferedCommand::get(index, size, type, normalized, stride, pointer));
+			} else {
+				GlVertexAttribPointerManager::update(index, size, type, normalized, stride, pointer);
+				executeCommand(GlVertexAttribPointerUnbufferedCommand::get(index, size, type, normalized, stride, pointer));
+			}
 		} else
             g_glVertexAttribPointer(index, size, type, normalized, stride, pointer);
-	}
+    }
 
 	void FunctionWrapper::glBindAttribLocation(GLuint program, GLuint index, const std::string& name)
 	{

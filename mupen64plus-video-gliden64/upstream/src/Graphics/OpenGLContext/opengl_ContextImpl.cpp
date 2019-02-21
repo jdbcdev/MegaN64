@@ -5,7 +5,6 @@
 #include "opengl_ContextImpl.h"
 #include "opengl_BufferedDrawer.h"
 #include "opengl_UnbufferedDrawer.h"
-#include "opengl_UnbufferedDrawerThreadSafe.h"
 #include "opengl_ColorBufferReaderWithPixelBuffer.h"
 #include "opengl_ColorBufferReaderWithBufferStorage.h"
 #include "opengl_ColorBufferReaderWithEGLImage.h"
@@ -67,13 +66,11 @@ void ContextImpl::init()
 	}
 
 	{
-		//if ((m_glInfo.isGLESX && (m_glInfo.bufferStorage && m_glInfo.majorVersion * 10 + m_glInfo.minorVersion >= 32)) || !m_glInfo.isGLESX) {
-		//	m_graphicsDrawer.reset(new BufferedDrawer(m_glInfo, m_cachedFunctions->getCachedVertexAttribArray(), m_cachedFunctions->getCachedBindBuffer()));
-		//} else if (config.video.threadedVideo) {
-			m_graphicsDrawer.reset(new UnbufferedDrawerThreadSafe(m_glInfo, m_cachedFunctions->getCachedVertexAttribArray()));
-		//} else {
-		//	m_graphicsDrawer.reset(new UnbufferedDrawer(m_glInfo, m_cachedFunctions->getCachedVertexAttribArray()));
-		//}
+		if ((m_glInfo.isGLESX && (m_glInfo.bufferStorage && m_glInfo.majorVersion * 10 + m_glInfo.minorVersion >= 32)) || !m_glInfo.isGLESX) {
+			m_graphicsDrawer.reset(new BufferedDrawer(m_glInfo, m_cachedFunctions->getCachedVertexAttribArray(), m_cachedFunctions->getCachedBindBuffer()));
+		} else {
+			m_graphicsDrawer.reset(new UnbufferedDrawer(m_glInfo, m_cachedFunctions->getCachedVertexAttribArray()));
+		}
 	}
 
 	resetCombinerProgramBuilder();

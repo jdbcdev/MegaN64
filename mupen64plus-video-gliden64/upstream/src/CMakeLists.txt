@@ -75,7 +75,6 @@ set(GLideN64_SOURCES
   Graphics/OpenGLContext/opengl_Parameters.cpp
   Graphics/OpenGLContext/opengl_TextureManipulationObjectFactory.cpp
   Graphics/OpenGLContext/opengl_UnbufferedDrawer.cpp
-  Graphics/OpenGLContext/opengl_UnbufferedDrawerThreadSafe.cpp
   Graphics/OpenGLContext/opengl_Utils.cpp
   Graphics/OpenGLContext/GLSL/glsl_CombinerInputs.cpp
   Graphics/OpenGLContext/GLSL/glsl_CombinerProgramBuilder.cpp

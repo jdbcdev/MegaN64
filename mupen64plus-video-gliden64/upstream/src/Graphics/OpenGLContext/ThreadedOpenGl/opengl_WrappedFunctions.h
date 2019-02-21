@@ -27,7 +27,7 @@ namespace opengl {
 	class GlBlendFuncCommand : public OpenGlCommand
 	{
 	public:
-		GlBlendFuncCommand(void) :
+		GlBlendFuncCommand() :
 			OpenGlCommand(false, false, "glBlendFunc")
 		{
 		}
@@ -40,7 +40,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBlendFunc(m_sfactor, m_dfactor);
 		}
@@ -58,7 +58,7 @@ namespace opengl {
 	class GlPixelStoreiCommand : public OpenGlCommand
 	{
 	public:
-		GlPixelStoreiCommand(void) :
+		GlPixelStoreiCommand() :
 			OpenGlCommand(false, false, "glPixelStorei")
 		{
 		}
@@ -71,7 +71,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glPixelStorei(m_pname, m_param);
 		}
@@ -90,7 +90,7 @@ namespace opengl {
 	class GlClearColorCommand : public OpenGlCommand
 	{
 	public:
-		GlClearColorCommand(void) :
+		GlClearColorCommand() :
 			OpenGlCommand(false, false, "glClearColor")
 		{
 
@@ -104,7 +104,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glClearColor(m_red, m_green, m_blue, m_alpha);
 		}
@@ -126,7 +126,7 @@ namespace opengl {
 	class GlCullFaceCommand : public OpenGlCommand
 	{
 	public:
-		GlCullFaceCommand(void) :
+		GlCullFaceCommand() :
 			OpenGlCommand(false, false, "glCullFace")
 		{
 		}
@@ -139,7 +139,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glCullFace(m_mode);
 		}
@@ -156,7 +156,7 @@ namespace opengl {
 	class GlDepthFuncCommand : public OpenGlCommand
 	{
 	public:
-		GlDepthFuncCommand(void) :
+		GlDepthFuncCommand() :
 			OpenGlCommand(false, false, "glDepthFunc")
 		{
 		}
@@ -169,7 +169,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDepthFunc(m_func);
 		}
@@ -185,7 +185,7 @@ namespace opengl {
 	class GlDepthMaskCommand : public OpenGlCommand
 	{
 	public:
-		GlDepthMaskCommand(void) :
+		GlDepthMaskCommand() :
 			OpenGlCommand(false, false, "glDepthMask")
 		{
 
@@ -199,7 +199,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDepthMask(m_flag);
 		}
@@ -215,7 +215,7 @@ namespace opengl {
 	class GlDisableCommand : public OpenGlCommand
 	{
 	public:
-		GlDisableCommand(void) :
+		GlDisableCommand() :
 			OpenGlCommand(false, false, "glDisable")
 		{
 		}
@@ -228,7 +228,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDisable(m_cap);
 		}
@@ -244,7 +244,7 @@ namespace opengl {
 	class GlEnableCommand : public OpenGlCommand
 	{
 	public:
-		GlEnableCommand(void) :
+		GlEnableCommand() :
 			OpenGlCommand(false, false, "glEnable")
 		{
 		}
@@ -257,7 +257,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glEnable(m_cap);
 		}
@@ -273,7 +273,7 @@ namespace opengl {
 	class GlDisableiCommand : public OpenGlCommand
 	{
 	public:
-		GlDisableiCommand(void) :
+		GlDisableiCommand() :
 			OpenGlCommand(false, false, "glDisablei")
 		{
 		}
@@ -286,7 +286,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDisablei(m_target, m_index);
 		}
@@ -304,7 +304,7 @@ namespace opengl {
 	class GlEnableiCommand : public OpenGlCommand
 	{
 	public:
-		GlEnableiCommand(void) :
+		GlEnableiCommand() :
 			OpenGlCommand(false, false, "glEnablei")
 		{
 		}
@@ -317,7 +317,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glEnablei(m_target, m_index);
 		}
@@ -335,7 +335,7 @@ namespace opengl {
 	class GlPolygonOffsetCommand : public OpenGlCommand
 	{
 	public:
-		GlPolygonOffsetCommand(void) :
+		GlPolygonOffsetCommand() :
 			OpenGlCommand(false, false, "glPolygonOffset")
 		{
 		}
@@ -348,7 +348,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glPolygonOffset(m_factor, m_units);
 		}
@@ -366,7 +366,7 @@ namespace opengl {
 	class GlScissorCommand : public OpenGlCommand
 	{
 	public:
-		GlScissorCommand(void) :
+		GlScissorCommand() :
 			OpenGlCommand(false, false, "glScissor")
 		{
 		}
@@ -379,7 +379,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glScissor(m_x, m_y, m_width, m_height);
 		}
@@ -401,7 +401,7 @@ namespace opengl {
 	class GlViewportCommand : public OpenGlCommand
 	{
 	public:
-		GlViewportCommand(void) :
+		GlViewportCommand() :
 			OpenGlCommand(false, false, "glViewport")
 		{
 		}
@@ -414,7 +414,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glViewport(m_x, m_y, m_width, m_height);
 		}
@@ -436,7 +436,7 @@ namespace opengl {
 	class GlBindTextureCommand : public OpenGlCommand
 	{
 	public:
-		GlBindTextureCommand(void) :
+		GlBindTextureCommand() :
 			OpenGlCommand(false, false, "glBindTexture")
 		{
 		}
@@ -449,7 +449,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBindTexture(m_target, m_texture);
 		}
@@ -468,7 +468,7 @@ namespace opengl {
 	class GlTexImage2DCommand : public OpenGlCommand
 	{
 	public:
-		GlTexImage2DCommand(void) :
+		GlTexImage2DCommand() :
 			OpenGlCommand(false, false, "glTexImage2D")
 		{
 		}
@@ -482,7 +482,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTexImage2D(m_target, m_level, m_internalformat, m_width, m_height, m_border, m_format, m_type,
 				m_pixels.get());
@@ -516,7 +516,7 @@ namespace opengl {
 	class GlTexParameteriCommand : public OpenGlCommand
 	{
 	public:
-		GlTexParameteriCommand(void) :
+		GlTexParameteriCommand() :
 			OpenGlCommand(false, false, "glTexParameteri")
 		{
 		}
@@ -529,7 +529,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTexParameteri(m_target, m_pname, m_param);
 		}
@@ -549,7 +549,7 @@ namespace opengl {
 	class GlGetIntegervCommand : public OpenGlCommand
 	{
 	public:
-		GlGetIntegervCommand(void) :
+		GlGetIntegervCommand() :
 			OpenGlCommand(true, false, "glGetIntegerv")
 		{
 		}
@@ -562,7 +562,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGetIntegerv(m_pname, m_data);
 		}
@@ -580,7 +580,7 @@ namespace opengl {
 	class GlGetStringCommand : public OpenGlCommand
 	{
 	public:
-		GlGetStringCommand(void) :
+		GlGetStringCommand() :
 			OpenGlCommand(true, false, "glGetString")
 		{
 		}
@@ -593,7 +593,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			*m_returnValue = g_glGetString(m_name);
 		}
@@ -611,7 +611,7 @@ namespace opengl {
 	class GlReadPixelsCommand : public OpenGlCommand
 	{
 	public:
-		GlReadPixelsCommand(void) :
+		GlReadPixelsCommand() :
 			OpenGlCommand(true, true, "glReadPixels")
 		{
 		}
@@ -624,7 +624,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glReadPixels(m_x, m_y, m_width, m_height, m_format, m_type, m_pixels);
 		}
@@ -652,7 +652,7 @@ namespace opengl {
 	class GlReadPixelsAsyncCommand : public OpenGlCommand
 	{
 	public:
-		GlReadPixelsAsyncCommand(void) :
+		GlReadPixelsAsyncCommand() :
 			OpenGlCommand(false, false, "GlReadPixelsAync")
 		{
 		}
@@ -665,7 +665,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glReadPixels(m_x, m_y, m_width, m_height, m_format, m_type, nullptr);
 		}
@@ -692,7 +692,7 @@ namespace opengl {
 	class GlTexSubImage2DUnbufferedCommand : public OpenGlCommand
 	{
 	public:
-		GlTexSubImage2DUnbufferedCommand(void) :
+		GlTexSubImage2DUnbufferedCommand() :
 			OpenGlCommand(false, false, "glTexSubImage2D")
 		{
 		}
@@ -706,7 +706,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTexSubImage2D(m_target, m_level, m_xoffset, m_yoffset, m_width, m_height, m_format, m_type, m_pixels.get());
 		}
@@ -739,7 +739,7 @@ namespace opengl {
 	class GlTexSubImage2DBufferedCommand : public OpenGlCommand
 	{
 	public:
-		GlTexSubImage2DBufferedCommand(void) :
+		GlTexSubImage2DBufferedCommand() :
 			OpenGlCommand(false, false, "glTexSubImage2D")
 		{
 		}
@@ -753,7 +753,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTexSubImage2D(m_target, m_level, m_xoffset, m_yoffset, m_width, m_height, m_format, m_type, (const GLvoid *)m_offset);
 		}
@@ -786,7 +786,7 @@ namespace opengl {
 	class GlDrawArraysCommand : public OpenGlCommand
 	{
 	public:
-		GlDrawArraysCommand(void) :
+		GlDrawArraysCommand() :
 			OpenGlCommand(false, false, "glDrawArrays")
 		{
 		}
@@ -799,7 +799,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDrawArrays(m_mode, m_first, m_count);
 		}
@@ -999,7 +999,7 @@ namespace opengl {
 	class GlDrawArraysUnbufferedCommand : public OpenGlCommand
 	{
 	public:
-		GlDrawArraysUnbufferedCommand(void) :
+		GlDrawArraysUnbufferedCommand() :
 			OpenGlCommand(false, false, "glDrawArraysUnbuffered")
 		{
             static bool attribsDataInitialized = false;
@@ -1018,7 +1018,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
             auto& vertexAttributes = GlVertexAttribPointerManager::getVertexAttributesRender();
 
@@ -1055,7 +1055,7 @@ namespace opengl {
 	class GlGetErrorCommand : public OpenGlCommand
 	{
 	public:
-		GlGetErrorCommand(void) :
+		GlGetErrorCommand() :
 			OpenGlCommand(true, true, "glGetError")
 		{
 		}
@@ -1068,7 +1068,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			*m_returnValue = g_glGetError();
 		}
@@ -1084,7 +1084,7 @@ namespace opengl {
 	class GlDrawElementsUnbufferedCommand : public OpenGlCommand
 	{
 	public:
-		GlDrawElementsUnbufferedCommand(void) :
+		GlDrawElementsUnbufferedCommand() :
 			OpenGlCommand(false, false, "glDrawElementsUnbuffered")
 		{
             static bool attribsDataInitialized = false;
@@ -1104,7 +1104,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
             auto& vertexAttributes = GlVertexAttribPointerManager::getVertexAttributesRender();
             int count = 0;
@@ -1145,7 +1145,7 @@ namespace opengl {
 	class GlLineWidthCommand : public OpenGlCommand
 	{
 	public:
-		GlLineWidthCommand(void) :
+		GlLineWidthCommand() :
 			OpenGlCommand(false, false, "glLineWidth")
 		{
 		}
@@ -1158,7 +1158,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glLineWidth(m_width);
 		}
@@ -1174,7 +1174,7 @@ namespace opengl {
 	class GlClearCommand : public OpenGlCommand
 	{
 	public:
-		GlClearCommand(void) :
+		GlClearCommand() :
 			OpenGlCommand(false, false, "glClear")
 		{
 		}
@@ -1187,7 +1187,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glClear(m_mask);
 		}
@@ -1203,7 +1203,7 @@ namespace opengl {
 	class GlClearBufferfvCommand : public OpenGlCommand
 	{
 	public:
-		GlClearBufferfvCommand(void) :
+		GlClearBufferfvCommand() :
 			OpenGlCommand(false, false, "glClearBufferfv")
 		{
 		}
@@ -1216,7 +1216,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glClearBufferfv(m_buffer, m_drawbuffer, m_value.get());
 		}
@@ -1236,7 +1236,7 @@ namespace opengl {
 	class GlGetFloatvCommand : public OpenGlCommand
 	{
 	public:
-		GlGetFloatvCommand(void) :
+		GlGetFloatvCommand() :
 			OpenGlCommand(true, false, "glGetFloatv")
 		{
 		}
@@ -1249,7 +1249,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGetFloatv(m_pname, m_data);
 		}
@@ -1267,7 +1267,7 @@ namespace opengl {
 	class GlDeleteTexturesCommand : public OpenGlCommand
 	{
 	public:
-		GlDeleteTexturesCommand(void) :
+		GlDeleteTexturesCommand() :
 			OpenGlCommand(false, false, "glDeleteTextures")
 		{
 		}
@@ -1280,7 +1280,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDeleteTextures(m_n, m_textures.get());
 		}
@@ -1298,7 +1298,7 @@ namespace opengl {
 	class GlGenTexturesCommand : public OpenGlCommand
 	{
 	public:
-		GlGenTexturesCommand(void) :
+		GlGenTexturesCommand() :
 			OpenGlCommand(true, false, "glGenTextures")
 		{
 		}
@@ -1311,7 +1311,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGenTextures(m_n, m_textures);
 		}
@@ -1329,7 +1329,7 @@ namespace opengl {
 	class GlTexParameterfCommand : public OpenGlCommand
 	{
 	public:
-		GlTexParameterfCommand(void) :
+		GlTexParameterfCommand() :
 			OpenGlCommand(false, false, "glTexParameterf")
 		{
 		}
@@ -1342,7 +1342,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTexParameterf(m_target, m_pname, m_param);
 		}
@@ -1362,7 +1362,7 @@ namespace opengl {
 	class GlActiveTextureCommand : public OpenGlCommand
 	{
 	public:
-		GlActiveTextureCommand(void) :
+		GlActiveTextureCommand() :
 			OpenGlCommand(false, false, "glActiveTexture")
 		{
 		}
@@ -1375,7 +1375,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glActiveTexture(m_texture);
 		}
@@ -1391,7 +1391,7 @@ namespace opengl {
 	class GlBlendColorCommand : public OpenGlCommand
 	{
 	public:
-		GlBlendColorCommand(void) :
+		GlBlendColorCommand() :
 			OpenGlCommand(false, false, "glBlendColor")
 		{
 		}
@@ -1404,7 +1404,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBlendColor(m_red, m_green, m_blue, m_alpha);
 		}
@@ -1426,7 +1426,7 @@ namespace opengl {
 	class GlReadBufferCommand : public OpenGlCommand
 	{
 	public:
-		GlReadBufferCommand(void) :
+		GlReadBufferCommand() :
 			OpenGlCommand(false, false, "glReadBuffer")
 		{
 		}
@@ -1439,7 +1439,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glReadBuffer(m_src);
 		}
@@ -1455,7 +1455,7 @@ namespace opengl {
 	class GlCreateShaderCommand : public OpenGlCommand
 	{
 	public:
-		GlCreateShaderCommand(void) :
+		GlCreateShaderCommand() :
 			OpenGlCommand(true, true, "glCreateShader")
 		{
 		}
@@ -1468,7 +1468,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			*m_returnValue = g_glCreateShader(m_type);
 		}
@@ -1486,7 +1486,7 @@ namespace opengl {
 	class GlCompileShaderCommand : public OpenGlCommand
 	{
 	public:
-		GlCompileShaderCommand(void) :
+		GlCompileShaderCommand() :
 			OpenGlCommand(false, false, "glCompileShader")
 		{
 		}
@@ -1499,7 +1499,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glCompileShader(m_shader);
 		}
@@ -1515,7 +1515,7 @@ namespace opengl {
 	class GlShaderSourceCommand : public OpenGlCommand
 	{
 	public:
-		GlShaderSourceCommand(void) :
+		GlShaderSourceCommand() :
 			OpenGlCommand(false, false, "glShaderSource")
 		{
 		}
@@ -1528,7 +1528,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			const GLchar* strShaderData = m_string.data();
 			g_glShaderSource(m_shader, 1, &strShaderData, nullptr);
@@ -1547,7 +1547,7 @@ namespace opengl {
 	class GlCreateProgramCommand : public OpenGlCommand
 	{
 	public:
-		GlCreateProgramCommand(void) :
+		GlCreateProgramCommand() :
 			OpenGlCommand(true, true, "glCreateProgram")
 		{
 		}
@@ -1560,7 +1560,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			*m_returnValue = g_glCreateProgram();
 		}
@@ -1576,7 +1576,7 @@ namespace opengl {
 	class GlAttachShaderCommand : public OpenGlCommand
 	{
 	public:
-		GlAttachShaderCommand(void) :
+		GlAttachShaderCommand() :
 			OpenGlCommand(false, false, "glAttachShader")
 		{
 		}
@@ -1589,7 +1589,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glAttachShader(m_program, m_shader);
 		}
@@ -1607,7 +1607,7 @@ namespace opengl {
 	class GlLinkProgramCommand : public OpenGlCommand
 	{
 	public:
-		GlLinkProgramCommand(void) :
+		GlLinkProgramCommand() :
 			OpenGlCommand(false, false, "glLinkProgram")
 		{
 		}
@@ -1620,7 +1620,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glLinkProgram(m_program);
 		}
@@ -1636,7 +1636,7 @@ namespace opengl {
 	class GlUseProgramCommand : public OpenGlCommand
 	{
 	public:
-		GlUseProgramCommand(void) :
+		GlUseProgramCommand() :
 			OpenGlCommand(false, false, "glUseProgram")
 		{
 		}
@@ -1649,7 +1649,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glUseProgram(m_program);
 		}
@@ -1665,7 +1665,7 @@ namespace opengl {
 	class GlGetUniformLocationCommand : public OpenGlCommand
 	{
 	public:
-		GlGetUniformLocationCommand(void) :
+		GlGetUniformLocationCommand() :
 			OpenGlCommand(true, true, "glGetUniformLocation")
 		{
 		}
@@ -1678,7 +1678,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			*m_returnValue = g_glGetUniformLocation(m_program, m_name);
 		}
@@ -1698,7 +1698,7 @@ namespace opengl {
 	class GlUniform1iCommand : public OpenGlCommand
 	{
 	public:
-		GlUniform1iCommand(void) :
+		GlUniform1iCommand() :
 			OpenGlCommand(false, false, "glUniform1i")
 		{
 		}
@@ -1711,7 +1711,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glUniform1i(m_location, m_v0);
 		}
@@ -1729,7 +1729,7 @@ namespace opengl {
 	class GlUniform1fCommand : public OpenGlCommand
 	{
 	public:
-		GlUniform1fCommand(void) :
+		GlUniform1fCommand() :
 			OpenGlCommand(false, false, "glUniform1f")
 		{
 		}
@@ -1742,7 +1742,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glUniform1f(m_location, m_v0);
 		}
@@ -1760,7 +1760,7 @@ namespace opengl {
 	class GlUniform2fCommand : public OpenGlCommand
 	{
 	public:
-		GlUniform2fCommand(void) :
+		GlUniform2fCommand() :
 			OpenGlCommand(false, false, "glUniform2f")
 		{
 		}
@@ -1773,7 +1773,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glUniform2f(m_location, m_v0, m_v1);
 		}
@@ -1793,7 +1793,7 @@ namespace opengl {
 	class GlUniform2iCommand : public OpenGlCommand
 	{
 	public:
-		GlUniform2iCommand(void) :
+		GlUniform2iCommand() :
 			OpenGlCommand(false, false, "glUniform2i")
 		{
 		}
@@ -1806,7 +1806,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glUniform2i(m_location, m_v0, m_v1);
 		}
@@ -1826,7 +1826,7 @@ namespace opengl {
 	class GlUniform4iCommand : public OpenGlCommand
 	{
 	public:
-		GlUniform4iCommand(void) :
+		GlUniform4iCommand() :
 			OpenGlCommand(false, false, "glUniform4i")
 		{
 		}
@@ -1839,7 +1839,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glUniform4i(m_location, m_v0, m_v1, m_v2, m_v3);
 		}
@@ -1863,7 +1863,7 @@ namespace opengl {
 	class GlUniform4fCommand : public OpenGlCommand
 	{
 	public:
-		GlUniform4fCommand(void) :
+		GlUniform4fCommand() :
 			OpenGlCommand(false, false, "glUniform4f")
 		{
 		}
@@ -1876,7 +1876,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glUniform4f(m_location, m_v0, m_v1, m_v2, m_v3);
 		}
@@ -1900,7 +1900,7 @@ namespace opengl {
 	class GlUniform3fvCommand : public OpenGlCommand
 	{
 	public:
-		GlUniform3fvCommand(void) :
+		GlUniform3fvCommand() :
 			OpenGlCommand(false, false, "glUniform3fv")
 		{
 		}
@@ -1913,7 +1913,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glUniform3fv(m_location, m_count, m_value.get());
 		}
@@ -1933,7 +1933,7 @@ namespace opengl {
 	class GlUniform4fvCommand : public OpenGlCommand
 	{
 	public:
-		GlUniform4fvCommand(void) :
+		GlUniform4fvCommand() :
 			OpenGlCommand(false, false, "glUniform4fv")
 		{
 		}
@@ -1946,7 +1946,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glUniform4fv(m_location, m_count, m_value.get());
 		}
@@ -1966,7 +1966,7 @@ namespace opengl {
 	class GlDetachShaderCommand : public OpenGlCommand
 	{
 	public:
-		GlDetachShaderCommand(void) :
+		GlDetachShaderCommand() :
 			OpenGlCommand(false, false, "glDetachShader")
 		{
 		}
@@ -1979,7 +1979,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDetachShader(m_program, m_shader);
 		}
@@ -1997,7 +1997,7 @@ namespace opengl {
 	class GlDeleteShaderCommand : public OpenGlCommand
 	{
 	public:
-		GlDeleteShaderCommand(void) :
+		GlDeleteShaderCommand() :
 			OpenGlCommand(false, false, "glDeleteShader")
 		{
 		}
@@ -2010,7 +2010,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDeleteShader(m_shader);
 		}
@@ -2026,7 +2026,7 @@ namespace opengl {
 	class GlDeleteProgramCommand : public OpenGlCommand
 	{
 	public:
-		GlDeleteProgramCommand(void) :
+		GlDeleteProgramCommand() :
 			OpenGlCommand(false, false, "glDeleteProgram")
 		{
 		}
@@ -2039,7 +2039,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDeleteProgram(m_program);
 		}
@@ -2055,7 +2055,7 @@ namespace opengl {
 	class GlGetProgramInfoLogCommand : public OpenGlCommand
 	{
 	public:
-		GlGetProgramInfoLogCommand(void) :
+		GlGetProgramInfoLogCommand() :
 			OpenGlCommand(true, true, "glGetProgramInfoLog")
 		{
 		}
@@ -2068,7 +2068,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGetProgramInfoLog(m_program, m_bufSize, m_length, m_infoLog);
 		}
@@ -2090,7 +2090,7 @@ namespace opengl {
 	class GlGetShaderInfoLogCommand : public OpenGlCommand
 	{
 	public:
-		GlGetShaderInfoLogCommand(void) :
+		GlGetShaderInfoLogCommand() :
 			OpenGlCommand(true, true, "glGetShaderInfoLog")
 		{
 		}
@@ -2103,7 +2103,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGetShaderInfoLog(m_shader, m_bufSize, m_length, m_infoLog);
 		}
@@ -2125,7 +2125,7 @@ namespace opengl {
 	class GlGetShaderivCommand : public OpenGlCommand
 	{
 	public:
-		GlGetShaderivCommand(void) :
+		GlGetShaderivCommand() :
 			OpenGlCommand(true, true, "glGetShaderiv")
 		{
 		}
@@ -2138,7 +2138,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGetShaderiv(m_shader, m_pname, m_params);
 		}
@@ -2158,7 +2158,7 @@ namespace opengl {
 	class GlGetProgramivCommand : public OpenGlCommand
 	{
 	public:
-		GlGetProgramivCommand(void) :
+		GlGetProgramivCommand() :
 			OpenGlCommand(true, true, "glGetProgramiv")
 		{
 		}
@@ -2171,7 +2171,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGetProgramiv(m_program, m_pname, m_params);
 		}
@@ -2191,7 +2191,7 @@ namespace opengl {
 	class GlEnableVertexAttribArrayCommand : public OpenGlCommand
 	{
 	public:
-		GlEnableVertexAttribArrayCommand(void) :
+		GlEnableVertexAttribArrayCommand() :
 			OpenGlCommand(false, false, "glEnableVertexAttribArray")
 		{
 		}
@@ -2204,7 +2204,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
             GlVertexAttribPointerManager::enableVertexAttributeIndexRender(m_index);
             g_glEnableVertexAttribArray(m_index);
@@ -2221,7 +2221,7 @@ namespace opengl {
 	class GlDisableVertexAttribArrayCommand : public OpenGlCommand
 	{
 	public:
-		GlDisableVertexAttribArrayCommand(void) :
+		GlDisableVertexAttribArrayCommand() :
 			OpenGlCommand(false, false, "glDisableVertexAttribArray")
 		{
 		}
@@ -2234,7 +2234,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
             GlVertexAttribPointerManager::disableVertexAttributeIndexRender(m_index);
 			g_glDisableVertexAttribArray(m_index);
@@ -2251,13 +2251,13 @@ namespace opengl {
 	class GlVertexAttribPointerBufferedCommand : public OpenGlCommand
 	{
 	public:
-		GlVertexAttribPointerBufferedCommand(void) :
+		GlVertexAttribPointerBufferedCommand() :
 			OpenGlCommand(false, false, "glVertexAttribPointer")
 		{
 		}
 
 		static std::shared_ptr<OpenGlCommand> get(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
-			std::size_t offset)
+        	const GLvoid* offset)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlVertexAttribPointerBufferedCommand>(poolId);
@@ -2265,13 +2265,13 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
-			g_glVertexAttribPointer(m_index, m_size, m_type, m_normalized, m_stride, (const GLvoid *)(m_offset));
+			g_glVertexAttribPointer(m_index, m_size, m_type, m_normalized, m_stride, m_offset);
 		}
 	private:
 		void set(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
-			std::size_t offset)
+        	const GLvoid* offset)
 		{
 			m_index = index;
 			m_size = size;
@@ -2286,13 +2286,13 @@ namespace opengl {
 		GLenum m_type;
 		GLboolean m_normalized;
 		GLsizei m_stride;
-		std::size_t m_offset;
+        const GLvoid* m_offset;
 	};
 
 	class GlBindAttribLocationCommand : public OpenGlCommand
 	{
 	public:
-		GlBindAttribLocationCommand(void) :
+		GlBindAttribLocationCommand() :
 			OpenGlCommand(false, false, "glBindAttribLocation")
 		{
 		}
@@ -2305,7 +2305,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBindAttribLocation(m_program, m_index, m_name.data());
 		}
@@ -2325,7 +2325,7 @@ namespace opengl {
 	class GlVertexAttrib1fCommand : public OpenGlCommand
 	{
 	public:
-		GlVertexAttrib1fCommand(void) :
+		GlVertexAttrib1fCommand() :
 			OpenGlCommand(false, false, "glVertexAttrib1f")
 		{
 		}
@@ -2338,7 +2338,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glVertexAttrib1f(m_index, m_x);
 		}
@@ -2356,7 +2356,7 @@ namespace opengl {
 	class GlVertexAttrib4fCommand : public OpenGlCommand
 	{
 	public:
-		GlVertexAttrib4fCommand(void) :
+		GlVertexAttrib4fCommand() :
 			OpenGlCommand(false, false, "glVertexAttrib4f")
 		{
 		}
@@ -2369,7 +2369,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glVertexAttrib4f(m_index, m_x, m_y, m_z, m_w);
 		}
@@ -2393,7 +2393,7 @@ namespace opengl {
 	class GlVertexAttrib4fvCommand : public OpenGlCommand
 	{
 	public:
-		GlVertexAttrib4fvCommand(void) :
+		GlVertexAttrib4fvCommand() :
 			OpenGlCommand(false, false, "glVertexAttrib4fv")
 		{
 		}
@@ -2406,7 +2406,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glVertexAttrib4fv(m_index, m_v.get());
 		}
@@ -2424,7 +2424,7 @@ namespace opengl {
 	class GlDepthRangefCommand : public OpenGlCommand
 	{
 	public:
-		GlDepthRangefCommand(void) :
+		GlDepthRangefCommand() :
 			OpenGlCommand(false, false, "glDepthRangef")
 		{
 		}
@@ -2437,7 +2437,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDepthRangef(m_n,m_f);
 		}
@@ -2455,7 +2455,7 @@ namespace opengl {
 	class GlClearDepthfCommand : public OpenGlCommand
 	{
 	public:
-		GlClearDepthfCommand(void) :
+		GlClearDepthfCommand() :
 			OpenGlCommand(false, false, "glClearDepthf")
 		{
 		}
@@ -2468,7 +2468,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glClearDepthf(m_d);
 		}
@@ -2484,7 +2484,7 @@ namespace opengl {
 	class GlDrawBuffersCommand : public OpenGlCommand
 	{
 	public:
-		GlDrawBuffersCommand(void) :
+		GlDrawBuffersCommand() :
 			OpenGlCommand(false, false, "glDrawBuffers")
 		{
 		}
@@ -2497,7 +2497,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDrawBuffers(m_n, m_bufs.get());
 		}
@@ -2515,7 +2515,7 @@ namespace opengl {
 	class GlGenFramebuffersCommand : public OpenGlCommand
 	{
 	public:
-		GlGenFramebuffersCommand(void) :
+		GlGenFramebuffersCommand() :
 			OpenGlCommand(true, false, "glGenFramebuffers")
 		{
 		}
@@ -2528,7 +2528,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGenFramebuffers(m_n, m_framebuffers);
 		}
@@ -2546,7 +2546,7 @@ namespace opengl {
 	class GlBindFramebufferCommand : public OpenGlCommand
 	{
 	public:
-		GlBindFramebufferCommand(void) :
+		GlBindFramebufferCommand() :
 			OpenGlCommand(false, false, "glBindFramebuffer")
 		{
 		}
@@ -2559,7 +2559,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBindFramebuffer(m_target, m_framebuffer);
 		}
@@ -2577,7 +2577,7 @@ namespace opengl {
 	class GlDeleteFramebuffersCommand : public OpenGlCommand
 	{
 	public:
-		GlDeleteFramebuffersCommand(void) :
+		GlDeleteFramebuffersCommand() :
 			OpenGlCommand(false, false, "glDeleteFramebuffers")
 		{
 		}
@@ -2590,7 +2590,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDeleteFramebuffers(m_n, m_framebuffers.get());
 		}
@@ -2608,7 +2608,7 @@ namespace opengl {
 	class GlFramebufferTexture2DCommand : public OpenGlCommand
 	{
 	public:
-		GlFramebufferTexture2DCommand(void) :
+		GlFramebufferTexture2DCommand() :
 			OpenGlCommand(false, false, "glFramebufferTexture2D")
 		{
 		}
@@ -2621,7 +2621,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glFramebufferTexture2D(m_target, m_attachment, m_textarget, m_texture, m_level);
 		}
@@ -2645,7 +2645,7 @@ namespace opengl {
 	class GlTexImage2DMultisampleCommand : public OpenGlCommand
 	{
 	public:
-		GlTexImage2DMultisampleCommand(void) :
+		GlTexImage2DMultisampleCommand() :
 			OpenGlCommand(false, false, "glTexImage2DMultisample")
 		{
 		}
@@ -2659,7 +2659,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTexImage2DMultisample(m_target, m_samples, m_internalformat, m_width, m_height, m_fixedsamplelocations);
 		}
@@ -2686,7 +2686,7 @@ namespace opengl {
 	class GlTexStorage2DMultisampleCommand : public OpenGlCommand
 	{
 	public:
-		GlTexStorage2DMultisampleCommand(void) :
+		GlTexStorage2DMultisampleCommand() :
 			OpenGlCommand(false, false, "glTexStorage2DMultisample")
 		{
 		}
@@ -2700,7 +2700,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTexStorage2DMultisample(m_target, m_samples, m_internalformat, m_width, m_height, m_fixedsamplelocations);
 		}
@@ -2727,7 +2727,7 @@ namespace opengl {
 	class GlGenRenderbuffersCommand : public OpenGlCommand
 	{
 	public:
-		GlGenRenderbuffersCommand(void) :
+		GlGenRenderbuffersCommand() :
 			OpenGlCommand(true, false, "glGenRenderbuffers")
 		{
 		}
@@ -2740,7 +2740,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGenRenderbuffers(m_n, m_renderbuffers);
 		}
@@ -2758,7 +2758,7 @@ namespace opengl {
 	class GlBindRenderbufferCommand : public OpenGlCommand
 	{
 	public:
-		GlBindRenderbufferCommand(void) :
+		GlBindRenderbufferCommand() :
 			OpenGlCommand(false, false, "glBindRenderbuffer")
 		{
 		}
@@ -2771,7 +2771,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBindRenderbuffer(m_target, m_renderbuffer);
 		}
@@ -2789,7 +2789,7 @@ namespace opengl {
 	class GlRenderbufferStorageCommand : public OpenGlCommand
 	{
 	public:
-		GlRenderbufferStorageCommand(void) :
+		GlRenderbufferStorageCommand() :
 			OpenGlCommand(false, false, "glRenderbufferStorage")
 		{
 		}
@@ -2802,7 +2802,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glRenderbufferStorage(m_target, m_internalformat, m_width, m_height);
 		}
@@ -2824,7 +2824,7 @@ namespace opengl {
 	class GlDeleteRenderbuffersCommand : public OpenGlCommand
 	{
 	public:
-		GlDeleteRenderbuffersCommand(void) :
+		GlDeleteRenderbuffersCommand() :
 			OpenGlCommand(false, false, "glDeleteRenderbuffers")
 		{
 		}
@@ -2837,7 +2837,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDeleteRenderbuffers(m_n, m_renderbuffers.get());
 		}
@@ -2855,7 +2855,7 @@ namespace opengl {
 	class GlFramebufferRenderbufferCommand : public OpenGlCommand
 	{
 	public:
-		GlFramebufferRenderbufferCommand(void) :
+		GlFramebufferRenderbufferCommand() :
 			OpenGlCommand(false, false, "glFramebufferRenderbuffer")
 		{
 		}
@@ -2868,7 +2868,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glFramebufferRenderbuffer(m_target, m_attachment, m_renderbuffertarget, m_renderbuffer);
 		}
@@ -2890,7 +2890,7 @@ namespace opengl {
 	class GlCheckFramebufferStatusCommand : public OpenGlCommand
 	{
 	public:
-		GlCheckFramebufferStatusCommand(void) :
+		GlCheckFramebufferStatusCommand() :
 			OpenGlCommand(true, true, "glCheckFramebufferStatus")
 		{
 		}
@@ -2903,7 +2903,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			*m_returnValue = g_glCheckFramebufferStatus(m_target);
 		}
@@ -2921,7 +2921,7 @@ namespace opengl {
 	class GlBlitFramebufferCommand : public OpenGlCommand
 	{
 	public:
-		GlBlitFramebufferCommand(void) :
+		GlBlitFramebufferCommand() :
 			OpenGlCommand(false, false, "glBlitFramebuffer")
 		{
 		}
@@ -2935,7 +2935,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBlitFramebuffer(m_srcX0, m_srcY0, m_srcX1, m_srcY1, m_dstX0, m_dstY0, m_dstX1, m_dstY1, m_mask,
 				m_filter);
@@ -2971,7 +2971,7 @@ namespace opengl {
 	class GlGenVertexArraysCommand : public OpenGlCommand
 	{
 	public:
-		GlGenVertexArraysCommand(void) :
+		GlGenVertexArraysCommand() :
 			OpenGlCommand(true, false, "glGenVertexArrays")
 		{
 		}
@@ -2984,7 +2984,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGenVertexArrays(m_n, m_arrays);
 		}
@@ -3002,7 +3002,7 @@ namespace opengl {
 	class GlBindVertexArrayCommand : public OpenGlCommand
 	{
 	public:
-		GlBindVertexArrayCommand(void) :
+		GlBindVertexArrayCommand() :
 			OpenGlCommand(false, false, "glBindVertexArray")
 		{
 		}
@@ -3015,7 +3015,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBindVertexArray(m_array);
 		}
@@ -3031,7 +3031,7 @@ namespace opengl {
 	class GlDeleteVertexArraysCommand : public OpenGlCommand
 	{
 	public:
-		GlDeleteVertexArraysCommand(void) :
+		GlDeleteVertexArraysCommand() :
 			OpenGlCommand(false, false, "glDeleteVertexArrays")
 		{
 		}
@@ -3044,7 +3044,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDeleteVertexArrays(m_n, m_arrays.get());
 		}
@@ -3062,7 +3062,7 @@ namespace opengl {
 	class GlGenBuffersCommand : public OpenGlCommand
 	{
 	public:
-		GlGenBuffersCommand(void) :
+		GlGenBuffersCommand() :
 			OpenGlCommand(true, false, "glGenBuffers")
 		{
 		}
@@ -3075,7 +3075,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGenBuffers(m_n, m_buffers);
 		}
@@ -3093,7 +3093,7 @@ namespace opengl {
 	class GlBindBufferCommand : public OpenGlCommand
 	{
 	public:
-		GlBindBufferCommand(void) :
+		GlBindBufferCommand() :
 			OpenGlCommand(false, false, "glBindBuffer")
 		{
 		}
@@ -3106,7 +3106,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBindBuffer(m_target, m_buffer);
 		}
@@ -3125,7 +3125,7 @@ namespace opengl {
 	class GlBufferDataCommand : public OpenGlCommand
 	{
 	public:
-		GlBufferDataCommand(void) :
+		GlBufferDataCommand() :
 			OpenGlCommand(false, false, "glBufferData")
 		{
 		}
@@ -3138,7 +3138,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBufferData(m_target, m_size, m_data.get(), m_usage);
 		}
@@ -3160,7 +3160,7 @@ namespace opengl {
 	class GlMapBufferCommand : public OpenGlCommand
 	{
 	public:
-		GlMapBufferCommand(void) :
+		GlMapBufferCommand() :
 			OpenGlCommand(false, false, "glMapBuffer")
 		{
 		}
@@ -3173,7 +3173,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glMapBuffer(m_target, m_access);
 		}
@@ -3191,7 +3191,7 @@ namespace opengl {
 	class GlMapBufferRangeCommand : public OpenGlCommand
 	{
 	public:
-		GlMapBufferRangeCommand(void) :
+		GlMapBufferRangeCommand() :
 			OpenGlCommand(true, true, "glMapBufferRange")
 		{
 		}
@@ -3205,7 +3205,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			*m_returnValue = reinterpret_cast<GLubyte*>(g_glMapBufferRange(m_target, m_offset, m_length, m_access));
 		}
@@ -3230,7 +3230,7 @@ namespace opengl {
 	class GlMapBufferRangeWriteAsyncCommand : public OpenGlCommand
 	{
 	public:
-		GlMapBufferRangeWriteAsyncCommand(void) :
+		GlMapBufferRangeWriteAsyncCommand() :
 			OpenGlCommand(false, false, "GlMapBufferRangeWriteAsyncCommand")
 		{
 		}
@@ -3244,7 +3244,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBindBuffer(m_target, m_buffer);
 			void* buffer_pointer = g_glMapBufferRange(m_target, m_offset, m_length, m_access);
@@ -3274,7 +3274,7 @@ namespace opengl {
 	class GlMapBufferRangeReadAsyncCommand : public OpenGlCommand
 	{
 	public:
-		GlMapBufferRangeReadAsyncCommand(void) :
+		GlMapBufferRangeReadAsyncCommand() :
 			OpenGlCommand(false, false, "GlMapBufferRangeReadAsyncCommand")
 		{
 		}
@@ -3288,7 +3288,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBindBuffer(m_target, m_buffer);
 			void* buffer_pointer = g_glMapBufferRange(m_target, m_offset, m_length, m_access);
@@ -3339,7 +3339,7 @@ namespace opengl {
 	class GlUnmapBufferCommand : public OpenGlCommand
 	{
 	public:
-		GlUnmapBufferCommand(void) :
+		GlUnmapBufferCommand() :
 			OpenGlCommand(true, true, "glUnmapBuffer")
 		{
 		}
@@ -3352,7 +3352,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			*m_returnValue = g_glUnmapBuffer(m_target);
 		}
@@ -3370,7 +3370,7 @@ namespace opengl {
 	class GlUnmapBufferAsyncCommand : public OpenGlCommand
 	{
 	public:
-		GlUnmapBufferAsyncCommand(void) :
+		GlUnmapBufferAsyncCommand() :
 			OpenGlCommand(false, false, "glUnmapBuffer")
 		{
 		}
@@ -3383,7 +3383,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glUnmapBuffer(m_target);
 		}
@@ -3399,7 +3399,7 @@ namespace opengl {
 	class GlDeleteBuffersCommand : public OpenGlCommand
 	{
 	public:
-		GlDeleteBuffersCommand(void) :
+		GlDeleteBuffersCommand() :
 			OpenGlCommand(false, false, "glDeleteBuffers")
 		{
 		}
@@ -3412,7 +3412,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDeleteBuffers(m_n, m_buffers.get());
 		}
@@ -3430,7 +3430,7 @@ namespace opengl {
 	class GlBindImageTextureCommand : public OpenGlCommand
 	{
 	public:
-		GlBindImageTextureCommand(void) :
+		GlBindImageTextureCommand() :
 			OpenGlCommand(false, false, "glBindImageTexture")
 		{
 		}
@@ -3444,7 +3444,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBindImageTexture(m_unit, m_texture, m_level, m_layered, m_layer, m_access, m_format);
 		}
@@ -3473,7 +3473,7 @@ namespace opengl {
 	class GlMemoryBarrierCommand : public OpenGlCommand
 	{
 	public:
-		GlMemoryBarrierCommand(void) :
+		GlMemoryBarrierCommand() :
 			OpenGlCommand(false, false, "glMemoryBarrier")
 		{
 		}
@@ -3486,7 +3486,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glMemoryBarrier(m_barriers);
 		}
@@ -3502,12 +3502,12 @@ namespace opengl {
 	class GlTextureBarrierCommand : public OpenGlCommand
 	{
 	public:
-		GlTextureBarrierCommand(void) :
+		GlTextureBarrierCommand() :
 			OpenGlCommand(false, false, "glTextureBarrier")
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(void)
+		static std::shared_ptr<OpenGlCommand> get()
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlTextureBarrierCommand>(poolId);
@@ -3515,12 +3515,12 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTextureBarrier();
 		}
 	private:
-		void set(void)
+		void set()
 		{
 		}
 	};
@@ -3528,12 +3528,12 @@ namespace opengl {
 	class GlTextureBarrierNVCommand : public OpenGlCommand
 	{
 	public:
-		GlTextureBarrierNVCommand(void) :
+		GlTextureBarrierNVCommand() :
 			OpenGlCommand(false, false, "glTextureBarrierNV")
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(void)
+		static std::shared_ptr<OpenGlCommand> get()
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlTextureBarrierNVCommand>(poolId);
@@ -3541,12 +3541,12 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTextureBarrierNV();
 		}
 	private:
-		void set(void)
+		void set()
 		{
 		}
 	};
@@ -3554,7 +3554,7 @@ namespace opengl {
 	class GlGetStringiCommand : public OpenGlCommand
 	{
 	public:
-		GlGetStringiCommand(void) :
+		GlGetStringiCommand() :
 			OpenGlCommand(true, false, "glGetStringi")
 		{
 		}
@@ -3567,7 +3567,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			*m_returnValue = g_glGetStringi(m_name, m_index);
 		}
@@ -3587,7 +3587,7 @@ namespace opengl {
 	class GlInvalidateFramebufferCommand : public OpenGlCommand
 	{
 	public:
-		GlInvalidateFramebufferCommand(void) :
+		GlInvalidateFramebufferCommand() :
 			OpenGlCommand(false, false, "glInvalidateFramebuffer")
 		{
 		}
@@ -3600,7 +3600,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glInvalidateFramebuffer(m_target, m_numAttachments, m_attachments.get());
 		}
@@ -3621,7 +3621,7 @@ namespace opengl {
 	class GlBufferStorageCommand : public OpenGlCommand
 	{
 	public:
-		GlBufferStorageCommand(void) :
+		GlBufferStorageCommand() :
 			OpenGlCommand(false, false, "glBufferStorage")
 		{
 		}
@@ -3634,7 +3634,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBufferStorage(m_target, m_size, m_data.get(), m_flags);
 		}
@@ -3656,7 +3656,7 @@ namespace opengl {
 	class GlFenceSyncCommand : public OpenGlCommand
 	{
 	public:
-		GlFenceSyncCommand(void) :
+		GlFenceSyncCommand() :
 			OpenGlCommand(true, false, "glFenceSync")
 		{
 		}
@@ -3669,7 +3669,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			*m_returnValue = g_glFenceSync(m_condition, m_flags);
 		}
@@ -3689,7 +3689,7 @@ namespace opengl {
 	class GlClientWaitSyncCommand : public OpenGlCommand
 	{
 	public:
-		GlClientWaitSyncCommand(void) :
+		GlClientWaitSyncCommand() :
 			OpenGlCommand(true, false, "glClientWaitSync")
 		{
 		}
@@ -3702,7 +3702,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glClientWaitSync(m_sync, m_flags, m_timeout);
 		}
@@ -3722,7 +3722,7 @@ namespace opengl {
 	class GlDeleteSyncCommand : public OpenGlCommand
 	{
 	public:
-		GlDeleteSyncCommand(void) :
+		GlDeleteSyncCommand() :
 			OpenGlCommand(true, false, "glDeleteSync")
 		{
 		}
@@ -3735,7 +3735,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDeleteSync(m_sync);
 		}
@@ -3751,7 +3751,7 @@ namespace opengl {
 	class GlGetUniformBlockIndexCommand : public OpenGlCommand
 	{
 	public:
-		GlGetUniformBlockIndexCommand(void) :
+		GlGetUniformBlockIndexCommand() :
 			OpenGlCommand(true, true, "glGetUniformBlockIndex")
 		{
 		}
@@ -3764,7 +3764,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			*m_returnValue = g_glGetUniformBlockIndex(m_program, m_uniformBlockName);
 		}
@@ -3784,7 +3784,7 @@ namespace opengl {
 	class GlUniformBlockBindingCommand : public OpenGlCommand
 	{
 	public:
-		GlUniformBlockBindingCommand(void) :
+		GlUniformBlockBindingCommand() :
 			OpenGlCommand(false, false, "glUniformBlockBinding")
 		{
 		}
@@ -3797,7 +3797,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glUniformBlockBinding(m_program, m_uniformBlockIndex, m_uniformBlockBinding);
 		}
@@ -3817,7 +3817,7 @@ namespace opengl {
 	class GlGetActiveUniformBlockivCommand : public OpenGlCommand
 	{
 	public:
-		GlGetActiveUniformBlockivCommand(void) :
+		GlGetActiveUniformBlockivCommand() :
 			OpenGlCommand(true, true, "glGetActiveUniformBlockiv")
 		{
 		}
@@ -3830,7 +3830,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGetActiveUniformBlockiv(m_program, m_uniformBlockIndex, m_pname, m_params);
 		}
@@ -3852,7 +3852,7 @@ namespace opengl {
 	class GlGetUniformIndicesCommand : public OpenGlCommand
 	{
 	public:
-		GlGetUniformIndicesCommand(void) :
+		GlGetUniformIndicesCommand() :
 			OpenGlCommand(true, true, "glGetUniformIndices")
 		{
 		}
@@ -3866,7 +3866,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGetUniformIndices(m_program, m_uniformCount, m_uniformNames, m_uniformIndices);
 		}
@@ -3889,7 +3889,7 @@ namespace opengl {
 	class GlGetActiveUniformsivCommand : public OpenGlCommand
 	{
 	public:
-		GlGetActiveUniformsivCommand(void) :
+		GlGetActiveUniformsivCommand() :
 			OpenGlCommand(true, true, "glGetActiveUniformsiv")
 		{
 		}
@@ -3903,7 +3903,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGetActiveUniformsiv(m_program, m_uniformCount, m_uniformIndices, m_pname, m_params);
 		}
@@ -3928,7 +3928,7 @@ namespace opengl {
 	class GlBindBufferBaseCommand : public OpenGlCommand
 	{
 	public:
-		GlBindBufferBaseCommand(void) :
+		GlBindBufferBaseCommand() :
 			OpenGlCommand(false, false, "glBindBufferBase")
 		{
 		}
@@ -3941,7 +3941,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBindBufferBase(m_target, m_index, m_buffer);
 		}
@@ -3962,7 +3962,7 @@ namespace opengl {
 	class GlBufferSubDataCommand : public OpenGlCommand
 	{
 	public:
-		GlBufferSubDataCommand(void) :
+		GlBufferSubDataCommand() :
 			OpenGlCommand(false, false, "glBufferSubData")
 		{
 		}
@@ -3975,7 +3975,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glBufferSubData(m_target, m_offset, m_size, m_data.get());
 		}
@@ -3997,7 +3997,7 @@ namespace opengl {
 	class GlGetProgramBinaryCommand : public OpenGlCommand
 	{
 	public:
-		GlGetProgramBinaryCommand(void) :
+		GlGetProgramBinaryCommand() :
 			OpenGlCommand(true, true, "glGetProgramBinary")
 		{
 		}
@@ -4010,7 +4010,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glGetProgramBinary(m_program, m_bufSize, m_length, m_binaryFormat, m_binary);
 		}
@@ -4035,7 +4035,7 @@ namespace opengl {
 	class GlProgramBinaryCommand : public OpenGlCommand
 	{
 	public:
-		GlProgramBinaryCommand(void) :
+		GlProgramBinaryCommand() :
 			OpenGlCommand(false, false, "glProgramBinary")
 		{
 		}
@@ -4048,7 +4048,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glProgramBinary(m_program, m_binaryFormat, m_binary.get(), m_length);
 		}
@@ -4070,7 +4070,7 @@ namespace opengl {
 	class GlProgramParameteriCommand : public OpenGlCommand
 	{
 	public:
-		GlProgramParameteriCommand(void) :
+		GlProgramParameteriCommand() :
 			OpenGlCommand(false, false, "glProgramParameteri")
 		{
 		}
@@ -4083,7 +4083,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glProgramParameteri(m_program, m_pname, m_value);
 		}
@@ -4103,7 +4103,7 @@ namespace opengl {
 	class GlTexStorage2DCommand : public OpenGlCommand
 	{
 	public:
-		GlTexStorage2DCommand(void) :
+		GlTexStorage2DCommand() :
 			OpenGlCommand(false, false, "glTexStorage2D")
 		{
 		}
@@ -4116,7 +4116,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTexStorage2D(m_target, m_levels, m_internalformat, m_width, m_height);
 		}
@@ -4140,7 +4140,7 @@ namespace opengl {
 	class GlTextureStorage2DCommand : public OpenGlCommand
 	{
 	public:
-		GlTextureStorage2DCommand(void) :
+		GlTextureStorage2DCommand() :
 			OpenGlCommand(false, false, "glTextureStorage2D")
 		{
 		}
@@ -4153,7 +4153,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTextureStorage2D(m_texture, m_levels, m_internalformat, m_width, m_height);
 		}
@@ -4178,7 +4178,7 @@ namespace opengl {
 	class GlTextureSubImage2DUnbufferedCommand : public OpenGlCommand
 	{
 	public:
-		GlTextureSubImage2DUnbufferedCommand(void) :
+		GlTextureSubImage2DUnbufferedCommand() :
 			OpenGlCommand(false, false, "glTextureSubImage2D")
 		{
 		}
@@ -4192,7 +4192,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTextureSubImage2D(m_texture, m_level, m_xoffset, m_yoffset, m_width, m_height, m_format, m_type,
 								  m_pixels.get());
@@ -4226,7 +4226,7 @@ namespace opengl {
 	class GlTextureSubImage2DBufferedCommand : public OpenGlCommand
 	{
 	public:
-		GlTextureSubImage2DBufferedCommand(void) :
+		GlTextureSubImage2DBufferedCommand() :
 			OpenGlCommand(false, false, "glTextureSubImage2D")
 		{
 		}
@@ -4240,7 +4240,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTextureSubImage2D(m_texture, m_level, m_xoffset, m_yoffset, m_width, m_height, m_format, m_type,
 								  (const GLvoid* )m_offset);
@@ -4274,7 +4274,7 @@ namespace opengl {
 	class GlTextureStorage2DMultisampleCommand : public OpenGlCommand
 	{
 	public:
-		GlTextureStorage2DMultisampleCommand(void) :
+		GlTextureStorage2DMultisampleCommand() :
 			OpenGlCommand(false, false, "glTextureStorage2DMultisample")
 		{
 		}
@@ -4288,7 +4288,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTextureStorage2DMultisample(m_texture, m_target, m_samples, m_internalformat,m_width, m_height,
 				m_fixedsamplelocations);
@@ -4318,7 +4318,7 @@ namespace opengl {
 	class GlTextureParameteriCommand : public OpenGlCommand
 	{
 	public:
-		GlTextureParameteriCommand(void) :
+		GlTextureParameteriCommand() :
 			OpenGlCommand(false, false, "glTextureParameteri")
 		{
 		}
@@ -4331,7 +4331,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTextureParameteri(m_texture, m_pname, m_param);
 		}
@@ -4351,7 +4351,7 @@ namespace opengl {
 	class GlTextureParameterfCommand : public OpenGlCommand
 	{
 	public:
-		GlTextureParameterfCommand(void) :
+		GlTextureParameterfCommand() :
 			OpenGlCommand(false, false, "glTextureParameterf")
 		{
 		}
@@ -4364,7 +4364,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glTextureParameterf(m_texture, m_pname, m_param);
 		}
@@ -4384,7 +4384,7 @@ namespace opengl {
 	class GlCreateTexturesCommand : public OpenGlCommand
 	{
 	public:
-		GlCreateTexturesCommand(void) :
+		GlCreateTexturesCommand() :
 			OpenGlCommand(true, false, "glCreateTextures")
 		{
 		}
@@ -4397,7 +4397,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glCreateTextures(m_target, m_n, m_textures);
 		}
@@ -4417,7 +4417,7 @@ namespace opengl {
 	class GlCreateBuffersCommand : public OpenGlCommand
 	{
 	public:
-		GlCreateBuffersCommand(void) :
+		GlCreateBuffersCommand() :
 			OpenGlCommand(true, false, "glCreateBuffers")
 		{
 		}
@@ -4430,7 +4430,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glCreateBuffers(m_n, m_buffers);
 		}
@@ -4448,7 +4448,7 @@ namespace opengl {
 	class GlCreateFramebuffersCommand : public OpenGlCommand
 	{
 	public:
-		GlCreateFramebuffersCommand(void) :
+		GlCreateFramebuffersCommand() :
 			OpenGlCommand(true, false, "glCreateFramebuffers")
 		{
 		}
@@ -4461,7 +4461,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glCreateFramebuffers(m_n, m_framebuffers);
 		}
@@ -4479,7 +4479,7 @@ namespace opengl {
 	class GlNamedFramebufferTextureCommand : public OpenGlCommand
 	{
 	public:
-		GlNamedFramebufferTextureCommand(void) :
+		GlNamedFramebufferTextureCommand() :
 			OpenGlCommand(false, false, "glNamedFramebufferTexture")
 		{
 		}
@@ -4492,7 +4492,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glNamedFramebufferTexture(m_framebuffer, m_attachment, m_texture, m_level);
 		}
@@ -4514,7 +4514,7 @@ namespace opengl {
 	class GlDrawRangeElementsBaseVertexCommand : public OpenGlCommand
 	{
 	public:
-		GlDrawRangeElementsBaseVertexCommand(void) :
+		GlDrawRangeElementsBaseVertexCommand() :
 			OpenGlCommand(false, false, "glDrawRangeElementsBaseVertex")
 		{
 		}
@@ -4528,7 +4528,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glDrawRangeElementsBaseVertex(m_mode, m_start, m_end, m_count, m_type, m_indices, m_basevertex);
 		}
@@ -4557,7 +4557,7 @@ namespace opengl {
 	class GlFlushMappedBufferRangeCommand : public OpenGlCommand
 	{
 	public:
-		GlFlushMappedBufferRangeCommand(void) :
+		GlFlushMappedBufferRangeCommand() :
 			OpenGlCommand(false, false, "glFlushMappedBufferRange")
 		{
 		}
@@ -4570,7 +4570,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glFlushMappedBufferRange(m_target, m_offset, m_length);
 		}
@@ -4590,12 +4590,12 @@ namespace opengl {
 	class GlFinishCommand : public OpenGlCommand
 	{
 	public:
-		GlFinishCommand(void) :
+		GlFinishCommand() :
 			OpenGlCommand(true, true, "glFinish")
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(void)
+		static std::shared_ptr<OpenGlCommand> get()
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlFinishCommand>(poolId);
@@ -4603,12 +4603,12 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glFinish();
 		}
 	private:
-		void set(void)
+		void set()
 		{
 
 		}
@@ -4617,7 +4617,7 @@ namespace opengl {
 	class GlEGLImageTargetTexture2DOESCommand : public OpenGlCommand
 	{
 	public:
-		GlEGLImageTargetTexture2DOESCommand(void) :
+		GlEGLImageTargetTexture2DOESCommand() :
 				OpenGlCommand(false, false, "glEGLImageTargetTexture2DOES")
 		{
 		}
@@ -4630,7 +4630,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			g_glEGLImageTargetTexture2DOES(m_target, m_image);
 		}
@@ -4649,7 +4649,7 @@ namespace opengl {
     class EglGetNativeClientBufferANDROIDCommand : public OpenGlCommand
     {
     public:
-        EglGetNativeClientBufferANDROIDCommand(void) :
+        EglGetNativeClientBufferANDROIDCommand() :
                 OpenGlCommand(true, true, "eglGetNativeClientBufferANDROID")
         {
         }
@@ -4662,7 +4662,7 @@ namespace opengl {
             return ptr;
         }
 
-        void commandToExecute(void) override
+        void commandToExecute() override
         {
             *m_returnValue = g_eglGetNativeClientBufferANDROID(m_buffer);
         }
@@ -4682,12 +4682,12 @@ namespace opengl {
 	class CoreVideoInitCommand : public OpenGlCommand
 	{
 	public:
-		CoreVideoInitCommand(void) :
+		CoreVideoInitCommand() :
 			OpenGlCommand(true, false, "CoreVideo_Init", false)
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(void)
+		static std::shared_ptr<OpenGlCommand> get()
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<CoreVideoInitCommand>(poolId);
@@ -4695,12 +4695,12 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			::CoreVideo_Init();
 		}
 	private:
-		void set(void)
+		void set()
 		{
 		}
 	};
@@ -4708,12 +4708,12 @@ namespace opengl {
 	class CoreVideoQuitCommand : public OpenGlCommand
 	{
 	public:
-		CoreVideoQuitCommand(void) :
+		CoreVideoQuitCommand() :
 			OpenGlCommand(true, false, "CoreVideo_Quit", false)
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(void)
+		static std::shared_ptr<OpenGlCommand> get()
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<CoreVideoQuitCommand>(poolId);
@@ -4721,12 +4721,12 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			::CoreVideo_Quit();
 		}
 	private:
-		void set(void)
+		void set()
 		{
 		}
 	};
@@ -4734,7 +4734,7 @@ namespace opengl {
 	class CoreVideoSetVideoModeCommand : public OpenGlCommand
 	{
 	public:
-		CoreVideoSetVideoModeCommand(void) :
+		CoreVideoSetVideoModeCommand() :
 			OpenGlCommand(true, false, "CoreVideo_SetVideoMode", false)
 		{
 		}
@@ -4748,7 +4748,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			*m_returnValue = ::CoreVideo_SetVideoMode(m_screenWidth, m_screenHeight, m_bitsPerPixel, m_mode, m_flags);
 
@@ -4777,7 +4777,7 @@ namespace opengl {
 	class CoreVideoGLSetAttributeCommand : public OpenGlCommand
 	{
 	public:
-		CoreVideoGLSetAttributeCommand(void) :
+		CoreVideoGLSetAttributeCommand() :
 			OpenGlCommand(true, false, "CoreVideo_GL_SetAttribute", false)
 		{
 		}
@@ -4790,7 +4790,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			::CoreVideo_GL_SetAttribute(m_attribute, m_value);
 		}
@@ -4808,7 +4808,7 @@ namespace opengl {
 	class CoreVideoGLGetAttributeCommand : public OpenGlCommand
 	{
 	public:
-		CoreVideoGLGetAttributeCommand(void) :
+		CoreVideoGLGetAttributeCommand() :
 			OpenGlCommand(true, false, "CoreVideo_GL_GetAttribute", false)
 		{
 		}
@@ -4821,7 +4821,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			::CoreVideo_GL_GetAttribute(m_attribute, m_value);
 		}
@@ -4839,12 +4839,12 @@ namespace opengl {
 	class CoreVideoGLSwapBuffersCommand : public OpenGlCommand
 	{
 	public:
-		CoreVideoGLSwapBuffersCommand(void) :
+		CoreVideoGLSwapBuffersCommand() :
 			OpenGlCommand(false, false, "CoreVideo_GL_SwapBuffers", false)
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(std::function<void(void)> swapBuffersCallback)
+		static std::shared_ptr<OpenGlCommand> get(std::function<void()> swapBuffersCallback)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<CoreVideoGLSwapBuffersCommand>(poolId);
@@ -4852,25 +4852,25 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			::CoreVideo_GL_SwapBuffers();
 			m_swapBuffersCallback();
 		}
 	private:
-		void set(std::function<void(void)> swapBuffersCallback)
+		void set(std::function<void()> swapBuffersCallback)
 		{
 			m_swapBuffersCallback = swapBuffersCallback;
 		}
 
-		std::function<void(void)> m_swapBuffersCallback;
+		std::function<void()> m_swapBuffersCallback;
 	};
 #else
 	//Zilmar API functions
 	class WindowsStartCommand : public OpenGlCommand
 	{
 	public:
-		WindowsStartCommand(void) :
+		WindowsStartCommand() :
 			OpenGlCommand(true, false, "WindowsStartCommand", false)
 		{
 		}
@@ -4883,7 +4883,7 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			*m_returnValue = WindowsWGL::start();
 		}
@@ -4900,12 +4900,12 @@ namespace opengl {
 	class WindowsStopCommand : public OpenGlCommand
 	{
 	public:
-		WindowsStopCommand(void) :
+		WindowsStopCommand() :
 			OpenGlCommand(true, false, "WindowsStopCommand", false)
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(void)
+		static std::shared_ptr<OpenGlCommand> get()
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<WindowsStopCommand>(poolId);
@@ -4913,13 +4913,13 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			WindowsWGL::stop();
 		}
 
 	private:
-		void set(void)
+		void set()
 		{
 		}
 	};
@@ -4927,12 +4927,12 @@ namespace opengl {
 	class WindowsSwapBuffersCommand : public OpenGlCommand
 	{
 	public:
-		WindowsSwapBuffersCommand(void) :
+		WindowsSwapBuffersCommand() :
 			OpenGlCommand(false, false, "WindowsSwapBuffersCommand", false)
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(std::function<void(void)> swapBuffersCallback)
+		static std::shared_ptr<OpenGlCommand> get(std::function<void()> swapBuffersCallback)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<WindowsSwapBuffersCommand>(poolId);
@@ -4940,18 +4940,18 @@ namespace opengl {
 			return ptr;
 		}
 
-		void commandToExecute(void) override
+		void commandToExecute() override
 		{
 			WindowsWGL::swapBuffers();
 			m_swapBuffersCallback();
 		}
 	private:
-		void set(std::function<void(void)> swapBuffersCallback)
+		void set(std::function<void()> swapBuffersCallback)
 		{
 			m_swapBuffersCallback = swapBuffersCallback;
 		}
 
-		std::function<void(void)> m_swapBuffersCallback;
+		std::function<void()> m_swapBuffersCallback;
 	};
 
 #endif

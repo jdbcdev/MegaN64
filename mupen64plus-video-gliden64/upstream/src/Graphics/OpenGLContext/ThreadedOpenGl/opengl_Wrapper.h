@@ -26,6 +26,7 @@ namespace opengl {
 		static bool m_threaded_wrapper;
 		static bool m_shutdown;
 		static int m_swapBuffersQueued;
+		static bool m_fastVertexAttributes;
 		static std::thread m_commandExecutionThread;
 		static std::mutex m_condvarMutex;
 		static std::condition_variable m_condition;
@@ -62,10 +63,8 @@ namespace opengl {
 		static void glTexSubImage2DUnbuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels);
 		static void glTexSubImage2DBuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, std::size_t offset);
 		static void glDrawArrays(GLenum mode, GLint first, GLsizei count);
-		static void glDrawArraysUnbuffered(GLenum mode, GLint first, GLsizei count);
-		static GLenum glGetError(void);
-		static void glDrawElementsNotThreadSafe(GLenum mode, GLsizei count, GLenum type, const void *indices);
-		static void glDrawElementsUnbuffered(GLenum mode, GLsizei count, GLenum type, const void *indices);
+        static GLenum glGetError(void);
+		static void glDrawElements(GLenum mode, GLsizei count, GLenum type, const void *indices);
 		static void glLineWidth(GLfloat width);
 		static void glClear(GLbitfield mask);
 		static void glClearBufferfv(GLenum buffer, GLint drawbuffer, std::unique_ptr<GLfloat[]> value);
@@ -104,8 +103,6 @@ namespace opengl {
 
 		static void glEnableVertexAttribArray(GLuint index);
 		static void glDisableVertexAttribArray(GLuint index);
-		static void glVertexAttribPointerBuffered(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, std::size_t offset);
-		static void glVertexAttribPointerNotThreadSafe(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
 		static void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
 		static void glBindAttribLocation(GLuint program, GLuint index, const std::string& name);
 		static void glVertexAttrib1f(GLuint index, GLfloat x);
@@ -230,18 +227,22 @@ namespace opengl {
 	template <class dataType>
 	void  FunctionWrapper::glBufferData(GLenum target, GLsizeiptr size, std::unique_ptr<dataType[]> data, GLenum usage)
 	{
-		if(m_threaded_wrapper)
-			executeCommand(GlBufferDataCommand<dataType>::get(target, size, std::move(data), usage));
-		else
+		if(m_threaded_wrapper) {
+		    if (target == GL_ARRAY_BUFFER || target == GL_ELEMENT_ARRAY_BUFFER)
+                m_fastVertexAttributes = true;
+            executeCommand(GlBufferDataCommand<dataType>::get(target, size, std::move(data), usage));
+        } else
 			g_glBufferData(target, size, data.get(), usage);
 	}
 
 	template <class dataType>
 	void  FunctionWrapper::glBufferStorage(GLenum target, GLsizeiptr size, std::unique_ptr<dataType[]> data, GLbitfield flags)
 	{
-		if(m_threaded_wrapper)
-			executeCommand(GlBufferStorageCommand<dataType>::get(target, size, std::move(data), flags));
-		else
+		if(m_threaded_wrapper) {
+            if (target == GL_ARRAY_BUFFER || target == GL_ELEMENT_ARRAY_BUFFER)
+                m_fastVertexAttributes = true;
+            executeCommand(GlBufferStorageCommand<dataType>::get(target, size, std::move(data), flags));
+        } else
 			g_glBufferStorage(target, size, data.get(), flags);
 	}
 

@@ -33,9 +33,9 @@ BufferedDrawer::BufferedDrawer(const GLInfo & _glinfo, CachedVertexAttribArray *
 	m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord0, true);
 	m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord1, true);
 
-	FunctionWrapper::glVertexAttribPointerBuffered(rectAttrib::position, 4, GL_FLOAT, GL_FALSE, sizeof(RectVertex), offsetof(RectVertex, x));
-	FunctionWrapper::glVertexAttribPointerBuffered(rectAttrib::texcoord0, 2, GL_FLOAT, GL_FALSE, sizeof(RectVertex), offsetof(RectVertex, s0));
-	FunctionWrapper::glVertexAttribPointerBuffered(rectAttrib::texcoord1, 2, GL_FLOAT, GL_FALSE, sizeof(RectVertex), offsetof(RectVertex, s1));
+	FunctionWrapper::glVertexAttribPointer(rectAttrib::position, 4, GL_FLOAT, GL_FALSE, sizeof(RectVertex), (const GLvoid *)offsetof(RectVertex, x));
+	FunctionWrapper::glVertexAttribPointer(rectAttrib::texcoord0, 2, GL_FLOAT, GL_FALSE, sizeof(RectVertex), (const GLvoid *)offsetof(RectVertex, s0));
+	FunctionWrapper::glVertexAttribPointer(rectAttrib::texcoord1, 2, GL_FLOAT, GL_FALSE, sizeof(RectVertex), (const GLvoid *)offsetof(RectVertex, s1));
 
 	/* Init buffers for triangles */
 	FunctionWrapper::glGenVertexArrays(1, &m_trisBuffers.vao);
@@ -47,10 +47,10 @@ BufferedDrawer::BufferedDrawer(const GLInfo & _glinfo, CachedVertexAttribArray *
 	m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::texcoord, true);
 	m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::modify, true);
 	m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::numlights, false);
-	FunctionWrapper::glVertexAttribPointerBuffered(triangleAttrib::position, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, x));
-	FunctionWrapper::glVertexAttribPointerBuffered(triangleAttrib::color, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, r));
-	FunctionWrapper::glVertexAttribPointerBuffered(triangleAttrib::texcoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, s));
-	FunctionWrapper::glVertexAttribPointerBuffered(triangleAttrib::modify, 4, GL_BYTE, GL_TRUE, sizeof(Vertex), offsetof(Vertex, modify));
+	FunctionWrapper::glVertexAttribPointer(triangleAttrib::position, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid *)offsetof(Vertex, x));
+	FunctionWrapper::glVertexAttribPointer(triangleAttrib::color, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid *)offsetof(Vertex, r));
+	FunctionWrapper::glVertexAttribPointer(triangleAttrib::texcoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid *)offsetof(Vertex, s));
+	FunctionWrapper::glVertexAttribPointer(triangleAttrib::modify, 4, GL_BYTE, GL_TRUE, sizeof(Vertex), (const GLvoid *)offsetof(Vertex, modify));
 }
 
 void BufferedDrawer::_initBuffer(Buffer & _buffer, GLuint _bufSize)
