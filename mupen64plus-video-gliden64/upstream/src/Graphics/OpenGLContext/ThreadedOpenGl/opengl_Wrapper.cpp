@@ -225,7 +225,7 @@ namespace opengl {
 			g_glReadPixels(x, y, width, height, format, type, nullptr);
 	}
 
-	void  FunctionWrapper::glTexSubImage2DUnbuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
+	void  FunctionWrapper::glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
 	{
 		if(m_threaded_wrapper) {
 			int totalBytes = getFormatBytesPerPixel(format, type)*width*height;
@@ -234,16 +234,8 @@ namespace opengl {
 				data = std::unique_ptr<u8[]>(new u8[totalBytes]);
 				std::copy_n(reinterpret_cast<const char*>(pixels), totalBytes, data.get());
 			}
-			executeCommand(GlTexSubImage2DUnbufferedCommand<u8>::get(target, level, xoffset, yoffset, width, height, format, type, std::move(data)));
+			executeCommand(GlTexSubImage2DUnbufferedCommand::get(target, level, xoffset, yoffset, width, height, format, type, std::move(data)));
 		}
-		else
-			g_glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
-	}
-
-	void FunctionWrapper::glTexSubImage2DBuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
-	{
-		if (m_threaded_wrapper)
-			executeCommand(GlTexSubImage2DBufferedCommand::get(target, level, xoffset, yoffset, width, height, format, type, pixels));
 		else
 			g_glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
 	}
@@ -1085,7 +1077,7 @@ namespace opengl {
 			g_glTextureStorage2D(texture, levels, internalformat, width, height);
 	}
 
-	void  FunctionWrapper::glTextureSubImage2DUnbuffered(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
+	void  FunctionWrapper::glTextureSubImage2D(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
 	{
 		if(m_threaded_wrapper) {
 			std::unique_ptr<u8[]> data(nullptr);
@@ -1099,14 +1091,6 @@ namespace opengl {
 															  width, height, format, type,
 															  std::move(data)));
 		} else
-			g_glTextureSubImage2D(texture, level, xoffset, yoffset, width, height, format, type, pixels);
-	}
-
-	void FunctionWrapper::glTextureSubImage2DBuffered(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void* pixels)
-	{
-		if (m_threaded_wrapper)
-			executeCommand(GlTextureSubImage2DBufferedCommand::get(texture, level, xoffset, yoffset, width, height, format, type, pixels));
-		else
 			g_glTextureSubImage2D(texture, level, xoffset, yoffset, width, height, format, type, pixels);
 	}
 

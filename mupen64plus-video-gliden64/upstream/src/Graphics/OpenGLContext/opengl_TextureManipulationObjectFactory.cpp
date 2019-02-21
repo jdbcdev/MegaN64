@@ -118,7 +118,7 @@ namespace opengl {
 				}
 
 				if (_params.data != nullptr) {
-					FunctionWrapper::glTexSubImage2DUnbuffered(GL_TEXTURE_2D,
+					FunctionWrapper::glTexSubImage2D(GL_TEXTURE_2D,
 						_params.mipMapLevel,
 						0, 0,
 						_params.width,
@@ -177,7 +177,7 @@ namespace opengl {
 				}
 
 				if (_params.data != nullptr) {
-					FunctionWrapper::glTextureSubImage2DBuffered(GLuint(_params.handle),
+					FunctionWrapper::glTextureSubImage2D(GLuint(_params.handle),
 						_params.mipMapLevel,
 						0, 0,
 						_params.width,
@@ -212,39 +212,26 @@ namespace opengl {
 	class Update2DTexSubImage : public Update2DTexture
 	{
 	public:
-		Update2DTexSubImage(const GLInfo & _glinfo, CachedBindTexture* _bind)
-			: m_glinfo(_glinfo), m_bind(_bind) {}
+		Update2DTexSubImage(CachedBindTexture* _bind)
+			: m_bind(_bind) {}
 
 		void update2DTexture(const graphics::Context::UpdateTextureDataParams & _params) override
 		{
 			m_bind->bind(_params.textureUnitIndex, GL_TEXTURE_2D, _params.handle);
 
-			if(_params.fromBuffer && m_glinfo.bufferStorage ) {
-				FunctionWrapper::glTexSubImage2DBuffered(GL_TEXTURE_2D,
-					_params.mipMapLevel,
-					_params.x,
-					_params.y,
-					_params.width,
-					_params.height,
-					GLuint(_params.format),
-					GLenum(_params.dataType),
-					_params.data);
-			} else {
-				FunctionWrapper::glTexSubImage2DUnbuffered(GL_TEXTURE_2D,
-					_params.mipMapLevel,
-					_params.x,
-					_params.y,
-					_params.width,
-					_params.height,
-					GLuint(_params.format),
-					GLenum(_params.dataType),
-					_params.data);
-			}
+            FunctionWrapper::glTexSubImage2D(GL_TEXTURE_2D,
+                _params.mipMapLevel,
+                _params.x,
+                _params.y,
+                _params.width,
+                _params.height,
+                GLuint(_params.format),
+                GLenum(_params.dataType),
+                _params.data);
 		}
 
 	private:
 		CachedBindTexture* m_bind;
-		const GLInfo & m_glinfo;
 	};
 
 	class Update2DTextureSubImage : public Update2DTexture
@@ -258,36 +245,18 @@ namespace opengl {
 #endif
 		}
 
-		Update2DTextureSubImage(const GLInfo & _glinfo)
-				: m_glinfo(_glinfo){
-		}
-
 		void update2DTexture(const graphics::Context::UpdateTextureDataParams & _params) override
 		{
-			if(_params.fromBuffer && m_glinfo.bufferStorage) {
-				FunctionWrapper::glTextureSubImage2DBuffered(GLuint(_params.handle),
-					_params.mipMapLevel,
-					_params.x,
-					_params.y,
-					_params.width,
-					_params.height,
-					GLuint(_params.format),
-					GLenum(_params.dataType),
-					_params.data);
-			} else {
-				FunctionWrapper::glTextureSubImage2DUnbuffered(GLuint(_params.handle),
-					_params.mipMapLevel,
-					_params.x,
-					_params.y,
-					_params.width,
-					_params.height,
-					GLuint(_params.format),
-					GLenum(_params.dataType),
-					_params.data);
-			}
+            FunctionWrapper::glTextureSubImage2D(GLuint(_params.handle),
+                _params.mipMapLevel,
+                _params.x,
+                _params.y,
+                _params.width,
+                _params.height,
+                GLuint(_params.format),
+                GLenum(_params.dataType),
+                _params.data);
 		}
-	private:
-		const GLInfo & m_glinfo;
 	};
 
 	/*---------------Set2DTextureParameters-------------*/
@@ -419,9 +388,9 @@ namespace opengl {
 	Update2DTexture * TextureManipulationObjectFactory::getUpdate2DTexture() const
 	{
 		if (Update2DTextureSubImage::Check(m_glInfo))
-			return new Update2DTextureSubImage(m_glInfo);
+			return new Update2DTextureSubImage();
 
-		return new Update2DTexSubImage(m_glInfo, m_cachedFunctions.getCachedBindTexture());
+		return new Update2DTexSubImage(m_cachedFunctions.getCachedBindTexture());
 	}
 
 	Set2DTextureParameters * TextureManipulationObjectFactory::getSet2DTextureParameters() const

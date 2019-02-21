@@ -687,7 +687,6 @@ namespace opengl {
 		GLenum m_type;
 	};
 
-	template <class pixelType>
 	class GlTexSubImage2DUnbufferedCommand : public OpenGlCommand
 	{
 	public:
@@ -697,7 +696,7 @@ namespace opengl {
 		}
 
 		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-			GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels)
+			GLenum format, GLenum type, std::unique_ptr<u8[]> pixels)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlTexSubImage2DUnbufferedCommand>(poolId);
@@ -711,7 +710,7 @@ namespace opengl {
 		}
 	private:
 		void set(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-			GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels)
+			GLenum format, GLenum type, std::unique_ptr<u8[]> pixels)
 		{
 			m_target = target;
 			m_level = level;
@@ -732,54 +731,7 @@ namespace opengl {
 		GLsizei m_height;
 		GLenum m_format;
 		GLenum m_type;
-		std::unique_ptr<pixelType[]> m_pixels;
-	};
-
-	class GlTexSubImage2DBufferedCommand : public OpenGlCommand
-	{
-	public:
-		GlTexSubImage2DBufferedCommand() :
-			OpenGlCommand(false, false, "glTexSubImage2D")
-		{
-		}
-
-		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-			GLenum format, GLenum type, const void* offset)
-		{
-			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
-			auto ptr = getFromPool<GlTexSubImage2DBufferedCommand>(poolId);
-			ptr->set(target, level, xoffset, yoffset, width, height, format, type, offset);
-			return ptr;
-		}
-
-		void commandToExecute() override
-		{
-			g_glTexSubImage2D(m_target, m_level, m_xoffset, m_yoffset, m_width, m_height, m_format, m_type, m_offset);
-		}
-	private:
-		void set(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-			GLenum format, GLenum type, const void* offset)
-		{
-			m_target = target;
-			m_level = level;
-			m_xoffset = xoffset;
-			m_yoffset = yoffset;
-			m_width = width;
-			m_height = height;
-			m_format = format;
-			m_type = type;
-			m_offset = offset;
-		}
-
-		GLenum m_target;
-		GLint m_level;
-		GLint m_xoffset;
-		GLint m_yoffset;
-		GLsizei m_width;
-		GLsizei m_height;
-		GLenum m_format;
-		GLenum m_type;
-        const void* m_offset;
+		std::unique_ptr<u8[]> m_pixels;
 	};
 
 	class GlDrawArraysCommand : public OpenGlCommand
@@ -4219,54 +4171,6 @@ namespace opengl {
 		GLenum m_format;
 		GLenum m_type;
 		std::unique_ptr<u8[]> m_pixels;
-	};
-
-	class GlTextureSubImage2DBufferedCommand : public OpenGlCommand
-	{
-	public:
-		GlTextureSubImage2DBufferedCommand() :
-			OpenGlCommand(false, false, "glTextureSubImage2D")
-		{
-		}
-
-		static std::shared_ptr<OpenGlCommand> get(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width,
-			GLsizei height, GLenum format, GLenum type, const void* offset)
-		{
-			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
-			auto ptr = getFromPool<GlTextureSubImage2DBufferedCommand>(poolId);
-			ptr->set(texture, level, xoffset, yoffset, width, height, format, type, offset);
-			return ptr;
-		}
-
-		void commandToExecute() override
-		{
-			g_glTextureSubImage2D(m_texture, m_level, m_xoffset, m_yoffset, m_width, m_height, m_format, m_type,
-								  m_offset);
-		}
-	private:
-		void set(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width,
-			GLsizei height, GLenum format, GLenum type, const void* offset)
-		{
-			m_texture = texture;
-			m_level = level;
-			m_xoffset = xoffset;
-			m_yoffset = yoffset;
-			m_width = width;
-			m_height = height;
-			m_format = format;
-			m_type = type;
-			m_offset = offset;
-		}
-
-		GLuint m_texture;
-		GLint m_level;
-		GLint m_xoffset;
-		GLint m_yoffset;
-		GLsizei m_width;
-		GLsizei m_height;
-		GLenum m_format;
-		GLenum m_type;
-        const void* m_offset;
 	};
 
 	class GlTextureStorage2DMultisampleCommand : public OpenGlCommand
