@@ -494,7 +494,6 @@ void TextureCache::init()
 	params.internalFormat = gfxContext.convertInternalTextureFormat(u32(internalcolorFormat::RGBA8));
 	params.dataType = datatype::UNSIGNED_BYTE;
 	params.data = dummyTexture;
-	params.dataBytes = numElements*sizeof(u32);
 	gfxContext.init2DTexture(params);
 
 	activateDummy( 0 );
@@ -773,7 +772,6 @@ bool TextureCache::_loadHiresBackground(CachedTexture *_pTexture)
 		params.internalFormat = InternalColorFormatParam(ghqTexInfo.format);
 		params.dataType = DatatypeParam(ghqTexInfo.pixel_type);
 		params.data = ghqTexInfo.data;
-		params.dataBytes = params.width*params.height*4;
 		gfxContext.init2DTexture(params);
 
 		assert(!gfxContext.isError());
@@ -878,7 +876,6 @@ void TextureCache::_loadBackground(CachedTexture *pTexture)
 			params.internalFormat = InternalColorFormatParam(ghqTexInfo.format);
 			params.dataType = DatatypeParam(ghqTexInfo.pixel_type);
 			params.data = ghqTexInfo.data;
-			params.dataBytes = params.width*params.height*4;
 			gfxContext.init2DTexture(params);
 			_updateCachedTexture(ghqTexInfo, pTexture, f32(ghqTexInfo.width) / f32(pTexture->realWidth));
 			bLoaded = true;
@@ -897,7 +894,6 @@ void TextureCache::_loadBackground(CachedTexture *pTexture)
 		params.internalFormat = gfxContext.convertInternalTextureFormat(u32(glInternalFormat));
 		params.dataType = glType;
 		params.data = pDest;
-		params.dataBytes = pTexture->textureBytes;
 		gfxContext.init2DTexture(params);
 	}
 	if (m_curUnpackAlignment > 1)
@@ -986,7 +982,6 @@ bool TextureCache::_loadHiresTexture(u32 _tile, CachedTexture *_pTexture, u64 & 
 		params.dataType = DatatypeParam(ghqTexInfo.pixel_type);
 		params.data = ghqTexInfo.data;
 		params.textureUnitIndex = textureIndices::Tex[_tile];
-		params.dataBytes = params.width*params.height*4;
 		gfxContext.init2DTexture(params);
 		assert(!gfxContext.isError());
 		_updateCachedTexture(ghqTexInfo, _pTexture, f32(ghqTexInfo.width) / f32(width));
@@ -1016,7 +1011,6 @@ void TextureCache::_loadDepthTexture(CachedTexture * _pTexture, u16* _pDest)
 	params.format = colorFormat::RED;
 	params.dataType = datatype::FLOAT;
 	params.data = pDestFloat.data();
-	params.dataBytes = _pTexture->textureBytes;
 	gfxContext.init2DTexture(params);
 }
 
@@ -1228,7 +1222,6 @@ void TextureCache::_load(u32 _tile, CachedTexture *_pTexture)
 				params.format = ColorFormatParam(ghqTexInfo.texture_format);
 				params.dataType = DatatypeParam(ghqTexInfo.pixel_type);
 				params.data = ghqTexInfo.data;
-				params.dataBytes = params.width*params.height*4;
 				gfxContext.init2DTexture(params);
 				_updateCachedTexture(ghqTexInfo, _pTexture, f32(ghqTexInfo.width) / f32(tmptex.realWidth));
 				bLoaded = true;
@@ -1251,7 +1244,6 @@ void TextureCache::_load(u32 _tile, CachedTexture *_pTexture)
 			params.format = colorFormat::RGBA;
 			params.dataType = glType;
 			params.data = pDest;
-			params.dataBytes = _pTexture->textureBytes;
 			gfxContext.init2DTexture(params);
 		}
 		if (mipLevel == _pTexture->max_level)

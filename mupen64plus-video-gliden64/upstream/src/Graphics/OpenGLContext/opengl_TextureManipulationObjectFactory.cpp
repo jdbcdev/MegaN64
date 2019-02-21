@@ -60,11 +60,6 @@ namespace opengl {
 		void init2DTexture(const graphics::Context::InitTextureParams & _params) override
 		{
 			if (_params.msaaLevel == 0) {
-				std::unique_ptr<u8[]> data(nullptr);
-				if(_params.dataBytes != 0 && _params.data != nullptr) {
-					data = std::unique_ptr<u8[]>(new u8[_params.dataBytes]);
-					std::copy_n(reinterpret_cast<const char*>(_params.data), _params.dataBytes, data.get());
-				}
 
 				m_bind->bind(_params.textureUnitIndex, graphics::textureTarget::TEXTURE_2D, _params.handle);
 				FunctionWrapper::glTexImage2D(GL_TEXTURE_2D,
@@ -75,7 +70,7 @@ namespace opengl {
 							 0,
 							 GLenum(_params.format),
 							 GLenum(_params.dataType),
-							 std::move(data));
+							 _params.data);
 			} else {
 				m_bind->bind(_params.textureUnitIndex, graphics::textureTarget::TEXTURE_2D_MULTISAMPLE, _params.handle);
 				FunctionWrapper::glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
@@ -123,13 +118,6 @@ namespace opengl {
 				}
 
 				if (_params.data != nullptr) {
-					std::unique_ptr<u8[]> data(nullptr);
-
-					if(_params.dataBytes != 0 && _params.data != nullptr) {
-						data = std::unique_ptr<u8[]>(new u8[_params.dataBytes]);
-						std::copy_n(reinterpret_cast<const char*>(_params.data), _params.dataBytes, data.get());
-					}
-
 					FunctionWrapper::glTexSubImage2DUnbuffered(GL_TEXTURE_2D,
 						_params.mipMapLevel,
 						0, 0,
@@ -137,7 +125,7 @@ namespace opengl {
 						_params.height,
 						GLuint(_params.format),
 						GLenum(_params.dataType),
-						std::move(data));
+						_params.data);
 				}
 			}
 			else {
@@ -196,7 +184,7 @@ namespace opengl {
 						_params.height,
 						GLuint(_params.format),
 						GLenum(_params.dataType),
-						reinterpret_cast<std::size_t>(_params.data));
+						_params.data);
 				}
 			}
 			else {
@@ -240,14 +228,8 @@ namespace opengl {
 					_params.height,
 					GLuint(_params.format),
 					GLenum(_params.dataType),
-					reinterpret_cast<std::size_t>(_params.data));
+					_params.data);
 			} else {
-				std::unique_ptr<u8[]> data(nullptr);
-				if(_params.dataBytes != 0 && _params.data != nullptr) {
-					data = std::unique_ptr<u8[]>(new u8[_params.dataBytes]);
-					std::copy_n(reinterpret_cast<const char*>(_params.data), _params.dataBytes, data.get());
-				}
-
 				FunctionWrapper::glTexSubImage2DUnbuffered(GL_TEXTURE_2D,
 					_params.mipMapLevel,
 					_params.x,
@@ -256,7 +238,7 @@ namespace opengl {
 					_params.height,
 					GLuint(_params.format),
 					GLenum(_params.dataType),
-					std::move(data));
+					_params.data);
 			}
 		}
 
@@ -291,14 +273,8 @@ namespace opengl {
 					_params.height,
 					GLuint(_params.format),
 					GLenum(_params.dataType),
-					reinterpret_cast<std::size_t>(_params.data));
+					_params.data);
 			} else {
-				std::unique_ptr<u8[]> data(nullptr);
-				if(_params.dataBytes != 0 && _params.data != nullptr) {
-					data = std::unique_ptr<u8[]>(new u8[_params.dataBytes]);
-					std::copy_n(reinterpret_cast<const char*>(_params.data), _params.dataBytes, data.get());
-				}
-
 				FunctionWrapper::glTextureSubImage2DUnbuffered(GLuint(_params.handle),
 					_params.mipMapLevel,
 					_params.x,
@@ -307,7 +283,7 @@ namespace opengl {
 					_params.height,
 					GLuint(_params.format),
 					GLenum(_params.dataType),
-					std::move(data));
+					_params.data);
 			}
 		}
 	private:

@@ -47,7 +47,6 @@ void ZlutTexture::init()
 	initParams.format = fbTexFormats.lutFormat;
 	initParams.dataType = fbTexFormats.lutType;
 	initParams.data = vecZLUT.data();
-	initParams.dataBytes = vecZLUT.size()*sizeof(vecZLUT[0]);
 	gfxContext.init2DTexture(initParams);
 
 	Context::TexParameters setParams;

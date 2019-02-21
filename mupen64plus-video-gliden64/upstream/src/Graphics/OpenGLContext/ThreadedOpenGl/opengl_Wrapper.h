@@ -19,7 +19,7 @@ namespace opengl {
 
 		static void executePriorityCommand(std::shared_ptr<OpenGlCommand> _command);
 
-		static void commandLoop(void);
+		static void commandLoop();
 
 		static BlockingQueue<std::shared_ptr<OpenGlCommand>> m_commandQueue;
 
@@ -51,19 +51,17 @@ namespace opengl {
 		static void glScissor(GLint x, GLint y, GLsizei width, GLsizei height);
 		static void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
 		static void glBindTexture(GLenum target, GLuint texture);
-		template <class pixelType>
-		static void glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels);
+		static void glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels);
 		static void glTexParameteri(GLenum target, GLenum pname, GLint param);
 		static void glGetIntegerv(GLenum pname, GLint* data);
 		static const GLubyte* glGetString(GLenum name);
 
 		static void glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void *pixels);
 		static void glReadPixelsAsync(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type);
-		template <class pixelType>
-		static void glTexSubImage2DUnbuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels);
-		static void glTexSubImage2DBuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, std::size_t offset);
+		static void glTexSubImage2DUnbuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
+		static void glTexSubImage2DBuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
 		static void glDrawArrays(GLenum mode, GLint first, GLsizei count);
-        static GLenum glGetError(void);
+        static GLenum glGetError();
 		static void glDrawElements(GLenum mode, GLsizei count, GLenum type, const void *indices);
 		static void glLineWidth(GLfloat width);
 		static void glClear(GLbitfield mask);
@@ -79,7 +77,7 @@ namespace opengl {
 		static GLuint glCreateShader(GLenum type);
 		static void glCompileShader(GLuint shader);
 		static void glShaderSource(GLuint shader, const std::string& string);
-		static GLuint glCreateProgram(void);
+		static GLuint glCreateProgram();
 		static void glAttachShader(GLuint program, GLuint shader);
 		static void glLinkProgram(GLuint program);
 		static void glUseProgram(GLuint program);
@@ -142,8 +140,8 @@ namespace opengl {
 		static void glDeleteBuffers(GLsizei n, std::unique_ptr<GLuint[]> buffers);
 		static void glBindImageTexture(GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format);
 		static void glMemoryBarrier(GLbitfield barriers);
-		static void glTextureBarrier(void);
-		static void glTextureBarrierNV(void);
+		static void glTextureBarrier();
+		static void glTextureBarrierNV();
 		static const GLubyte* glGetStringi(GLenum name, GLuint index);
 		static void glInvalidateFramebuffer(GLenum target, GLsizei numAttachments, std::unique_ptr<GLenum[]> attachments);
 		template <class dataType>
@@ -168,9 +166,8 @@ namespace opengl {
 
 		static void glTexStorage2D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height);
 		static void glTextureStorage2D(GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height);
-		template <class pixelType>
-		static void glTextureSubImage2DUnbuffered(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels);
-		static void glTextureSubImage2DBuffered(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, std::size_t offset);
+		static void glTextureSubImage2DUnbuffered(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
+		static void glTextureSubImage2DBuffered(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
 		static void glTextureStorage2DMultisample(GLuint texture, GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
 		static void glTextureParameteri(GLuint texture, GLenum pname, GLint param);
 		static void glTextureParameterf(GLuint texture, GLenum pname, GLfloat param);
@@ -180,7 +177,7 @@ namespace opengl {
 		static void glNamedFramebufferTexture(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level);
 		static void glDrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const u16* indices, GLint basevertex);
 		static void glFlushMappedBufferRange(GLenum target, GLintptr offset, GLsizeiptr length);
-		static void glFinish(void);
+		static void glFinish();
 		static void glEGLImageTargetTexture2DOES(GLenum target, void* image);
 
 #if defined(OS_ANDROID)
@@ -189,40 +186,24 @@ namespace opengl {
 
 #ifdef MUPENPLUSAPI
 		//Vid_ext functions
-		static void CoreVideo_Init(void);
-		static void CoreVideo_Quit(void);
+		static void CoreVideo_Init();
+		static void CoreVideo_Quit();
 		static m64p_error CoreVideo_SetVideoMode(int screenWidth, int screenHeight, int bitsPerPixel, m64p_video_mode mode, m64p_video_flags flags);
 		static void CoreVideo_GL_SetAttribute(m64p_GLattr attribute, int value);
 		static void CoreVideo_GL_GetAttribute(m64p_GLattr attribute, int *value);
-		static void CoreVideo_GL_SwapBuffers(void);
+		static void CoreVideo_GL_SwapBuffers();
 #else
 		//Windows GL context functions
-		static bool windowsStart(void);
-		static void windowsStop(void);
-		static void windowsSwapBuffers(void);
+		static bool windowsStart();
+		static void windowsStop();
+		static void windowsSwapBuffers();
 #endif
 
-		static void ReduceSwapBuffersQueued(void);
-		static void WaitForSwapBuffersQueued(void);
+		static void ReduceSwapBuffersQueued();
+		static void WaitForSwapBuffersQueued();
+
+		static int getFormatBytesPerPixel(GLenum format, GLenum type);
 	};
-
-	template <class pixelType>
-	void  FunctionWrapper::glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels)
-	{
-		if(m_threaded_wrapper)
-			executeCommand(GlTexImage2DCommand<pixelType>::get(target, level, internalformat, width, height, border, format, type, std::move(pixels)));
-		else
-			g_glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels.get());
-	}
-
-	template <class pixelType>
-	void  FunctionWrapper::glTexSubImage2DUnbuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels)
-	{
-		if(m_threaded_wrapper)
-			executeCommand(GlTexSubImage2DUnbufferedCommand<pixelType>::get(target, level, xoffset, yoffset, width, height, format, type, std::move(pixels)));
-		else
-			g_glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels.get());
-	}
 
 	template <class dataType>
 	void  FunctionWrapper::glBufferData(GLenum target, GLsizeiptr size, std::unique_ptr<dataType[]> data, GLenum usage)
@@ -262,14 +243,5 @@ namespace opengl {
 			executeCommand(GlProgramBinaryCommand<dataType>::get(program, binaryFormat, std::move(binary), length));
 		else
 			g_glProgramBinary(program, binaryFormat, binary.get(), length);
-	}
-
-	template <class pixelType>
-	void  FunctionWrapper::glTextureSubImage2DUnbuffered(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels)
-	{
-		if(m_threaded_wrapper)
-			executeCommand(GlTextureSubImage2DUnbufferedCommand<pixelType>::get(texture, level, xoffset, yoffset, width, height, format, type, std::move(pixels)));
-		else
-			g_glTextureSubImage2D(texture, level, xoffset, yoffset, width, height, format, type, pixels.get());
 	}
 }

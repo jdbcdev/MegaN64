@@ -464,7 +464,6 @@ namespace opengl {
 		GLuint m_texture;
 	};
 
-	template <class pixelType>
 	class GlTexImage2DCommand : public OpenGlCommand
 	{
 	public:
@@ -474,7 +473,7 @@ namespace opengl {
 		}
 
 		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height,
-			GLint border, GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels)
+			GLint border, GLenum format, GLenum type, std::unique_ptr<u8[]> pixels)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlTexImage2DCommand>(poolId);
@@ -489,7 +488,7 @@ namespace opengl {
 		}
 	private:
 		void set(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height,
-			GLint border, GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels)
+			GLint border, GLenum format, GLenum type, std::unique_ptr<u8[]> pixels)
 		{
 			m_target = target;
 			m_level = level;
@@ -510,7 +509,7 @@ namespace opengl {
 		GLint m_border;
 		GLenum m_format;
 		GLenum m_type;
-		std::unique_ptr<pixelType[]> m_pixels;
+		std::unique_ptr<u8[]> m_pixels;
 	};
 
 	class GlTexParameteriCommand : public OpenGlCommand
@@ -745,7 +744,7 @@ namespace opengl {
 		}
 
 		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-			GLenum format, GLenum type, std::size_t offset)
+			GLenum format, GLenum type, const void* offset)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlTexSubImage2DBufferedCommand>(poolId);
@@ -755,11 +754,11 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			g_glTexSubImage2D(m_target, m_level, m_xoffset, m_yoffset, m_width, m_height, m_format, m_type, (const GLvoid *)m_offset);
+			g_glTexSubImage2D(m_target, m_level, m_xoffset, m_yoffset, m_width, m_height, m_format, m_type, m_offset);
 		}
 	private:
 		void set(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-			GLenum format, GLenum type, std::size_t offset)
+			GLenum format, GLenum type, const void* offset)
 		{
 			m_target = target;
 			m_level = level;
@@ -780,7 +779,7 @@ namespace opengl {
 		GLsizei m_height;
 		GLenum m_format;
 		GLenum m_type;
-		std::size_t m_offset;
+        const void* m_offset;
 	};
 
 	class GlDrawArraysCommand : public OpenGlCommand
@@ -4174,7 +4173,6 @@ namespace opengl {
 		GLsizei m_height;
 	};
 
-	template <class pixelType>
 	class GlTextureSubImage2DUnbufferedCommand : public OpenGlCommand
 	{
 	public:
@@ -4184,7 +4182,7 @@ namespace opengl {
 		}
 
 		static std::shared_ptr<OpenGlCommand> get(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width,
-			GLsizei height, GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels)
+			GLsizei height, GLenum format, GLenum type, std::unique_ptr<u8[]> pixels)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlTextureSubImage2DUnbufferedCommand>(poolId);
@@ -4199,7 +4197,7 @@ namespace opengl {
 		}
 	private:
 		void set(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width,
-			GLsizei height, GLenum format, GLenum type, std::unique_ptr<pixelType[]> pixels)
+			GLsizei height, GLenum format, GLenum type, std::unique_ptr<u8[]> pixels)
 		{
 			m_texture = texture;
 			m_level = level;
@@ -4220,7 +4218,7 @@ namespace opengl {
 		GLsizei m_height;
 		GLenum m_format;
 		GLenum m_type;
-		std::unique_ptr<pixelType[]> m_pixels;
+		std::unique_ptr<u8[]> m_pixels;
 	};
 
 	class GlTextureSubImage2DBufferedCommand : public OpenGlCommand
@@ -4232,7 +4230,7 @@ namespace opengl {
 		}
 
 		static std::shared_ptr<OpenGlCommand> get(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width,
-			GLsizei height, GLenum format, GLenum type, std::size_t offset)
+			GLsizei height, GLenum format, GLenum type, const void* offset)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlTextureSubImage2DBufferedCommand>(poolId);
@@ -4243,11 +4241,11 @@ namespace opengl {
 		void commandToExecute() override
 		{
 			g_glTextureSubImage2D(m_texture, m_level, m_xoffset, m_yoffset, m_width, m_height, m_format, m_type,
-								  (const GLvoid* )m_offset);
+								  m_offset);
 		}
 	private:
 		void set(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width,
-			GLsizei height, GLenum format, GLenum type, std::size_t offset)
+			GLsizei height, GLenum format, GLenum type, const void* offset)
 		{
 			m_texture = texture;
 			m_level = level;
@@ -4268,7 +4266,7 @@ namespace opengl {
 		GLsizei m_height;
 		GLenum m_format;
 		GLenum m_type;
-		std::size_t m_offset;
+        const void* m_offset;
 	};
 
 	class GlTextureStorage2DMultisampleCommand : public OpenGlCommand

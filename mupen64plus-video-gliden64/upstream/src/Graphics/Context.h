@@ -92,7 +92,6 @@ namespace graphics {
 			ColorFormatParam format;
 			InternalColorFormatParam internalFormat;
 			DatatypeParam dataType;
-			u32 dataBytes = 0;
 			const void * data = nullptr;
 		};
 

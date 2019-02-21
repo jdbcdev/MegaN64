@@ -25,7 +25,7 @@ namespace opengl {
 		_command->waitOnCommand();
 	}
 
-	void FunctionWrapper::commandLoop(void)
+	void FunctionWrapper::commandLoop()
 	{
 		while (!m_shutdown || m_commandQueue.size() != 0) {
 			std::shared_ptr<OpenGlCommand> command;
@@ -164,6 +164,23 @@ namespace opengl {
 			g_glBindTexture(target, texture);
 	}
 
+	void FunctionWrapper::glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels)
+	{
+		if(m_threaded_wrapper) {
+			std::unique_ptr<u8[]> data(nullptr);
+			int totalBytes = getFormatBytesPerPixel(format, type)*width*height;
+			if(totalBytes != 0 && pixels != nullptr) {
+				data = std::unique_ptr<u8[]>(new u8[totalBytes]);
+				std::copy_n(reinterpret_cast<const char*>(pixels), totalBytes, data.get());
+			}
+
+			executeCommand(GlTexImage2DCommand::get(target, level, internalformat, width, height, border,
+				format, type, std::move(data)));
+		}
+		else
+			g_glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
+	}
+
 	void FunctionWrapper::glTexParameteri(GLenum target, GLenum pname, GLint param)
 	{
 		if (m_threaded_wrapper)
@@ -208,12 +225,27 @@ namespace opengl {
 			g_glReadPixels(x, y, width, height, format, type, nullptr);
 	}
 
-	void FunctionWrapper::glTexSubImage2DBuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, std::size_t offset)
+	void  FunctionWrapper::glTexSubImage2DUnbuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
+	{
+		if(m_threaded_wrapper) {
+			int totalBytes = getFormatBytesPerPixel(format, type)*width*height;
+			std::unique_ptr<u8[]> data(nullptr);
+			if(totalBytes != 0 && pixels != nullptr) {
+				data = std::unique_ptr<u8[]>(new u8[totalBytes]);
+				std::copy_n(reinterpret_cast<const char*>(pixels), totalBytes, data.get());
+			}
+			executeCommand(GlTexSubImage2DUnbufferedCommand<u8>::get(target, level, xoffset, yoffset, width, height, format, type, std::move(data)));
+		}
+		else
+			g_glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
+	}
+
+	void FunctionWrapper::glTexSubImage2DBuffered(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
 	{
 		if (m_threaded_wrapper)
-			executeCommand(GlTexSubImage2DBufferedCommand::get(target, level, xoffset, yoffset, width, height, format, type, offset));
+			executeCommand(GlTexSubImage2DBufferedCommand::get(target, level, xoffset, yoffset, width, height, format, type, pixels));
 		else
-			g_glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, (const GLvoid *)offset);
+			g_glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
 	}
 
 	void FunctionWrapper::glDrawArrays(GLenum mode, GLint first, GLsizei count)
@@ -231,7 +263,7 @@ namespace opengl {
 		}
 	}
 
-	GLenum FunctionWrapper::glGetError(void)
+	GLenum FunctionWrapper::glGetError()
 	{
 #ifdef GL_DEBUG
 		GLenum returnValue;
@@ -410,7 +442,7 @@ namespace opengl {
 		}
 	}
 
-	GLuint FunctionWrapper::glCreateProgram(void)
+	GLuint FunctionWrapper::glCreateProgram()
 	{
 		GLuint returnValue;
 
@@ -905,7 +937,7 @@ namespace opengl {
 			g_glMemoryBarrier(barriers);
 	}
 
-	void FunctionWrapper::glTextureBarrier(void)
+	void FunctionWrapper::glTextureBarrier()
 	{
 		if (m_threaded_wrapper)
 			executeCommand(GlTextureBarrierCommand::get());
@@ -913,7 +945,7 @@ namespace opengl {
 			g_glTextureBarrier();
 	}
 
-	void FunctionWrapper::glTextureBarrierNV(void)
+	void FunctionWrapper::glTextureBarrierNV()
 	{
 		if (m_threaded_wrapper)
 			executeCommand(GlTextureBarrierNVCommand::get());
@@ -1053,12 +1085,29 @@ namespace opengl {
 			g_glTextureStorage2D(texture, levels, internalformat, width, height);
 	}
 
-	void FunctionWrapper::glTextureSubImage2DBuffered(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, std::size_t offset)
+	void  FunctionWrapper::glTextureSubImage2DUnbuffered(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
+	{
+		if(m_threaded_wrapper) {
+			std::unique_ptr<u8[]> data(nullptr);
+			int totalBytes = getFormatBytesPerPixel(format, type)*width*height;
+			if(totalBytes != 0 && pixels != nullptr) {
+				data = std::unique_ptr<u8[]>(new u8[totalBytes]);
+				std::copy_n(reinterpret_cast<const char*>(pixels), totalBytes, data.get());
+			}
+
+			executeCommand(GlTextureSubImage2DUnbufferedCommand::get(texture, level, xoffset, yoffset,
+															  width, height, format, type,
+															  std::move(data)));
+		} else
+			g_glTextureSubImage2D(texture, level, xoffset, yoffset, width, height, format, type, pixels);
+	}
+
+	void FunctionWrapper::glTextureSubImage2DBuffered(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void* pixels)
 	{
 		if (m_threaded_wrapper)
-			executeCommand(GlTextureSubImage2DBufferedCommand::get(texture, level, xoffset, yoffset, width, height, format, type, offset));
+			executeCommand(GlTextureSubImage2DBufferedCommand::get(texture, level, xoffset, yoffset, width, height, format, type, pixels));
 		else
-			g_glTextureSubImage2D(texture, level, xoffset, yoffset, width, height, format, type, (const GLvoid* )offset);
+			g_glTextureSubImage2D(texture, level, xoffset, yoffset, width, height, format, type, pixels);
 	}
 
 	void FunctionWrapper::glTextureStorage2DMultisample(GLuint texture, GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations)
@@ -1134,7 +1183,7 @@ namespace opengl {
 			g_glFlushMappedBufferRange(target, offset, length);
 	}
 
-	void FunctionWrapper::glFinish(void)
+	void FunctionWrapper::glFinish()
 	{
 		if (m_threaded_wrapper)
 			executeCommand(GlFinishCommand::get());
@@ -1167,7 +1216,7 @@ namespace opengl {
 
 #ifdef MUPENPLUSAPI
 
-	void FunctionWrapper::CoreVideo_Init(void)
+	void FunctionWrapper::CoreVideo_Init()
 	{
 		if (m_threaded_wrapper)
 			executeCommand(CoreVideoInitCommand::get());
@@ -1175,7 +1224,7 @@ namespace opengl {
 			CoreVideoInitCommand::get()->performCommandSingleThreaded();
 	}
 
-	void FunctionWrapper::CoreVideo_Quit(void)
+	void FunctionWrapper::CoreVideo_Quit()
 	{
 		if (m_threaded_wrapper)
 			executeCommand(CoreVideoQuitCommand::get());
@@ -1218,7 +1267,7 @@ namespace opengl {
 			CoreVideoGLGetAttributeCommand::get(attribute, value)->performCommandSingleThreaded();
 	}
 
-	void FunctionWrapper::CoreVideo_GL_SwapBuffers(void)
+	void FunctionWrapper::CoreVideo_GL_SwapBuffers()
 	{
 		++m_swapBuffersQueued;
 
@@ -1228,7 +1277,7 @@ namespace opengl {
 			CoreVideoGLSwapBuffersCommand::get([]{ReduceSwapBuffersQueued();})->performCommandSingleThreaded();
 	}
 #else
-	bool FunctionWrapper::windowsStart(void)
+	bool FunctionWrapper::windowsStart()
 	{
 		bool returnValue;
 
@@ -1240,7 +1289,7 @@ namespace opengl {
 		return returnValue;
 	}
 
-	void FunctionWrapper::windowsStop(void)
+	void FunctionWrapper::windowsStop()
 	{
 		if (m_threaded_wrapper)
 			executeCommand(WindowsStopCommand::get());
@@ -1255,7 +1304,7 @@ namespace opengl {
 		}
 	}
 
-	void FunctionWrapper::windowsSwapBuffers(void)
+	void FunctionWrapper::windowsSwapBuffers()
 	{
 		++m_swapBuffersQueued;
 
@@ -1267,7 +1316,7 @@ namespace opengl {
 
 #endif
 
-	void FunctionWrapper::ReduceSwapBuffersQueued(void)
+	void FunctionWrapper::ReduceSwapBuffersQueued()
 	{
 		--m_swapBuffersQueued;
 
@@ -1276,12 +1325,104 @@ namespace opengl {
 		}
 	}
 
-	void FunctionWrapper::WaitForSwapBuffersQueued(void)
+	void FunctionWrapper::WaitForSwapBuffersQueued()
 	{
 		std::unique_lock<std::mutex> lock(m_condvarMutex);
 
 		if (!m_shutdown && m_swapBuffersQueued > MAX_SWAP) {
 			m_condition.wait(lock, []{return FunctionWrapper::m_swapBuffersQueued <= MAX_SWAP;});
 		}
+	}
+
+
+	int FunctionWrapper::getFormatBytesPerPixel(GLenum format, GLenum type)
+	{
+		int components = 0;
+		int bytesPerComponent = 0;
+
+		switch(format)
+		{
+			case GL_RED:
+				components = 1;
+				break;
+			case GL_RG:
+				components = 2;
+				break;
+			case GL_RGB:
+			case GL_BGR:
+				components = 3;
+				break;
+			case GL_RGBA:
+			case GL_BGRA:
+				components = 4;
+				break;
+			case GL_RED_INTEGER:
+				components = 1;
+				break;
+			case GL_RG_INTEGER:
+				components = 2;
+				break;
+			case GL_RGB_INTEGER:
+			case GL_BGR_INTEGER:
+				components = 3;
+				break;
+			case GL_RGBA_INTEGER:
+			case GL_BGRA_INTEGER:
+				components = 4;
+				break;
+			case GL_STENCIL_INDEX:
+			case GL_DEPTH_COMPONENT:
+				components = 1;
+				break;
+			case GL_DEPTH_STENCIL:
+				components = 2;
+				break;
+			default:
+				components = 1;
+		}
+
+		switch(type)
+		{
+			case GL_UNSIGNED_BYTE:
+			case GL_BYTE:
+				bytesPerComponent = 1;
+				break;
+			case GL_UNSIGNED_SHORT:
+			case GL_SHORT:
+				bytesPerComponent = 2;
+				break;
+			case GL_UNSIGNED_INT:
+			case GL_INT:
+				bytesPerComponent = 4;
+				break;
+			case GL_HALF_FLOAT:
+				bytesPerComponent = 2;
+				break;
+			case GL_FLOAT:
+				bytesPerComponent = 4;
+				break;
+			case GL_UNSIGNED_BYTE_3_3_2:
+			case GL_UNSIGNED_BYTE_2_3_3_REV:
+				bytesPerComponent = 1;
+				break;
+			case GL_UNSIGNED_SHORT_5_6_5:
+			case GL_UNSIGNED_SHORT_5_6_5_REV:
+			case GL_UNSIGNED_SHORT_4_4_4_4:
+			case GL_UNSIGNED_SHORT_4_4_4_4_REV:
+			case GL_UNSIGNED_SHORT_5_5_5_1:
+			case GL_UNSIGNED_SHORT_1_5_5_5_REV:
+				bytesPerComponent = 2;
+				break;
+			case GL_UNSIGNED_INT_8_8_8_8:
+			case GL_UNSIGNED_INT_8_8_8_8_REV:
+			case GL_UNSIGNED_INT_10_10_10_2:
+			case GL_UNSIGNED_INT_2_10_10_10_REV:
+				bytesPerComponent = 4;
+				break;
+			default:
+				bytesPerComponent = -1;
+		}
+
+        return components*bytesPerComponent;
 	}
 }
