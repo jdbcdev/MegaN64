@@ -62,13 +62,7 @@ struct fv3Uniform {
 		const size_t szData = sizeof(float)* 3;
 		if (loc >= 0 && (_force || memcmp(val, _pVal, szData) != 0)) {
 			memcpy(val, _pVal, szData);
-
-			std::unique_ptr<GLfloat[]> values(new GLfloat[3]);
-			values.get()[0] = _pVal[0];
-			values.get()[1] = _pVal[1];
-			values.get()[2] = _pVal[2];
-
-			FunctionWrapper::glUniform3fv(loc, 1, std::move(values));
+			FunctionWrapper::glUniform3fv(loc, 1, _pVal);
 		}
 	}
 };
@@ -80,14 +74,7 @@ struct fv4Uniform {
 		const size_t szData = sizeof(float)* 4;
 		if (loc >= 0 && (_force || memcmp(val, _pVal, szData) != 0)) {
 			memcpy(val, _pVal, szData);
-
-			std::unique_ptr<GLfloat[]> values(new GLfloat[4]);
-			values.get()[0] = _pVal[0];
-			values.get()[1] = _pVal[1];
-			values.get()[2] = _pVal[2];
-			values.get()[3] = _pVal[3];
-
-			FunctionWrapper::glUniform4fv(loc, 1, std::move(values));
+			FunctionWrapper::glUniform4fv(loc, 1, _pVal);
 		}
 	}
 };

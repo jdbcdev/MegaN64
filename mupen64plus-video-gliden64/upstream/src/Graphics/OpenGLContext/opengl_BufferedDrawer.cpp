@@ -80,11 +80,8 @@ BufferedDrawer::~BufferedDrawer()
 	FunctionWrapper::glDeleteBuffers(numDeleteBuffers, std::move(buffers));
 	FunctionWrapper::glBindVertexArray(0);
 
-	int numVertexBuffers = 2;
-	auto vertexBuffers = std::unique_ptr<GLuint[]>(new GLuint[numVertexBuffers]);
-	vertexBuffers[0] = m_rectsBuffers.vao;
-	vertexBuffers[1] = m_trisBuffers.vao;
-	FunctionWrapper::glDeleteVertexArrays(numVertexBuffers, std::move(vertexBuffers));
+	GLuint arrays[2] = { m_rectsBuffers.vao, m_trisBuffers.vao };
+	FunctionWrapper::glDeleteVertexArrays(2, arrays);
 }
 
 void BufferedDrawer::_updateBuffer(Buffer & _buffer, u32 _count, u32 _dataSize, const void * _data)

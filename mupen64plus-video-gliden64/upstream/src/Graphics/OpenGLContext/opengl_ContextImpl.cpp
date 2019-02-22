@@ -211,9 +211,7 @@ graphics::ObjectHandle ContextImpl::createTexture(graphics::Parameter _target)
 void ContextImpl::deleteTexture(graphics::ObjectHandle _name)
 {
 	u32 glName(_name);
-	std::unique_ptr<GLuint[]> texture(new GLuint[1]);
-	texture[0] = glName;
-	FunctionWrapper::glDeleteTextures(1, std::move(texture));
+    FunctionWrapper::glDeleteTextures(1, &glName);
 	m_init2DTexture->reset(_name);
 
 	m_cachedFunctions->getTexParams()->erase(u32(_name));
@@ -303,8 +301,7 @@ void ContextImpl::deleteFramebuffer(graphics::ObjectHandle _name)
 {
 	u32 fbo(_name);
 	if (fbo != 0) {
-		std::unique_ptr<GLuint[]> buffers(new GLuint[1]{fbo});
-		FunctionWrapper::glDeleteFramebuffers(1, std::move(buffers));
+		FunctionWrapper::glDeleteFramebuffers(1, std::move(&fbo));
 		m_cachedFunctions->getCachedBindFramebuffer()->reset();
 	}
 }
@@ -341,13 +338,8 @@ bool ContextImpl::blitFramebuffers(const graphics::Context::BlitFramebuffersPara
 
 void ContextImpl::setDrawBuffers(u32 _num)
 {
-	std::unique_ptr<GLenum[]> targets(new GLenum[4]);
-	targets.get()[0] = GL_COLOR_ATTACHMENT0;
-	targets.get()[1] = GL_COLOR_ATTACHMENT1;
-	targets.get()[2] = GL_COLOR_ATTACHMENT2;
-	targets.get()[3] = GL_COLOR_ATTACHMENT3;
-
-	FunctionWrapper::glDrawBuffers(_num, std::move(targets));
+	GLenum targets[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
+	FunctionWrapper::glDrawBuffers(_num, targets);
 }
 
 graphics::PixelReadBuffer * ContextImpl::createPixelReadBuffer(size_t _sizeInBytes)

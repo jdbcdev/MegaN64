@@ -506,9 +506,7 @@ namespace glsl {
 
 		void activate() override {
 			ShadowMapShaderBase::activate();
-			std::unique_ptr<GLfloat[]> values(new GLfloat[4]);
-			std::copy_n(&gDP.fogColor.r, 4, values.get());
-			FunctionWrapper::glUniform4fv(m_locFog, 1, std::move(values));
+			FunctionWrapper::glUniform4fv(m_locFog, 1, &gDP.fogColor.r);
 			FunctionWrapper::glUniform1i(m_locZlut, int(graphics::textureIndices::ZLUTTex));
 			FunctionWrapper::glUniform1i(m_locTlut, int(graphics::textureIndices::PaletteTex));
 			FunctionWrapper::glUniform1i(m_locDepthImage, 0);
@@ -733,17 +731,13 @@ namespace glsl {
 			const int texLoc = FunctionWrapper::glGetUniformLocation(GLuint(m_program), "uTex0");
 			FunctionWrapper::glUniform1i(texLoc, 0);
 			m_colorLoc = FunctionWrapper::glGetUniformLocation(GLuint(m_program), "uColor");
-			std::unique_ptr<GLfloat[]> values(new GLfloat[4]);
-			std::copy_n(config.font.colorf, 4, values.get());
-			FunctionWrapper::glUniform4fv(m_colorLoc, 1, std::move(values));
+			FunctionWrapper::glUniform4fv(m_colorLoc, 1, config.font.colorf);
 			m_useProgram->useProgram(graphics::ObjectHandle::null);
 		}
 
 		void setTextColor(float * _color) override {
 			m_useProgram->useProgram(m_program);
-			std::unique_ptr<GLfloat[]> values(new GLfloat[4]);
-			std::copy_n(_color, 4, values.get());
-			FunctionWrapper::glUniform4fv(m_colorLoc, 1, std::move(values));
+			FunctionWrapper::glUniform4fv(m_colorLoc, 1, _color);
 			m_useProgram->useProgram(graphics::ObjectHandle::null);
 		}
 

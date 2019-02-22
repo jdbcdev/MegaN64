@@ -364,11 +364,7 @@ namespace opengl {
 			}
 
 			std::unique_ptr<GLfloat[]> values(new GLfloat[numValues]);
-
-			for(unsigned int index = 0; index < numValues; ++index) {
-				values.get()[index] = value[index];
-			}
-
+			std::copy_n(value, numValues, values.get());
 			executeCommand(GlClearBufferfvCommand::get(buffer, drawbuffer, std::move(values)));
 		} else
 			g_glClearBufferfv(buffer, drawbuffer, value);
@@ -382,12 +378,14 @@ namespace opengl {
 			g_glGetFloatv(pname, data);
 	}
 
-	void FunctionWrapper::glDeleteTextures(GLsizei n, std::unique_ptr<GLuint[]> textures)
+	void FunctionWrapper::glDeleteTextures(GLsizei n, const GLuint *textures)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlDeleteTexturesCommand::get(n, std::move(textures)));
-		else
-			g_glDeleteTextures(n, textures.get());
+		if (m_threaded_wrapper) {
+            std::unique_ptr<GLuint[]> texture(new GLuint[n]);
+            std::copy_n(textures, n, texture.get());
+            executeCommand(GlDeleteTexturesCommand::get(n, std::move(texture)));
+        } else
+			g_glDeleteTextures(n, textures);
 	}
 
 	void FunctionWrapper::glGenTextures(GLsizei n, GLuint* textures)
@@ -557,20 +555,24 @@ namespace opengl {
 			g_glUniform4f(location, v0, v1, v2, v3);
 	}
 
-	void FunctionWrapper::glUniform3fv(GLint location, GLsizei count, std::unique_ptr<GLfloat[]> value)
+	void FunctionWrapper::glUniform3fv(GLint location, GLsizei count, const GLfloat *value)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlUniform3fvCommand::get(location, count, std::move(value)));
-		else
-			g_glUniform3fv(location, count, value.get());
+		if (m_threaded_wrapper) {
+			std::unique_ptr<GLfloat[]> values(new GLfloat[3]);
+			std::copy_n(value, 3, values.get());
+			executeCommand(GlUniform3fvCommand::get(location, count, std::move(values)));
+		} else
+			g_glUniform3fv(location, count, value);
 	}
 
-	void FunctionWrapper::glUniform4fv(GLint location, GLsizei count, std::unique_ptr<GLfloat[]> value)
+	void FunctionWrapper::glUniform4fv(GLint location, GLsizei count, const GLfloat *value)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlUniform4fvCommand::get(location, count, std::move(value)));
-		else
-			g_glUniform4fv(location, count, value.get());
+		if (m_threaded_wrapper) {
+			std::unique_ptr<GLfloat[]> values(new GLfloat[4]);
+			std::copy_n(value, 4, values.get());
+			executeCommand(GlUniform4fvCommand::get(location, count, std::move(values)));
+		} else
+			g_glUniform4fv(location, count, value);
 	}
 
 	void FunctionWrapper::glDetachShader(GLuint program, GLuint shader)
@@ -686,12 +688,14 @@ namespace opengl {
 			g_glVertexAttrib4f(index, x, y, z, w);
 	}
 
-	void FunctionWrapper::glVertexAttrib4fv(GLuint index, std::unique_ptr<GLfloat[]> v)
+	void FunctionWrapper::glVertexAttrib4fv(GLuint index, const GLfloat *v)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlVertexAttrib4fvCommand::get(index, std::move(v)));
-		else
-			g_glVertexAttrib4fv(index, v.get());
+		if (m_threaded_wrapper) {
+			std::unique_ptr<GLfloat[]> values(new GLfloat[4]);
+			std::copy_n(v, 4, values.get());
+			executeCommand(GlVertexAttrib4fvCommand::get(index, std::move(values)));
+		} else
+			g_glVertexAttrib4fv(index, v);
 	}
 
 	void FunctionWrapper::glDepthRangef(GLfloat n, GLfloat f)
@@ -710,12 +714,15 @@ namespace opengl {
 			g_glClearDepthf(d);
 	}
 
-	void FunctionWrapper::glDrawBuffers(GLsizei n, std::unique_ptr<GLenum[]> bufs)
+	void FunctionWrapper::glDrawBuffers(GLsizei n, const GLenum *bufs)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlDrawBuffersCommand::get(n, std::move(bufs)));
-		else
-			g_glDrawBuffers(n, bufs.get());
+		if (m_threaded_wrapper) {
+			std::unique_ptr<GLenum[]> bufsPtr(new GLenum[n]);
+			std::copy_n(bufs, n, bufsPtr.get());
+
+			executeCommand(GlDrawBuffersCommand::get(n, std::move(bufsPtr)));
+		} else
+			g_glDrawBuffers(n, bufs);
 	}
 
 	void FunctionWrapper::glGenFramebuffers(GLsizei n, GLuint* framebuffers)
@@ -734,12 +741,14 @@ namespace opengl {
 			g_glBindFramebuffer(target, framebuffer);
 	}
 
-	void FunctionWrapper::glDeleteFramebuffers(GLsizei n, std::unique_ptr<GLuint[]> framebuffers)
+	void FunctionWrapper::glDeleteFramebuffers(GLsizei n, const GLuint *framebuffers)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlDeleteFramebuffersCommand::get(n, std::move(framebuffers)));
-		else
-			g_glDeleteFramebuffers(n, framebuffers.get());
+		if (m_threaded_wrapper) {
+			std::unique_ptr<GLuint[]> framebuffersPtr(new GLuint[n]);
+			std::copy_n(framebuffers, n, framebuffersPtr.get());
+			executeCommand(GlDeleteFramebuffersCommand::get(n, std::move(framebuffersPtr)));
+		} else
+			g_glDeleteFramebuffers(n, framebuffers);
 	}
 
 	void FunctionWrapper::glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
@@ -790,12 +799,14 @@ namespace opengl {
 			g_glRenderbufferStorage(target, internalformat, width, height);
 	}
 
-	void FunctionWrapper::glDeleteRenderbuffers(GLsizei n, std::unique_ptr<GLuint[]> renderbuffers)
+	void FunctionWrapper::glDeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlDeleteRenderbuffersCommand::get(n, std::move(renderbuffers)));
-		else
-			g_glDeleteRenderbuffers(n, renderbuffers.get());
+		if (m_threaded_wrapper) {
+			std::unique_ptr<GLuint[]> renderbuffersPtr(new GLuint[n]);
+			std::copy_n(renderbuffers, n, renderbuffersPtr.get());
+			executeCommand(GlDeleteRenderbuffersCommand::get(n, std::move(renderbuffersPtr)));
+		} else
+			g_glDeleteRenderbuffers(n, renderbuffers);
 	}
 
 	void FunctionWrapper::glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
@@ -846,12 +857,14 @@ namespace opengl {
 			g_glBindVertexArray(array);
 	}
 
-	void FunctionWrapper::glDeleteVertexArrays(GLsizei n, std::unique_ptr<GLuint[]> arrays)
+	void FunctionWrapper::glDeleteVertexArrays(GLsizei n, const GLuint *arrays)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlDeleteVertexArraysCommand::get(n, std::move(arrays)));
-		else
-			g_glDeleteVertexArrays(n, arrays.get());
+		if (m_threaded_wrapper) {
+			std::unique_ptr<GLuint[]> arraysPtr(new GLuint[n]);
+			std::copy_n(arrays, n, arraysPtr.get());
+			executeCommand(GlDeleteVertexArraysCommand::get(n, std::move(arraysPtr)));
+		} else
+			g_glDeleteVertexArrays(n, arrays);
 	}
 
 	void FunctionWrapper::glGenBuffers(GLsizei n, GLuint* buffers)

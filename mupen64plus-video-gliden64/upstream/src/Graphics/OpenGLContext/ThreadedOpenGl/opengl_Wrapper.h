@@ -65,7 +65,7 @@ namespace opengl {
 		static void glClear(GLbitfield mask);
 		static void glClearBufferfv(GLenum buffer, GLint drawbuffer, const GLfloat *value);
 		static void glGetFloatv(GLenum pname, GLfloat* data);
-		static void glDeleteTextures(GLsizei n, std::unique_ptr<GLuint[]> textures);
+		static void glDeleteTextures(GLsizei n, const GLuint *textures);
 		static void glGenTextures(GLsizei n, GLuint* textures);
 		static void glTexParameterf(GLenum target, GLenum pname, GLfloat param);
 		static void glActiveTexture(GLenum texture);
@@ -87,8 +87,8 @@ namespace opengl {
 		static void glUniform4i(GLint location, GLint v0, GLint v1, GLint v2, GLint v3);
 
 		static void glUniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
-		static void glUniform3fv(GLint location, GLsizei count, std::unique_ptr<GLfloat[]> value);
-		static void glUniform4fv(GLint location, GLsizei count, std::unique_ptr<GLfloat[]> value);
+		static void glUniform3fv(GLint location, GLsizei count, const GLfloat *value);
+		static void glUniform4fv(GLint location, GLsizei count, const GLfloat *value);
 		static void glDetachShader(GLuint program, GLuint shader);
 		static void glDeleteShader(GLuint shader);
 		static void glDeleteProgram(GLuint program);
@@ -103,28 +103,28 @@ namespace opengl {
 		static void glBindAttribLocation(GLuint program, GLuint index, const std::string& name);
 		static void glVertexAttrib1f(GLuint index, GLfloat x);
 		static void glVertexAttrib4f(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-		static void glVertexAttrib4fv(GLuint index, std::unique_ptr<GLfloat[]> v);
+		static void glVertexAttrib4fv(GLuint index, const GLfloat *v);
 
 		static void glDepthRangef(GLfloat n, GLfloat f);
 		static void glClearDepthf(GLfloat d);
 
-		static void glDrawBuffers(GLsizei n, std::unique_ptr<GLenum[]> bufs);
+		static void glDrawBuffers(GLsizei n, const GLenum *bufs);
 		static void glGenFramebuffers(GLsizei n, GLuint* framebuffers);
 		static void glBindFramebuffer(GLenum target, GLuint framebuffer);
-		static void glDeleteFramebuffers(GLsizei n, std::unique_ptr<GLuint[]> framebuffers);
+		static void glDeleteFramebuffers(GLsizei n, const GLuint *framebuffers);
 		static void glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
 		static void glTexImage2DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
 		static void glTexStorage2DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations);
 		static void glGenRenderbuffers(GLsizei n, GLuint* renderbuffers);
 		static void glBindRenderbuffer(GLenum target, GLuint renderbuffer);
 		static void glRenderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
-		static void glDeleteRenderbuffers(GLsizei n, std::unique_ptr<GLuint[]> renderbuffers);
+		static void glDeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers);
 		static void glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
 		static GLenum glCheckFramebufferStatus(GLenum target);
 		static void glBlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
 		static void glGenVertexArrays(GLsizei n, GLuint* arrays);
 		static void glBindVertexArray(GLuint array);
-		static void glDeleteVertexArrays(GLsizei n, std::unique_ptr<GLuint[]> arrays);
+		static void glDeleteVertexArrays(GLsizei n, const GLuint *arrays);
 		static void glGenBuffers(GLsizei n, GLuint* buffers);
 		static void glBindBuffer(GLenum target, GLuint buffer);
 		template <class dataType>
