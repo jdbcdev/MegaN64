@@ -27,6 +27,7 @@ void GLInfo::init() {
 	LOG(LOG_VERBOSE, "%s major version: %d\n", isGLESX ? "OpenGL ES" : "OpenGL", majorVersion);
 	LOG(LOG_VERBOSE, "%s minor version: %d\n", isGLESX ? "OpenGL ES" : "OpenGL", minorVersion);
 
+
 	LOG(LOG_VERBOSE, "OpenGL vendor: %s\n", glGetString(GL_VENDOR));
 	const GLubyte * strRenderer = glGetString(GL_RENDERER);
 	const GLubyte * strDriverVersion = glGetString(GL_VERSION);
@@ -89,7 +90,7 @@ void GLInfo::init() {
 	bufferStorage = (!isGLESX && (numericVersion >= 44)) || Utils::isExtensionSupported(*this, "GL_ARB_buffer_storage") ||
 			Utils::isExtensionSupported(*this, "GL_EXT_buffer_storage");
 
-	texStorage = (isGLESX && (numericVersion >= 30) && config.video.multisampling != 0) || (!isGLESX && numericVersion >= 42) ||
+	texStorage = (isGLESX && (numericVersion >= 30)) || (!isGLESX && numericVersion >= 42) ||
 			Utils::isExtensionSupported(*this, "GL_ARB_texture_storage");
 
 	shaderStorage = false;
@@ -107,20 +108,20 @@ void GLInfo::init() {
 	bool ext_draw_buffers_indexed = isGLESX && (Utils::isExtensionSupported(*this, "GL_EXT_draw_buffers_indexed") || numericVersion >= 32);
 #ifdef EGL
 	if (isGLESX && bufferStorage)
-		RealBufferStorage = (PFNGLBUFFERSTORAGEPROC) eglGetProcAddress("glBufferStorageEXT");
+		g_glBufferStorage = (PFNGLBUFFERSTORAGEPROC) eglGetProcAddress("glBufferStorageEXT");
 	if (isGLESX && numericVersion < 32) {
 		if (ext_draw_buffers_indexed) {
-            RealEnablei = (PFNGLENABLEIPROC) eglGetProcAddress("glEnableiEXT");
-            RealDisablei = (PFNGLDISABLEIPROC) eglGetProcAddress("glDisableiEXT");
+			g_glEnablei = (PFNGLENABLEIPROC) eglGetProcAddress("glEnableiEXT");
+			g_glDisablei = (PFNGLDISABLEIPROC) eglGetProcAddress("glDisableiEXT");
 		} else {
-            RealEnablei = nullptr;
-            RealDisablei = nullptr;
+			g_glEnablei = nullptr;
+			g_glDisablei = nullptr;
 		}
 	}
 	if (isGLES2 && shaderStorage) {
-        RealProgramBinary = (PFNGLPROGRAMBINARYPROC) eglGetProcAddress("glProgramBinaryOES");
-        RealGetProgramBinary = (PFNGLGETPROGRAMBINARYPROC) eglGetProcAddress("glGetProgramBinaryOES");
-        RealProgramParameteri = nullptr;
+		g_glProgramBinary = (PFNGLPROGRAMBINARYPROC) eglGetProcAddress("glProgramBinaryOES");
+		g_glGetProgramBinary = (PFNGLGETPROGRAMBINARYPROC) eglGetProcAddress("glGetProgramBinaryOES");
+		g_glProgramParameteri = nullptr;
 	}
 #endif
 #ifndef OS_ANDROID

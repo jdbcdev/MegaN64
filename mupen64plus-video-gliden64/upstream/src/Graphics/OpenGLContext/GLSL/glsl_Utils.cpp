@@ -4,7 +4,6 @@
 #include "glsl_Utils.h"
 
 using namespace glsl;
-using namespace opengl;
 
 void Utils::locateAttributes(GLuint _program, bool _rect, bool _textures)
 {

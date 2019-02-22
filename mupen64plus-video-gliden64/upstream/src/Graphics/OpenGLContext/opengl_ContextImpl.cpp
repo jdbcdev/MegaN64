@@ -7,7 +7,9 @@
 #include "opengl_UnbufferedDrawer.h"
 #include "opengl_ColorBufferReaderWithPixelBuffer.h"
 #include "opengl_ColorBufferReaderWithBufferStorage.h"
+#ifdef OS_ANDROID
 #include "opengl_ColorBufferReaderWithEGLImage.h"
+#endif
 #include "opengl_ColorBufferReaderWithReadPixels.h"
 #include "opengl_Utils.h"
 #include "GLSL/glsl_CombinerProgramBuilder.h"
@@ -65,11 +67,10 @@ void ContextImpl::init()
 	}
 
 	{
-		if ((m_glInfo.isGLESX && (m_glInfo.bufferStorage && m_glInfo.majorVersion * 10 + m_glInfo.minorVersion >= 32)) || !m_glInfo.isGLESX) {
+		if ((m_glInfo.isGLESX && (m_glInfo.bufferStorage && m_glInfo.majorVersion * 10 + m_glInfo.minorVersion >= 32)) || !m_glInfo.isGLESX)
 			m_graphicsDrawer.reset(new BufferedDrawer(m_glInfo, m_cachedFunctions->getCachedVertexAttribArray(), m_cachedFunctions->getCachedBindBuffer()));
-		} else {
+		else
 			m_graphicsDrawer.reset(new UnbufferedDrawer(m_glInfo, m_cachedFunctions->getCachedVertexAttribArray()));
-		}
 	}
 
 	resetCombinerProgramBuilder();
@@ -171,8 +172,8 @@ void ContextImpl::clearColorBuffer(f32 _red, f32 _green, f32 _blue, f32 _alpha)
 		m_cachedFunctions->getCachedClearColor()->setClearColor(_red, _green, _blue, _alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
 	} else {
-        GLfloat values[4] = {_red, _green, _blue, _alpha};
-        glClearBufferfv(GL_COLOR, 0, std::move(values));
+		GLfloat values[4] = {_red, _green, _blue, _alpha};
+		glClearBufferfv(GL_COLOR, 0, values);
 	}
 
 	enableScissor->enable(true);
@@ -210,7 +211,7 @@ graphics::ObjectHandle ContextImpl::createTexture(graphics::Parameter _target)
 void ContextImpl::deleteTexture(graphics::ObjectHandle _name)
 {
 	u32 glName(_name);
-    glDeleteTextures(1, &glName);
+	glDeleteTextures(1, &glName);
 	m_init2DTexture->reset(_name);
 
 	m_cachedFunctions->getTexParams()->erase(u32(_name));
@@ -300,7 +301,7 @@ void ContextImpl::deleteFramebuffer(graphics::ObjectHandle _name)
 {
 	u32 fbo(_name);
 	if (fbo != 0) {
-		glDeleteFramebuffers(1, std::move(&fbo));
+		glDeleteFramebuffers(1, &fbo);
 		m_cachedFunctions->getCachedBindFramebuffer()->reset();
 	}
 }

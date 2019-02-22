@@ -13,9 +13,6 @@
 #include <gDP.h>
 #include <VI.h>
 
-#include <algorithm>
-using namespace opengl;
-
 namespace glsl {
 
 /*---------------Uniform-------------*/

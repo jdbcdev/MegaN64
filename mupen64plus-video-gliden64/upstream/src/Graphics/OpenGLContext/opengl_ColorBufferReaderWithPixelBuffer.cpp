@@ -47,25 +47,23 @@ void ColorBufferReaderWithPixelBuffer::_initBuffers()
 const u8 * ColorBufferReaderWithPixelBuffer::_readPixels(const ReadColorBufferParams& _params, u32& _heightOffset,
 	u32& _stride)
 {
-    GLenum format = GLenum(_params.colorFormat);
-    GLenum type = GLenum(_params.colorType);
+	GLenum format = GLenum(_params.colorFormat);
+	GLenum type = GLenum(_params.colorType);
 
-    m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[m_curIndex]));
-    glReadPixels(_params.x0,
-            _params.y0, m_pTexture->realWidth, _params.height, format, type, 0);
-    // If Sync, read pixels from the buffer, copy them to RDRAM.
-    // If not Sync, read pixels from the buffer, copy pixels from the previous buffer to RDRAM.
-    if (!_params.sync) {
-        m_curIndex = (m_curIndex + 1) % m_numPBO;
-        m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[m_curIndex]));
-    }
+	m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[m_curIndex]));
+	glReadPixels(_params.x0, _params.y0, m_pTexture->realWidth, _params.height, format, type, 0);
+	// If Sync, read pixels from the buffer, copy them to RDRAM.
+	// If not Sync, read pixels from the buffer, copy pixels from the previous buffer to RDRAM.
+	if (!_params.sync) {
+		m_curIndex = (m_curIndex + 1) % m_numPBO;
+		m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[m_curIndex]));
+	}
 
-    _heightOffset = 0;
-    _stride = m_pTexture->realWidth;
+	_heightOffset = 0;
+	_stride = m_pTexture->realWidth;
 
-    return reinterpret_cast<u8*>(glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0,
-                                                  m_pTexture->realWidth * _params.height * _params.colorFormatBytes, GL_MAP_READ_BIT));
-
+	return reinterpret_cast<u8*>(glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0,
+		m_pTexture->realWidth * _params.height * _params.colorFormatBytes, GL_MAP_READ_BIT));
 }
 
 void ColorBufferReaderWithPixelBuffer::cleanUp()

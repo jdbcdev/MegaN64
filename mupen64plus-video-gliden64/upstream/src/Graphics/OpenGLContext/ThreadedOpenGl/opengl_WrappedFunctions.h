@@ -41,7 +41,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBlendFunc(m_sfactor, m_dfactor);
+			g_glBlendFunc(m_sfactor, m_dfactor);
 		}
 	private:
 		void set(GLenum sfactor, GLenum dfactor)
@@ -72,7 +72,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealPixelStorei(m_pname, m_param);
+			g_glPixelStorei(m_pname, m_param);
 		}
 
 	private:
@@ -105,7 +105,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealClearColor(m_red, m_green, m_blue, m_alpha);
+			g_glClearColor(m_red, m_green, m_blue, m_alpha);
 		}
 	private:
 		void set(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
@@ -140,7 +140,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealCullFace(m_mode);
+			g_glCullFace(m_mode);
 		}
 
 	private:
@@ -170,7 +170,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDepthFunc(m_func);
+			g_glDepthFunc(m_func);
 		}
 	private:
 		void set(GLenum func)
@@ -200,7 +200,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDepthMask(m_flag);
+			g_glDepthMask(m_flag);
 		}
 	private:
 		void set(GLboolean flag)
@@ -229,7 +229,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDisable(m_cap);
+			g_glDisable(m_cap);
 		}
 	private:
 		void set(GLenum cap)
@@ -258,7 +258,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealEnable(m_cap);
+			g_glEnable(m_cap);
 		}
 	private:
 		void set(GLenum cap)
@@ -287,7 +287,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDisablei(m_target, m_index);
+			g_glDisablei(m_target, m_index);
 		}
 	private:
 		void set(GLenum target, GLuint index)
@@ -318,7 +318,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealEnablei(m_target, m_index);
+			g_glEnablei(m_target, m_index);
 		}
 	private:
 		void set(GLenum target, GLuint index)
@@ -349,7 +349,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealPolygonOffset(m_factor, m_units);
+			g_glPolygonOffset(m_factor, m_units);
 		}
 	private:
 		void set(GLfloat factor, GLfloat units)
@@ -380,7 +380,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealScissor(m_x, m_y, m_width, m_height);
+			g_glScissor(m_x, m_y, m_width, m_height);
 		}
 	private:
 		void set(GLint x, GLint y, GLsizei width, GLsizei height)
@@ -415,7 +415,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealViewport(m_x, m_y, m_width, m_height);
+			g_glViewport(m_x, m_y, m_width, m_height);
 		}
 	private:
 		void set(GLint x, GLint y, GLsizei width, GLsizei height)
@@ -450,7 +450,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBindTexture(m_target, m_texture);
+			g_glBindTexture(m_target, m_texture);
 		}
 	private:
 		void set(GLenum target, GLuint texture)
@@ -482,7 +482,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTexImage2D(m_target, m_level, m_internalformat, m_width, m_height, m_border, m_format, m_type,
+			g_glTexImage2D(m_target, m_level, m_internalformat, m_width, m_height, m_border, m_format, m_type,
 				m_pixels.get());
 		}
 	private:
@@ -529,7 +529,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTexParameteri(m_target, m_pname, m_param);
+			g_glTexParameteri(m_target, m_pname, m_param);
 		}
 	private:
 		void set(GLenum target, GLenum pname, GLint param)
@@ -562,7 +562,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGetIntegerv(m_pname, m_data);
+			g_glGetIntegerv(m_pname, m_data);
 		}
 	private:
 		void set(GLenum pname, GLint* data)
@@ -593,7 +593,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			*m_returnValue = RealGetString(m_name);
+			*m_returnValue = g_glGetString(m_name);
 		}
 	private:
 		void set(GLenum name, const GLubyte*& returnValue)
@@ -624,7 +624,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealReadPixels(m_x, m_y, m_width, m_height, m_format, m_type, m_pixels);
+			g_glReadPixels(m_x, m_y, m_width, m_height, m_format, m_type, m_pixels);
 		}
 	private:
 		void set(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels)
@@ -665,7 +665,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealReadPixels(m_x, m_y, m_width, m_height, m_format, m_type, nullptr);
+			g_glReadPixels(m_x, m_y, m_width, m_height, m_format, m_type, nullptr);
 		}
 
         static GLuint getBoundBuffer()
@@ -717,7 +717,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTexSubImage2D(m_target, m_level, m_xoffset, m_yoffset, m_width, m_height, m_format, m_type, m_pixels.get());
+			g_glTexSubImage2D(m_target, m_level, m_xoffset, m_yoffset, m_width, m_height, m_format, m_type, m_pixels.get());
 		}
 	private:
 		void set(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
@@ -763,7 +763,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDrawArrays(m_mode, m_first, m_count);
+			g_glDrawArrays(m_mode, m_first, m_count);
 		}
 	private:
 		void set(GLenum mode, GLint first, GLsizei count)
@@ -989,13 +989,13 @@ namespace opengl {
 
                     unsigned long ptrOffset = reinterpret_cast<const char*>(data.second.m_pointer) -
                                               GlVertexAttribPointerManager::getSmallestPtrRender();
-                    RealVertexAttribPointer(data.second.m_index, data.second.m_size, data.second.m_type, data.second.m_normalized,
+                    g_glVertexAttribPointer(data.second.m_index, data.second.m_size, data.second.m_type, data.second.m_normalized,
                                             data.second.m_stride, reinterpret_cast<const GLvoid*>(m_attribsData.data() + ptrOffset));
                     data.second.m_updated = false;
                 }
             }
 			std::copy_n(m_data->val().begin(), m_data->val().size(), m_attribsData.begin());
-			RealDrawArrays(m_mode, m_first, m_count);
+			g_glDrawArrays(m_mode, m_first, m_count);
             GlVertexAttribPointerManager::releaseVectorFromPool(m_data);
 		}
 	private:
@@ -1032,7 +1032,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			*m_returnValue = RealGetError();
+			*m_returnValue = g_glGetError();
 		}
 	private:
 		void set(GLenum& returnValue)
@@ -1075,14 +1075,14 @@ namespace opengl {
                 if (data.second.m_updated && data.second.m_enabled) {
                     unsigned long ptrOffset = reinterpret_cast<const char*>(data.second.m_pointer) -
                                               GlVertexAttribPointerManager::getSmallestPtrRender();
-                    RealVertexAttribPointer(data.second.m_index, data.second.m_size, data.second.m_type, data.second.m_normalized,
+                    g_glVertexAttribPointer(data.second.m_index, data.second.m_size, data.second.m_type, data.second.m_normalized,
                                             data.second.m_stride, reinterpret_cast<const GLvoid*>(m_attribsData.data() + ptrOffset));
                     data.second.m_updated = false;
                 }
             }
 
             std::copy_n(m_data->val().begin(), m_data->val().size(), m_attribsData.begin());
-            RealDrawElements(m_mode, m_count, m_type, m_indices.get());
+            g_glDrawElements(m_mode, m_count, m_type, m_indices.get());
             GlVertexAttribPointerManager::releaseVectorFromPool(m_data);
 		}
 	private:
@@ -1122,7 +1122,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealLineWidth(m_width);
+			g_glLineWidth(m_width);
 		}
 	private:
 		void set(GLfloat width)
@@ -1151,7 +1151,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealClear(m_mask);
+			g_glClear(m_mask);
 		}
 	private:
 		void set(GLbitfield mask)
@@ -1180,7 +1180,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealClearBufferfv(m_buffer, m_drawbuffer, m_value.get());
+			g_glClearBufferfv(m_buffer, m_drawbuffer, m_value.get());
 		}
 	private:
 		void set(GLenum buffer, GLint drawbuffer, std::unique_ptr<GLfloat[]> value)
@@ -1213,7 +1213,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGetFloatv(m_pname, m_data);
+			g_glGetFloatv(m_pname, m_data);
 		}
 	private:
 		void set(GLenum pname, GLfloat* data)
@@ -1244,7 +1244,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDeleteTextures(m_n, m_textures.get());
+			g_glDeleteTextures(m_n, m_textures.get());
 		}
 	private:
 		void set(GLsizei n, std::unique_ptr<GLuint[]> textures)
@@ -1275,7 +1275,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGenTextures(m_n, m_textures);
+			g_glGenTextures(m_n, m_textures);
 		}
 	private:
 		void set(GLsizei n, GLuint* textures)
@@ -1306,7 +1306,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTexParameterf(m_target, m_pname, m_param);
+			g_glTexParameterf(m_target, m_pname, m_param);
 		}
 	private:
 		void set(GLenum target, GLenum pname, GLfloat param)
@@ -1339,7 +1339,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealActiveTexture(m_texture);
+			g_glActiveTexture(m_texture);
 		}
 	private:
 		void set(GLenum texture)
@@ -1368,7 +1368,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBlendColor(m_red, m_green, m_blue, m_alpha);
+			g_glBlendColor(m_red, m_green, m_blue, m_alpha);
 		}
 	private:
 		void set(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
@@ -1403,7 +1403,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealReadBuffer(m_src);
+			g_glReadBuffer(m_src);
 		}
 	private:
 		void set(GLenum src)
@@ -1432,7 +1432,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			*m_returnValue = RealCreateShader(m_type);
+			*m_returnValue = g_glCreateShader(m_type);
 		}
 	private:
 		void set(GLenum type, GLuint& returnValue)
@@ -1463,7 +1463,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealCompileShader(m_shader);
+			g_glCompileShader(m_shader);
 		}
 	private:
 		void set(GLuint shader)
@@ -1497,7 +1497,7 @@ namespace opengl {
                 stringData[index] = m_strings[index].data();
             }
 
-			RealShaderSource(m_shader, m_strings.size(), stringData, nullptr);
+			g_glShaderSource(m_shader, m_strings.size(), stringData, nullptr);
 		}
 	private:
 		void set(GLuint shader, std::vector<std::string>& strings)
@@ -1528,7 +1528,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			*m_returnValue = RealCreateProgram();
+			*m_returnValue = g_glCreateProgram();
 		}
 	private:
 		void set(GLuint& returnValue)
@@ -1557,7 +1557,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealAttachShader(m_program, m_shader);
+			g_glAttachShader(m_program, m_shader);
 		}
 	private:
 		void set(GLuint program, GLuint shader)
@@ -1588,7 +1588,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealLinkProgram(m_program);
+			g_glLinkProgram(m_program);
 		}
 	private:
 		void set(GLuint program)
@@ -1617,7 +1617,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealUseProgram(m_program);
+			g_glUseProgram(m_program);
 		}
 	private:
 		void set(GLuint program)
@@ -1646,7 +1646,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			*m_returnValue = RealGetUniformLocation(m_program, m_name);
+			*m_returnValue = g_glGetUniformLocation(m_program, m_name);
 		}
 	private:
 		void set(GLuint program, const GLchar* name, GLint& returnValue)
@@ -1679,7 +1679,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealUniform1i(m_location, m_v0);
+			g_glUniform1i(m_location, m_v0);
 		}
 	private:
 		void set(GLint location, GLint v0)
@@ -1710,7 +1710,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealUniform1f(m_location, m_v0);
+			g_glUniform1f(m_location, m_v0);
 		}
 	private:
 		void set(GLint location, GLfloat v0)
@@ -1741,7 +1741,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealUniform2f(m_location, m_v0, m_v1);
+			g_glUniform2f(m_location, m_v0, m_v1);
 		}
 	private:
 		void set(GLint location, GLfloat v0, GLfloat v1)
@@ -1774,7 +1774,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealUniform2i(m_location, m_v0, m_v1);
+			g_glUniform2i(m_location, m_v0, m_v1);
 		}
 	private:
 		void set(GLint location, GLint v0, GLint v1)
@@ -1807,7 +1807,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealUniform4i(m_location, m_v0, m_v1, m_v2, m_v3);
+			g_glUniform4i(m_location, m_v0, m_v1, m_v2, m_v3);
 		}
 	private:
 		void set(GLint location, GLint v0, GLint v1, GLint v2, GLint v3)
@@ -1844,7 +1844,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealUniform4f(m_location, m_v0, m_v1, m_v2, m_v3);
+			g_glUniform4f(m_location, m_v0, m_v1, m_v2, m_v3);
 		}
 	private:
 		void set(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3)
@@ -1881,7 +1881,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealUniform3fv(m_location, m_count, m_value.get());
+			g_glUniform3fv(m_location, m_count, m_value.get());
 		}
 	private:
 		void set(GLint location, GLsizei count, std::unique_ptr<GLfloat[]> value)
@@ -1914,7 +1914,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealUniform4fv(m_location, m_count, m_value.get());
+			g_glUniform4fv(m_location, m_count, m_value.get());
 		}
 	private:
 		void set(GLint location, GLsizei count, std::unique_ptr<GLfloat[]> value)
@@ -1947,7 +1947,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDetachShader(m_program, m_shader);
+			g_glDetachShader(m_program, m_shader);
 		}
 	private:
 		void set(GLuint program, GLuint shader)
@@ -1978,7 +1978,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDeleteShader(m_shader);
+			g_glDeleteShader(m_shader);
 		}
 	private:
 		void set(GLuint shader)
@@ -2007,7 +2007,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDeleteProgram(m_program);
+			g_glDeleteProgram(m_program);
 		}
 	private:
 		void set(GLuint program)
@@ -2036,7 +2036,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGetProgramInfoLog(m_program, m_bufSize, m_length, m_infoLog);
+			g_glGetProgramInfoLog(m_program, m_bufSize, m_length, m_infoLog);
 		}
 	private:
 		void set(GLuint program, GLsizei bufSize, GLsizei* length, GLchar* infoLog)
@@ -2071,7 +2071,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGetShaderInfoLog(m_shader, m_bufSize, m_length, m_infoLog);
+			g_glGetShaderInfoLog(m_shader, m_bufSize, m_length, m_infoLog);
 		}
 	private:
 		void set(GLuint shader, GLsizei bufSize, GLsizei* length, GLchar* infoLog)
@@ -2106,7 +2106,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGetShaderiv(m_shader, m_pname, m_params);
+			g_glGetShaderiv(m_shader, m_pname, m_params);
 		}
 	private:
 		void set(GLuint shader, GLenum pname, GLint* params)
@@ -2129,7 +2129,7 @@ namespace opengl {
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(GLuint program, GLenum pname, GLint* params)
+		static std::shared_ptr<OpenGlCommand> get(GLuint program, GLenum pname, GLint*& params)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlGetProgramivCommand>(poolId);
@@ -2139,19 +2139,19 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGetProgramiv(m_program, m_pname, m_params);
+			g_glGetProgramiv(m_program, m_pname, *m_params);
 		}
 	private:
-		void set(GLuint program, GLenum pname, GLint* params)
+		void set(GLuint program, GLenum pname, GLint*& params)
 		{
 			m_program = program;
 			m_pname = pname;
-			m_params = params;
+			m_params = &params;
 		}
 
 		GLuint m_program;
 		GLenum m_pname;
-		GLint* m_params;
+		GLint** m_params;
 	};
 
 	class GlEnableVertexAttribArrayCommand : public OpenGlCommand
@@ -2173,7 +2173,7 @@ namespace opengl {
 		void commandToExecute() override
 		{
             GlVertexAttribPointerManager::enableVertexAttributeIndexRender(m_index);
-            RealEnableVertexAttribArray(m_index);
+            g_glEnableVertexAttribArray(m_index);
 		}
 	private:
 		void set(GLuint index)
@@ -2203,7 +2203,7 @@ namespace opengl {
 		void commandToExecute() override
 		{
             GlVertexAttribPointerManager::disableVertexAttributeIndexRender(m_index);
-			RealDisableVertexAttribArray(m_index);
+			g_glDisableVertexAttribArray(m_index);
 		}
 	private:
 		void set(GLuint index)
@@ -2233,7 +2233,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealVertexAttribPointer(m_index, m_size, m_type, m_normalized, m_stride, m_offset);
+			g_glVertexAttribPointer(m_index, m_size, m_type, m_normalized, m_stride, m_offset);
 		}
 	private:
 		void set(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
@@ -2273,7 +2273,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBindAttribLocation(m_program, m_index, m_name.data());
+			g_glBindAttribLocation(m_program, m_index, m_name.data());
 		}
 	private:
 		void set(GLuint program, GLuint index, const std::string name)
@@ -2306,7 +2306,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealVertexAttrib1f(m_index, m_x);
+			g_glVertexAttrib1f(m_index, m_x);
 		}
 	private:
 		void set(GLuint index, GLfloat x)
@@ -2337,7 +2337,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealVertexAttrib4f(m_index, m_x, m_y, m_z, m_w);
+			g_glVertexAttrib4f(m_index, m_x, m_y, m_z, m_w);
 		}
 	private:
 		void set(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
@@ -2374,7 +2374,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealVertexAttrib4fv(m_index, m_v.get());
+			g_glVertexAttrib4fv(m_index, m_v.get());
 		}
 	private:
 		void set(GLuint index, std::unique_ptr<GLfloat[]> v)
@@ -2405,7 +2405,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDepthRangef(m_n,m_f);
+			g_glDepthRangef(m_n,m_f);
 		}
 	private:
 		void set(GLfloat n, GLfloat f)
@@ -2436,7 +2436,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealClearDepthf(m_d);
+			g_glClearDepthf(m_d);
 		}
 	private:
 		void set(GLfloat d)
@@ -2465,7 +2465,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDrawBuffers(m_n, m_bufs.get());
+			g_glDrawBuffers(m_n, m_bufs.get());
 		}
 	private:
 		void set(GLsizei n, std::unique_ptr<GLenum[]> bufs)
@@ -2496,7 +2496,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGenFramebuffers(m_n, m_framebuffers);
+			g_glGenFramebuffers(m_n, m_framebuffers);
 		}
 	private:
 		void set(GLsizei n, GLuint* framebuffers)
@@ -2527,7 +2527,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBindFramebuffer(m_target, m_framebuffer);
+			g_glBindFramebuffer(m_target, m_framebuffer);
 		}
 	private:
 		void set(GLenum target, GLuint framebuffer)
@@ -2558,7 +2558,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDeleteFramebuffers(m_n, m_framebuffers.get());
+			g_glDeleteFramebuffers(m_n, m_framebuffers.get());
 		}
 	private:
 		void set(GLsizei n, std::unique_ptr<GLuint[]> framebuffers)
@@ -2589,7 +2589,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealFramebufferTexture2D(m_target, m_attachment, m_textarget, m_texture, m_level);
+			g_glFramebufferTexture2D(m_target, m_attachment, m_textarget, m_texture, m_level);
 		}
 	private:
 		void set(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
@@ -2627,7 +2627,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTexImage2DMultisample(m_target, m_samples, m_internalformat, m_width, m_height, m_fixedsamplelocations);
+			g_glTexImage2DMultisample(m_target, m_samples, m_internalformat, m_width, m_height, m_fixedsamplelocations);
 		}
 	private:
 		void set(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width,
@@ -2668,7 +2668,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTexStorage2DMultisample(m_target, m_samples, m_internalformat, m_width, m_height, m_fixedsamplelocations);
+			g_glTexStorage2DMultisample(m_target, m_samples, m_internalformat, m_width, m_height, m_fixedsamplelocations);
 		}
 	private:
 		void set(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width,
@@ -2708,7 +2708,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGenRenderbuffers(m_n, m_renderbuffers);
+			g_glGenRenderbuffers(m_n, m_renderbuffers);
 		}
 	private:
 		void set(GLsizei n, GLuint* renderbuffers)
@@ -2739,7 +2739,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBindRenderbuffer(m_target, m_renderbuffer);
+			g_glBindRenderbuffer(m_target, m_renderbuffer);
 		}
 	private:
 		void set(GLenum target, GLuint renderbuffer)
@@ -2770,7 +2770,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealRenderbufferStorage(m_target, m_internalformat, m_width, m_height);
+			g_glRenderbufferStorage(m_target, m_internalformat, m_width, m_height);
 		}
 	private:
 		void set(GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
@@ -2805,7 +2805,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDeleteRenderbuffers(m_n, m_renderbuffers.get());
+			g_glDeleteRenderbuffers(m_n, m_renderbuffers.get());
 		}
 	private:
 		void set(GLsizei n, std::unique_ptr<GLuint[]> renderbuffers)
@@ -2836,7 +2836,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealFramebufferRenderbuffer(m_target, m_attachment, m_renderbuffertarget, m_renderbuffer);
+			g_glFramebufferRenderbuffer(m_target, m_attachment, m_renderbuffertarget, m_renderbuffer);
 		}
 	private:
 		void set(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
@@ -2871,7 +2871,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			*m_returnValue = RealCheckFramebufferStatus(m_target);
+			*m_returnValue = g_glCheckFramebufferStatus(m_target);
 		}
 	private:
 		void set(GLenum target, GLenum& returnValue)
@@ -2903,7 +2903,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBlitFramebuffer(m_srcX0, m_srcY0, m_srcX1, m_srcY1, m_dstX0, m_dstY0, m_dstX1, m_dstY1, m_mask,
+			g_glBlitFramebuffer(m_srcX0, m_srcY0, m_srcX1, m_srcY1, m_dstX0, m_dstY0, m_dstX1, m_dstY1, m_mask,
 				m_filter);
 		}
 	private:
@@ -2952,7 +2952,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGenVertexArrays(m_n, m_arrays);
+			g_glGenVertexArrays(m_n, m_arrays);
 		}
 	private:
 		void set(GLsizei n, GLuint* arrays)
@@ -2983,7 +2983,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBindVertexArray(m_array);
+			g_glBindVertexArray(m_array);
 		}
 	private:
 		void set(GLuint array)
@@ -3012,7 +3012,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDeleteVertexArrays(m_n, m_arrays.get());
+			g_glDeleteVertexArrays(m_n, m_arrays.get());
 		}
 	private:
 		void set(GLsizei n, std::unique_ptr<GLuint[]> arrays)
@@ -3043,7 +3043,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGenBuffers(m_n, m_buffers);
+			g_glGenBuffers(m_n, m_buffers);
 		}
 	private:
 		void set(GLsizei n, GLuint* buffers)
@@ -3089,7 +3089,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBindBuffer(m_target, m_buffer);
+			g_glBindBuffer(m_target, m_buffer);
             m_boundBuffersRender[m_target] = m_buffer;
 		}
 	private:
@@ -3124,7 +3124,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBufferData(m_target, m_size, m_data.get(), m_usage);
+			g_glBufferData(m_target, m_size, m_data.get(), m_usage);
 		}
 	private:
 		void set(GLenum target, GLsizeiptr size, std::unique_ptr<u8[]> data, GLenum usage)
@@ -3159,7 +3159,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealMapBuffer(m_target, m_access);
+			g_glMapBuffer(m_target, m_access);
 		}
 	private:
 		void set(GLenum target, GLenum access)
@@ -3191,7 +3191,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			*m_returnValue = RealMapBufferRange(m_target, m_offset, m_length, m_access);
+			*m_returnValue = g_glMapBufferRange(m_target, m_offset, m_length, m_access);
 		}
 	private:
 		void set(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access,
@@ -3230,7 +3230,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			void* buffer_pointer = RealMapBufferRange(m_target, m_offset, m_length, m_access);
+			void* buffer_pointer = g_glMapBufferRange(m_target, m_offset, m_length, m_access);
 			memcpy(buffer_pointer, m_data->val().data(), m_length);
 			m_vectorPool.release(m_data);
 		}
@@ -3325,7 +3325,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			void* buffer_pointer = RealMapBufferRange(m_target, m_offset, m_length, m_access);
+			void* buffer_pointer = g_glMapBufferRange(m_target, m_offset, m_length, m_access);
 
 			if (buffer_pointer != nullptr) {
 				std::unique_lock<std::mutex> lock(m_mapMutex);
@@ -3385,7 +3385,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			*m_returnValue = RealUnmapBuffer(m_target);
+			*m_returnValue = g_glUnmapBuffer(m_target);
 		}
 	private:
 		void set(GLenum target, GLboolean& returnValue)
@@ -3416,7 +3416,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealUnmapBuffer(m_target);
+			g_glUnmapBuffer(m_target);
 		}
 	private:
 		void set(GLenum target)
@@ -3445,7 +3445,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDeleteBuffers(m_n, m_buffers.get());
+			g_glDeleteBuffers(m_n, m_buffers.get());
 		}
 	private:
 		void set(GLsizei n, std::unique_ptr<GLuint[]> buffers)
@@ -3477,7 +3477,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBindImageTexture(m_unit, m_texture, m_level, m_layered, m_layer, m_access, m_format);
+			g_glBindImageTexture(m_unit, m_texture, m_level, m_layered, m_layer, m_access, m_format);
 		}
 	private:
 		void set(GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer,
@@ -3519,7 +3519,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealMemoryBarrier(m_barriers);
+			g_glMemoryBarrier(m_barriers);
 		}
 	private:
 		void set(GLbitfield barriers)
@@ -3548,7 +3548,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTextureBarrier();
+			g_glTextureBarrier();
 		}
 	private:
 		void set()
@@ -3574,7 +3574,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTextureBarrierNV();
+			g_glTextureBarrierNV();
 		}
 	private:
 		void set()
@@ -3600,7 +3600,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			*m_returnValue = RealGetStringi(m_name, m_index);
+			*m_returnValue = g_glGetStringi(m_name, m_index);
 		}
 	private:
 		void set(GLenum name, GLuint index, const GLubyte*& returnValue)
@@ -3633,7 +3633,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealInvalidateFramebuffer(m_target, m_numAttachments, m_attachments.get());
+			g_glInvalidateFramebuffer(m_target, m_numAttachments, m_attachments.get());
 		}
 	private:
 		void set(GLenum target, GLsizei numAttachments, std::unique_ptr<GLenum[]> attachments)
@@ -3666,7 +3666,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBufferStorage(m_target, m_size, m_data.get(), m_flags);
+			g_glBufferStorage(m_target, m_size, m_data.get(), m_flags);
 		}
 	private:
 		void set(GLenum target, GLsizeiptr size, std::unique_ptr<u8[]> data, GLbitfield flags)
@@ -3701,7 +3701,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			*m_returnValue = RealFenceSync(m_condition, m_flags);
+			*m_returnValue = g_glFenceSync(m_condition, m_flags);
 		}
 	private:
 		void set(GLenum condition, GLbitfield flags, GLsync& returnValue)
@@ -3734,7 +3734,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealClientWaitSync(m_sync, m_flags, m_timeout);
+			g_glClientWaitSync(m_sync, m_flags, m_timeout);
 		}
 	private:
 		void set(GLsync sync, GLbitfield flags, GLuint64 timeout)
@@ -3767,7 +3767,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDeleteSync(m_sync);
+			g_glDeleteSync(m_sync);
 		}
 	private:
 		void set(GLsync sync)
@@ -3796,7 +3796,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			*m_returnValue = RealGetUniformBlockIndex(m_program, m_uniformBlockName);
+			*m_returnValue = g_glGetUniformBlockIndex(m_program, m_uniformBlockName);
 		}
 	private:
 		void set(GLuint program, const GLchar* uniformBlockName, GLuint& returnValue)
@@ -3829,7 +3829,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealUniformBlockBinding(m_program, m_uniformBlockIndex, m_uniformBlockBinding);
+			g_glUniformBlockBinding(m_program, m_uniformBlockIndex, m_uniformBlockBinding);
 		}
 	private:
 		void set(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding)
@@ -3862,7 +3862,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGetActiveUniformBlockiv(m_program, m_uniformBlockIndex, m_pname, m_params);
+			g_glGetActiveUniformBlockiv(m_program, m_uniformBlockIndex, m_pname, m_params);
 		}
 	private:
 		void set(GLuint program, GLuint uniformBlockIndex, GLenum pname, GLint* params)
@@ -3898,7 +3898,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGetUniformIndices(m_program, m_uniformCount, m_uniformNames, m_uniformIndices);
+			g_glGetUniformIndices(m_program, m_uniformCount, m_uniformNames, m_uniformIndices);
 		}
 	private:
 		void set(GLuint program, GLsizei uniformCount, const GLchar* const* uniformNames,
@@ -3935,7 +3935,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGetActiveUniformsiv(m_program, m_uniformCount, m_uniformIndices, m_pname, m_params);
+			g_glGetActiveUniformsiv(m_program, m_uniformCount, m_uniformIndices, m_pname, m_params);
 		}
 	private:
 		void set(GLuint program, GLsizei uniformCount, const GLuint* uniformIndices, GLenum pname,
@@ -3973,7 +3973,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBindBufferBase(m_target, m_index, m_buffer);
+			g_glBindBufferBase(m_target, m_index, m_buffer);
 		}
 	private:
 		void set(GLenum target, GLuint index, GLuint buffer)
@@ -4006,7 +4006,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealBufferSubData(m_target, m_offset, m_size, m_data.get());
+			g_glBufferSubData(m_target, m_offset, m_size, m_data.get());
 		}
 	private:
 		void set(GLenum target, GLintptr offset, GLsizeiptr size, std::unique_ptr<u8[]> data)
@@ -4041,7 +4041,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealGetProgramBinary(m_program, m_bufSize, m_length, m_binaryFormat, m_binary);
+			g_glGetProgramBinary(m_program, m_bufSize, m_length, m_binaryFormat, m_binary);
 		}
 	private:
 		void set(GLuint program, GLsizei bufSize, GLsizei* length, GLenum* binaryFormat, void* binary)
@@ -4078,7 +4078,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealProgramBinary(m_program, m_binaryFormat, m_binary.get(), m_length);
+			g_glProgramBinary(m_program, m_binaryFormat, m_binary.get(), m_length);
 		}
 	private:
 		void set(GLuint program, GLenum binaryFormat, std::unique_ptr<u8[]> binary, GLsizei length)
@@ -4113,7 +4113,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealProgramParameteri(m_program, m_pname, m_value);
+			g_glProgramParameteri(m_program, m_pname, m_value);
 		}
 	private:
 		void set(GLuint program, GLenum pname, GLint value)
@@ -4146,7 +4146,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTexStorage2D(m_target, m_levels, m_internalformat, m_width, m_height);
+			g_glTexStorage2D(m_target, m_levels, m_internalformat, m_width, m_height);
 		}
 	private:
 		void set(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height)
@@ -4183,7 +4183,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTextureStorage2D(m_texture, m_levels, m_internalformat, m_width, m_height);
+			g_glTextureStorage2D(m_texture, m_levels, m_internalformat, m_width, m_height);
 		}
 	private:
 		void set(GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height)
@@ -4221,7 +4221,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTextureSubImage2D(m_texture, m_level, m_xoffset, m_yoffset, m_width, m_height, m_format, m_type,
+			g_glTextureSubImage2D(m_texture, m_level, m_xoffset, m_yoffset, m_width, m_height, m_format, m_type,
 								  m_pixels.get());
 		}
 	private:
@@ -4269,7 +4269,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTextureStorage2DMultisample(m_texture, m_target, m_samples, m_internalformat,m_width, m_height,
+			g_glTextureStorage2DMultisample(m_texture, m_target, m_samples, m_internalformat,m_width, m_height,
 				m_fixedsamplelocations);
 		}
 	private:
@@ -4312,7 +4312,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTextureParameteri(m_texture, m_pname, m_param);
+			g_glTextureParameteri(m_texture, m_pname, m_param);
 		}
 	private:
 		void set(GLuint texture, GLenum pname, GLint param)
@@ -4345,7 +4345,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealTextureParameterf(m_texture, m_pname, m_param);
+			g_glTextureParameterf(m_texture, m_pname, m_param);
 		}
 	private:
 		void set(GLuint texture, GLenum pname, GLfloat param)
@@ -4378,7 +4378,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealCreateTextures(m_target, m_n, m_textures);
+			g_glCreateTextures(m_target, m_n, m_textures);
 		}
 	private:
 		void set(GLenum target, GLsizei n, GLuint* textures)
@@ -4411,7 +4411,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealCreateBuffers(m_n, m_buffers);
+			g_glCreateBuffers(m_n, m_buffers);
 		}
 	private:
 		void set(GLsizei n, GLuint* buffers)
@@ -4442,7 +4442,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealCreateFramebuffers(m_n, m_framebuffers);
+			g_glCreateFramebuffers(m_n, m_framebuffers);
 		}
 	private:
 		void set(GLsizei n, GLuint* framebuffers)
@@ -4473,7 +4473,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealNamedFramebufferTexture(m_framebuffer, m_attachment, m_texture, m_level);
+			g_glNamedFramebufferTexture(m_framebuffer, m_attachment, m_texture, m_level);
 		}
 	private:
 		void set(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level)
@@ -4509,7 +4509,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealDrawRangeElementsBaseVertex(m_mode, m_start, m_end, m_count, m_type, m_indices, m_basevertex);
+			g_glDrawRangeElementsBaseVertex(m_mode, m_start, m_end, m_count, m_type, m_indices, m_basevertex);
 		}
 	private:
 		void set(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type,
@@ -4551,7 +4551,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealFlushMappedBufferRange(m_target, m_offset, m_length);
+			g_glFlushMappedBufferRange(m_target, m_offset, m_length);
 		}
 	private:
 		void set(GLenum target, GLintptr offset, GLsizeiptr length)
@@ -4584,7 +4584,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealFinish();
+			g_glFinish();
 		}
 	private:
 		void set()
@@ -4611,7 +4611,7 @@ namespace opengl {
 
 		void commandToExecute() override
 		{
-			RealEGLImageTargetTexture2DOES(m_target, m_image);
+			g_glEGLImageTargetTexture2DOES(m_target, m_image);
 		}
 	private:
 		void set(GLenum target, void* image)
@@ -4643,7 +4643,7 @@ namespace opengl {
 
         void commandToExecute() override
         {
-            *m_returnValue = RealGetNativeClientBufferANDROID(m_buffer);
+            *m_returnValue = g_glGetNativeClientBufferANDROID(m_buffer);
         }
     private:
         void set(const AHardwareBuffer *buffer, EGLClientBuffer& returnValue)

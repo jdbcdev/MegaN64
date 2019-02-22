@@ -2,6 +2,7 @@
 #include <Types.h>
 #include <Log.h>
 #include "opengl_Utils.h"
+#include "GLFunctions.h"
 #include <cstring>
 
 using namespace opengl;
@@ -131,7 +132,6 @@ bool Utils::isFramebufferError()
 {
 #ifdef GL_DEBUG
 	GLenum e = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-
 	switch (e) {
 		//		case GL_FRAMEBUFFER_UNDEFINED:
 		//			printf("FBO Undefined\n");

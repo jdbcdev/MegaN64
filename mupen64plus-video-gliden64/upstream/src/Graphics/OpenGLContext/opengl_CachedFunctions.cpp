@@ -23,12 +23,12 @@ void CachedEnable::enable(bool _enable)
 		return;
 
 	if (_enable) {
-		if (m_parameter == enable::BLEND && IS_GL_FUNCTION_VALID(Enablei))
+		if (m_parameter == enable::BLEND && IS_GL_FUNCTION_VALID(glEnablei))
 			glEnablei(GLenum(m_parameter), 0);
 		else
 			glEnable(GLenum(m_parameter));
 	} else {
-		if (m_parameter == enable::BLEND && IS_GL_FUNCTION_VALID(Disablei))
+		if (m_parameter == enable::BLEND && IS_GL_FUNCTION_VALID(glDisablei))
 			glDisablei(GLenum(m_parameter), 0);
 		else
 			glDisable(GLenum(m_parameter));

@@ -20,7 +20,6 @@
 #include "glsl_CombinerProgramUniformFactory.h"
 
 using namespace glsl;
-using namespace opengl;
 
 #define SHADER_STORAGE_FOLDER_NAME L"shaders"
 

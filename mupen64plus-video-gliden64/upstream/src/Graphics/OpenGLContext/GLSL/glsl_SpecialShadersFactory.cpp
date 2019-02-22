@@ -15,10 +15,6 @@
 #include "glsl_FXAA.h"
 #include "glsl_Utils.h"
 
-#include <algorithm>
-
-using namespace opengl;
-
 namespace glsl {
 
 	/*---------------VertexShaderPart-------------*/
@@ -459,7 +455,7 @@ namespace glsl {
 				_fragmentEnd->write(ssFragmentShader);
 
 			m_program =
-					graphics::ObjectHandle(Utils::createRectShaderProgram(ssVertexShader.str().data(), ssFragmentShader.str().data()));
+				graphics::ObjectHandle(Utils::createRectShaderProgram(ssVertexShader.str().data(), ssFragmentShader.str().data()));
 		}
 
 		~SpecialShader()
@@ -589,7 +585,7 @@ namespace glsl {
 			fragmentMain.write(ssFragmentShader);
 
 			m_program =
-					graphics::ObjectHandle(Utils::createRectShaderProgram(ssVertexShader.str().data(), ssFragmentShader.str().data()));
+				graphics::ObjectHandle(Utils::createRectShaderProgram(ssVertexShader.str().data(), ssFragmentShader.str().data()));
 
 			m_useProgram->useProgram(m_program);
 			GLint loc = glGetUniformLocation(GLuint(m_program), "uTex0");

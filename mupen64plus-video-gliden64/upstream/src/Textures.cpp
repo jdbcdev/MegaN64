@@ -4,7 +4,6 @@
 #include <thread>         // std::this_thread::sleep_for
 #include <chrono>         // std::chrono::seconds
 #include "Platform.h"
-#include "GLideNHQ/TxUtil.h"
 #include "Textures.h"
 #include "GBI.h"
 #include "RSP.h"
@@ -16,6 +15,7 @@
 #include "FrameBuffer.h"
 #include "Config.h"
 #include "Keys.h"
+#include "GLideNHQ/Ext_TxFilter.h"
 #include "TextureFilterHandler.h"
 #include "DisplayLoadProgress.h"
 #include "Graphics/Context.h"
@@ -478,8 +478,7 @@ void TextureCache::init()
 {
 	m_curUnpackAlignment = 0;
 
-	static const int numElements = 16;
-	u32 dummyTexture[numElements] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	u32 dummyTexture[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 	m_pDummy = addFrameBufferTexture(false); // we don't want to remove dummy texture
 	_initDummyTexture(m_pDummy);
@@ -731,7 +730,7 @@ void _updateCachedTexture(const GHQTexInfo & _info, CachedTexture *_pTexture, f3
 	_pTexture->bHDTexture = true;
 }
 
-bool TextureCache::_loadHiresBackground(CachedTexture *_pTexture)
+bool TextureCache::_loadHiresBackground(CachedTexture *_pTexture, u64 & _ricecrc)
 {
 	if (!TFH.isInited())
 		return false;
@@ -754,12 +753,12 @@ bool TextureCache::_loadHiresBackground(CachedTexture *_pTexture)
 		//			palette = (rdp.pal_8 + (gSP.textureTile[_t]->palette << 4));
 	}
 
-	u64 ricecrc = txfilter_checksum(addr, tile_width,
+	_ricecrc = txfilter_checksum(addr, tile_width,
 						tile_height, (unsigned short)(gSP.bgImage.format << 8 | gSP.bgImage.size),
 						bpl, paladdr);
 	GHQTexInfo ghqTexInfo;
 	// TODO: fix problem with zero texture dimensions on GLideNHQ side.
-	if (txfilter_hirestex(_pTexture->crc, ricecrc, palette, &ghqTexInfo) &&
+	if (txfilter_hirestex(_pTexture->crc, _ricecrc, palette, &ghqTexInfo) &&
 			ghqTexInfo.width != 0 && ghqTexInfo.height != 0) {
 		ghqTexInfo.format = gfxContext.convertInternalTextureFormat(ghqTexInfo.format);
 		Context::InitTextureParams params;
@@ -783,7 +782,8 @@ bool TextureCache::_loadHiresBackground(CachedTexture *_pTexture)
 
 void TextureCache::_loadBackground(CachedTexture *pTexture)
 {
-	if (_loadHiresBackground(pTexture))
+	u64 ricecrc = 0;
+	if (_loadHiresBackground(pTexture, ricecrc))
 		return;
 
 	u32 *pDest = nullptr;
@@ -849,6 +849,15 @@ void TextureCache::_loadBackground(CachedTexture *pTexture)
 		free(pDest);
 		free(pSwapped);
 		return;
+	}
+
+	if (m_toggleDumpTex &&
+		config.textureFilter.txHiresEnable != 0 &&
+		config.textureFilter.txDump != 0) {
+		txfilter_dmptx((u8*)pDest, pTexture->realWidth, pTexture->realHeight,
+			pTexture->realWidth, (u16)u32(glInternalFormat),
+			(unsigned short)(pTexture->format << 8 | pTexture->size),
+			ricecrc);
 	}
 
 	bool bLoaded = false;
@@ -1210,6 +1219,10 @@ void TextureCache::_load(u32 _tile, CachedTexture *_pTexture)
 			if (txfilter_filter((u8*)pDest, tmptex.realWidth, tmptex.realHeight,
 							(u16)u32(glInternalFormat), (uint64)_pTexture->crc,
 							&ghqTexInfo) != 0 && ghqTexInfo.data != nullptr) {
+				if (ghqTexInfo.width % 2 != 0 &&
+					ghqTexInfo.format != u32(internalcolorFormat::RGBA8) &&
+					m_curUnpackAlignment > 1)
+					gfxContext.setTextureUnpackAlignment(2);
 				ghqTexInfo.format = gfxContext.convertInternalTextureFormat(ghqTexInfo.format);
 				Context::InitTextureParams params;
 				params.handle = _pTexture->name;
@@ -1325,7 +1338,7 @@ void TextureCache::activateTexture(u32 _t, CachedTexture *_pTexture)
 		params.target = textureTarget::TEXTURE_2D;
 		params.textureUnitIndex = textureIndices::Tex[_t];
 
-		const bool bUseBilinear = gDP.otherMode.textureFilter != 0;
+		const bool bUseBilinear = gDP.otherMode.textureFilter != G_TF_POINT && config.texture.bilinearMode != BILINEAR_3POINT;
 		const bool bUseLOD = currentCombiner()->usesLOD();
 		const s32 texLevel = bUseLOD ? _pTexture->max_level : 0;
 		params.maxMipmapLevel = Parameter(texLevel);

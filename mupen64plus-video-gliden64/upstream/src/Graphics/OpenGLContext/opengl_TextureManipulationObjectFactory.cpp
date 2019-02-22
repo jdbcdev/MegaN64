@@ -5,7 +5,6 @@
 #include "opengl_CachedFunctions.h"
 #include "opengl_Utils.h"
 #include "opengl_TextureManipulationObjectFactory.h"
-#include <algorithm>
 
 #ifndef GL_EXT_texture_filter_anisotropic
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT     0x84FE
@@ -59,7 +58,6 @@ namespace opengl {
 		void init2DTexture(const graphics::Context::InitTextureParams & _params) override
 		{
 			if (_params.msaaLevel == 0) {
-
 				m_bind->bind(_params.textureUnitIndex, graphics::textureTarget::TEXTURE_2D, _params.handle);
 				glTexImage2D(GL_TEXTURE_2D,
 							 _params.mipMapLevel,
@@ -162,9 +160,9 @@ namespace opengl {
 			return false;
 #endif
 		}
-
 		void init2DTexture(const graphics::Context::InitTextureParams & _params) override
 		{
+
 			if (_params.msaaLevel == 0) {
 				if (m_handle != _params.handle) {
 					m_handle = _params.handle;
@@ -218,15 +216,15 @@ namespace opengl {
 		{
 			m_bind->bind(_params.textureUnitIndex, GL_TEXTURE_2D, _params.handle);
 
-            glTexSubImage2D(GL_TEXTURE_2D,
-                _params.mipMapLevel,
-                _params.x,
-                _params.y,
-                _params.width,
-                _params.height,
-                GLuint(_params.format),
-                GLenum(_params.dataType),
-                _params.data);
+			glTexSubImage2D(GL_TEXTURE_2D,
+				_params.mipMapLevel,
+				_params.x,
+				_params.y,
+				_params.width,
+				_params.height,
+				GLuint(_params.format),
+				GLenum(_params.dataType),
+				_params.data);
 		}
 
 	private:
@@ -246,15 +244,15 @@ namespace opengl {
 
 		void update2DTexture(const graphics::Context::UpdateTextureDataParams & _params) override
 		{
-            glTextureSubImage2D(GLuint(_params.handle),
-                _params.mipMapLevel,
-                _params.x,
-                _params.y,
-                _params.width,
-                _params.height,
-                GLuint(_params.format),
-                GLenum(_params.dataType),
-                _params.data);
+			glTextureSubImage2D(GLuint(_params.handle),
+				_params.mipMapLevel,
+				_params.x,
+				_params.y,
+				_params.width,
+				_params.height,
+				GLuint(_params.format),
+				GLenum(_params.dataType),
+				_params.data);
 		}
 	};
 
@@ -387,7 +385,7 @@ namespace opengl {
 	Update2DTexture * TextureManipulationObjectFactory::getUpdate2DTexture() const
 	{
 		if (Update2DTextureSubImage::Check(m_glInfo))
-			return new Update2DTextureSubImage();
+			return new Update2DTextureSubImage;
 
 		return new Update2DTexSubImage(m_cachedFunctions.getCachedBindTexture());
 	}

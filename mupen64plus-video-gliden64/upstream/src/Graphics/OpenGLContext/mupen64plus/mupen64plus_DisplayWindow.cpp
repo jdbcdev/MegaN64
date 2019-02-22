@@ -205,13 +205,13 @@ void DisplayWindowMupen64plus::_readScreen2(void * _dest, int * _width, int * _h
 
 #if !defined(OS_ANDROID) && !defined(OS_IOS)
 	GLint oldMode;
-	GetIntegerv(GL_READ_BUFFER, &oldMode);
+	glGetIntegerv(GL_READ_BUFFER, &oldMode);
 	if (_front != 0)
-		ReadBuffer(GL_FRONT);
+		glReadBuffer(GL_FRONT);
 	else
-		ReadBuffer(GL_BACK);
-	ReadPixels(0, m_heightOffset, m_screenWidth, m_screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, pBufferData);
-	ReadBuffer(oldMode);
+		glReadBuffer(GL_BACK);
+	glReadPixels(0, m_heightOffset, m_screenWidth, m_screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, pBufferData);
+	glReadBuffer(oldMode);
 #else
 	glReadPixels(0, m_heightOffset, m_screenWidth, m_screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, pBufferData);
 #endif
