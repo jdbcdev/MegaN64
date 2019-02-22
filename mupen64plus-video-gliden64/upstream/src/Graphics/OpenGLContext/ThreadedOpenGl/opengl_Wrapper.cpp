@@ -346,12 +346,32 @@ namespace opengl {
 			g_glClear(mask);
 	}
 
-	void FunctionWrapper::glClearBufferfv(GLenum buffer, GLint drawbuffer, std::unique_ptr<GLfloat[]> value)
+	void FunctionWrapper::glClearBufferfv(GLenum buffer, GLint drawbuffer, const GLfloat *value)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlClearBufferfvCommand::get(buffer, drawbuffer, std::move(value)));
-		else
-			g_glClearBufferfv(buffer, drawbuffer, value.get());
+		if (m_threaded_wrapper) {
+			int numValues = 0;
+
+			switch(buffer) {
+				case GL_COLOR:
+					numValues = 4;
+					break;
+				case GL_DEPTH:
+				case GL_STENCIL:
+					numValues = 1;
+					break;
+				default:
+					numValues = 1;
+			}
+
+			std::unique_ptr<GLfloat[]> values(new GLfloat[numValues]);
+
+			for(unsigned int index = 0; index < numValues; ++index) {
+				values.get()[index] = value[index];
+			}
+
+			executeCommand(GlClearBufferfvCommand::get(buffer, drawbuffer, std::move(values)));
+		} else
+			g_glClearBufferfv(buffer, drawbuffer, value);
 	}
 
 	void FunctionWrapper::glGetFloatv(GLenum pname, GLfloat* data)

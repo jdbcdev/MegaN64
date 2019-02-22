@@ -172,12 +172,8 @@ void ContextImpl::clearColorBuffer(f32 _red, f32 _green, f32 _blue, f32 _alpha)
 		m_cachedFunctions->getCachedClearColor()->setClearColor(_red, _green, _blue, _alpha);
 		FunctionWrapper::glClear(GL_COLOR_BUFFER_BIT);
 	} else {
-		std::unique_ptr<GLfloat[]> values(new GLfloat[4]);
-		values.get()[0] = _red;
-		values.get()[1] = _green;
-		values.get()[2] = _blue;
-		values.get()[3] = _alpha;
-		FunctionWrapper::glClearBufferfv(GL_COLOR, 0, std::move(values));
+        GLfloat values[4] = {_red, _green, _blue, _alpha};
+        FunctionWrapper::glClearBufferfv(GL_COLOR, 0, std::move(values));
 	}
 
 	enableScissor->enable(true);

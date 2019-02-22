@@ -63,7 +63,7 @@ namespace opengl {
 		static void glDrawElements(GLenum mode, GLsizei count, GLenum type, const void *indices);
 		static void glLineWidth(GLfloat width);
 		static void glClear(GLbitfield mask);
-		static void glClearBufferfv(GLenum buffer, GLint drawbuffer, std::unique_ptr<GLfloat[]> value);
+		static void glClearBufferfv(GLenum buffer, GLint drawbuffer, const GLfloat *value);
 		static void glGetFloatv(GLenum pname, GLfloat* data);
 		static void glDeleteTextures(GLsizei n, std::unique_ptr<GLuint[]> textures);
 		static void glGenTextures(GLsizei n, GLuint* textures);
