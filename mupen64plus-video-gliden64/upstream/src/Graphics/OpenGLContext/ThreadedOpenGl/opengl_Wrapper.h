@@ -131,9 +131,7 @@ namespace opengl {
 		static void glBufferData(GLenum target, GLsizeiptr size, std::unique_ptr<dataType[]> data, GLenum usage);
 		static void glMapBuffer(GLenum target, GLenum access);
 		static void* glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
-		static void glMapBufferRangeWriteAsync(GLenum target, GLuint buffer, GLintptr offset, u32 length, GLbitfield access, std::unique_ptr<u8[]> data);
 		static GLboolean glUnmapBuffer(GLenum target);
-		static void glUnmapBufferAsync(GLenum target);
 		static void glDeleteBuffers(GLsizei n, std::unique_ptr<GLuint[]> buffers);
 		static void glBindImageTexture(GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format);
 		static void glMemoryBarrier(GLbitfield barriers);

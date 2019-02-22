@@ -870,6 +870,9 @@ namespace opengl {
                 executeCommand(GlMapBufferRangeReadAsyncCommand::get(target, offset, length, access));
                 GLuint buffer = GlBindBufferCommand::getBoundBuffer(target);
                 returnValue = GlMapBufferRangeReadAsyncCommand::getData(buffer, length)->data();
+            } else if (access == GlMapBufferRangeWriteAsyncCommand::WRITE_ACCESS_ASYNC) {
+                GlMapBufferRangeWriteAsyncCommand::setTemp(target, offset, length, access);
+                returnValue = GlMapBufferRangeWriteAsyncCommand::getData(target, length)->data();
             } else {
                 executeCommand(GlMapBufferRangeCommand::get(target, offset, length, access, returnValue));
             }
@@ -880,34 +883,34 @@ namespace opengl {
         return returnValue;
     }
 
-	void FunctionWrapper::glMapBufferRangeWriteAsync(GLenum target, GLuint buffer, GLintptr offset, u32 length, GLbitfield access, std::unique_ptr<u8[]> data)
-	{
-		if (m_threaded_wrapper)
-			executeCommand(GlMapBufferRangeWriteAsyncCommand::get(target, buffer, offset, length, access, std::move(data)));
-		else {
-			auto command = GlMapBufferRangeWriteAsyncCommand::get(target, buffer, offset, length, access, std::move(data));
-			command->performCommandSingleThreaded();
-		}
-	}
-
 	GLboolean FunctionWrapper::glUnmapBuffer(GLenum target)
 	{
-		GLboolean returnValue;
+		GLboolean returnValue = GL_TRUE;
 
-		if (m_threaded_wrapper)
-			executeCommand(GlUnmapBufferCommand::get(target, returnValue));
+		if (m_threaded_wrapper) {
+
+			GLbitfield accessTemp = GlMapBufferRangeWriteAsyncCommand::getTempAccess();
+			GLenum targetTemp = GlMapBufferRangeWriteAsyncCommand::getTempTarget();
+
+			if (accessTemp == GlMapBufferRangeWriteAsyncCommand::WRITE_ACCESS_ASYNC &&
+				target == targetTemp) {
+				GLintptr offsetTemp = GlMapBufferRangeWriteAsyncCommand::getTempOffset();
+				GLsizeiptr lengthTemp = GlMapBufferRangeWriteAsyncCommand::getTempLength();
+				auto dataToCopy = GlMapBufferRangeWriteAsyncCommand::getData(targetTemp, lengthTemp);
+
+				splicer::Node<std::vector<char>>* node = GlMapBufferRangeWriteAsyncCommand::getVectorFromPool();
+				node->val().assign(dataToCopy->begin(), dataToCopy->end());
+
+				executeCommand(GlMapBufferRangeWriteAsyncCommand::get(targetTemp, offsetTemp, lengthTemp, accessTemp, node));
+				GlMapBufferRangeWriteAsyncCommand::setTemp(0, 0, 0, 0);
+			}
+
+			executeCommand(GlUnmapBufferAsyncCommand::get(target));
+		}
 		else
 			returnValue = g_glUnmapBuffer(target);
 
 		return returnValue;
-	}
-
-	void FunctionWrapper::glUnmapBufferAsync(GLenum target)
-	{
-		if (m_threaded_wrapper)
-			executeCommand(GlUnmapBufferAsyncCommand::get(target));
-		else
-			g_glUnmapBuffer(target);
 	}
 
 	void FunctionWrapper::glDeleteBuffers(GLsizei n, std::unique_ptr<GLuint[]> buffers)

@@ -77,6 +77,6 @@ const u8 * ColorBufferReaderWithPixelBuffer::_readPixels(const ReadColorBufferPa
 
 void ColorBufferReaderWithPixelBuffer::cleanUp()
 {
-	FunctionWrapper::glUnmapBufferAsync(GL_PIXEL_PACK_BUFFER);
+	FunctionWrapper::glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 	m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle::null);
 }

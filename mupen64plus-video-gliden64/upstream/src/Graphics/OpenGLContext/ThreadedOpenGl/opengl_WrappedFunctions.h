@@ -3217,40 +3217,91 @@ namespace opengl {
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLuint buffer, GLintptr offset, u32 length,
-			GLbitfield access, std::unique_ptr<u8[]> data)
+		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLintptr offset, u32 length,
+			GLbitfield access, splicer::Node<std::vector<char>>* data)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlMapBufferRangeWriteAsyncCommand>(poolId);
-			ptr->set(target, buffer, offset, length, access, std::move(data));
+			ptr->set(target, offset, length, access, data);
 			return ptr;
 		}
 
 		void commandToExecute() override
 		{
-			g_glBindBuffer(m_target, m_buffer);
 			void* buffer_pointer = g_glMapBufferRange(m_target, m_offset, m_length, m_access);
-			memcpy(buffer_pointer, m_data.get(), m_length);
-			g_glUnmapBuffer(m_target);
+			memcpy(buffer_pointer, m_data->val().data(), m_length);
+			m_vectorPool.release(m_data);
 		}
+
+        static std::shared_ptr<std::vector<u8>> getData(GLuint buffer, u32 length)
+        {
+            verifyBuffer(buffer, length);
+            return m_TempData[buffer];
+        }
+
+		static void setTemp(GLenum target, GLintptr offset, u32 length, GLbitfield access)
+		{
+			m_targetTemp = target;
+			m_offsetTemp = offset;
+			m_lengthTemp = length;
+			m_accessTemp = access;
+		}
+
+		static GLenum getTempTarget(void)
+		{
+			return m_targetTemp;
+		}
+
+		static GLintptr getTempOffset(void)
+		{
+			return m_offsetTemp;
+		}
+
+		static u32 getTempLength(void)
+		{
+			return m_lengthTemp;
+		}
+
+		static GLbitfield getTempAccess(void)
+		{
+			return m_accessTemp;
+		}
+
+		static splicer::Node<std::vector<char>>* getVectorFromPool() {
+			return m_vectorPool.acquireOne().release();
+		}
+
 	private:
-		void set(GLenum target, GLuint buffer, GLintptr offset, u32 length,
-			GLbitfield access, std::unique_ptr<u8[]> data)
+		void set(GLenum target, GLintptr offset, u32 length, GLbitfield access, splicer::Node<std::vector<char>>* data)
 		{
 			m_target = target;
-			m_buffer = buffer;
 			m_offset = offset;
 			m_length = length;
 			m_access = access;
-			m_data = std::move(data);
+			m_data = data;
 		}
 
+        static void verifyBuffer(GLuint buffer, u32 length)
+        {
+            if (m_TempData[buffer] == nullptr || m_TempData[buffer]->size() < length) {
+                m_TempData[buffer] = std::make_shared<std::vector<u8>>(length);
+            }
+        }
+
 		GLenum m_target;
-		GLuint m_buffer;
 		GLintptr m_offset;
 		u32 m_length;
 		GLbitfield m_access;
-		std::unique_ptr<u8[]> m_data;
+		splicer::Node<std::vector<char>>* m_data;
+
+		static GLenum m_targetTemp;
+		static GLintptr m_offsetTemp;
+		static u32 m_lengthTemp;
+		static GLbitfield m_accessTemp;
+        static std::unordered_map<int, std::shared_ptr<std::vector<u8>>> m_TempData;
+		static splicer::ObjectPool<std::vector<char>> m_vectorPool;
+	public:
+		static constexpr GLbitfield WRITE_ACCESS_ASYNC = GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT;
 	};
 
 	class GlMapBufferRangeReadAsyncCommand : public OpenGlCommand
