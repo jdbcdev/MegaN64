@@ -61,17 +61,17 @@ void DisplayWindowWindows::_saveScreenshot()
 {
 	unsigned char * pixelData = NULL;
 	GLint oldMode;
-	FunctionWrapper::glGetIntegerv(GL_READ_BUFFER, &oldMode);
+	GetIntegerv(GL_READ_BUFFER, &oldMode);
 	gfxContext.bindFramebuffer(graphics::bufferTarget::READ_FRAMEBUFFER, graphics::ObjectHandle::defaultFramebuffer);
-	FunctionWrapper::glReadBuffer(GL_FRONT);
+	ReadBuffer(GL_FRONT);
 	pixelData = (unsigned char*)malloc(m_screenWidth * m_screenHeight * 3);
-	FunctionWrapper::glReadPixels(0, m_heightOffset, m_screenWidth, m_screenHeight, GL_RGB, GL_UNSIGNED_BYTE, pixelData);
+	ReadPixels(0, m_heightOffset, m_screenWidth, m_screenHeight, GL_RGB, GL_UNSIGNED_BYTE, pixelData);
 	if (graphics::BufferAttachmentParam(oldMode) == graphics::bufferAttachment::COLOR_ATTACHMENT0) {
 		FrameBuffer * pBuffer = frameBufferList().getCurrent();
 		if (pBuffer != nullptr)
 			gfxContext.bindFramebuffer(graphics::bufferTarget::READ_FRAMEBUFFER, pBuffer->m_FBO);
 	}
-	FunctionWrapper::glReadBuffer(oldMode);
+	ReadBuffer(oldMode);
 	SaveScreenshot(m_strScreenDirectory, RSP.romname, m_screenWidth, m_screenHeight, pixelData);
 	free( pixelData );
 }
@@ -202,18 +202,18 @@ void DisplayWindowWindows::_readScreen(void **_pDest, long *_pWidth, long *_pHei
 
 #ifndef GLESX
 	GLint oldMode;
-	FunctionWrapper::glGetIntegerv(GL_READ_BUFFER, &oldMode);
+	GetIntegerv(GL_READ_BUFFER, &oldMode);
 	gfxContext.bindFramebuffer(graphics::bufferTarget::READ_FRAMEBUFFER, graphics::ObjectHandle::defaultFramebuffer);
-	FunctionWrapper::glReadBuffer(GL_FRONT);
-	FunctionWrapper::glReadPixels(0, m_heightOffset, m_width, m_height, GL_BGR_EXT, GL_UNSIGNED_BYTE, *_pDest);
+	ReadBuffer(GL_FRONT);
+	ReadPixels(0, m_heightOffset, m_width, m_height, GL_BGR_EXT, GL_UNSIGNED_BYTE, *_pDest);
 	if (graphics::BufferAttachmentParam(oldMode) == graphics::bufferAttachment::COLOR_ATTACHMENT0) {
 		FrameBuffer * pBuffer = frameBufferList().getCurrent();
 		if (pBuffer != nullptr)
 			gfxContext.bindFramebuffer(graphics::bufferTarget::READ_FRAMEBUFFER, pBuffer->m_FBO);
 	}
-	FunctionWrapper::glReadBuffer(oldMode);
+	ReadBuffer(oldMode);
 #else
-	FunctionWrapper::glReadPixels(0, m_heightOffset, m_width, m_height, GL_RGB, GL_UNSIGNED_BYTE, *_pDest);
+	ReadPixels(0, m_heightOffset, m_width, m_height, GL_RGB, GL_UNSIGNED_BYTE, *_pDest);
 #endif
 }
 

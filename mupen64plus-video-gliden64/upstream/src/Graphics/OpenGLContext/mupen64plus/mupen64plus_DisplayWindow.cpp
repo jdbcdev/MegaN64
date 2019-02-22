@@ -205,15 +205,15 @@ void DisplayWindowMupen64plus::_readScreen2(void * _dest, int * _width, int * _h
 
 #if !defined(OS_ANDROID) && !defined(OS_IOS)
 	GLint oldMode;
-	FunctionWrapper::glGetIntegerv(GL_READ_BUFFER, &oldMode);
+	GetIntegerv(GL_READ_BUFFER, &oldMode);
 	if (_front != 0)
-		FunctionWrapper::glReadBuffer(GL_FRONT);
+		ReadBuffer(GL_FRONT);
 	else
-		FunctionWrapper::glReadBuffer(GL_BACK);
-	FunctionWrapper::glReadPixels(0, m_heightOffset, m_screenWidth, m_screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, pBufferData);
-	FunctionWrapper::glReadBuffer(oldMode);
+		ReadBuffer(GL_BACK);
+	ReadPixels(0, m_heightOffset, m_screenWidth, m_screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, pBufferData);
+	ReadBuffer(oldMode);
 #else
-	FunctionWrapper::glReadPixels(0, m_heightOffset, m_screenWidth, m_screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, pBufferData);
+	glReadPixels(0, m_heightOffset, m_screenWidth, m_screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, pBufferData);
 #endif
 
 	//Convert RGBA to RGB

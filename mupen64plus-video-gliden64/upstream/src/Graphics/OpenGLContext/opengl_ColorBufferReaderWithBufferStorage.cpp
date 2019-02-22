@@ -1,7 +1,6 @@
 #include <Config.h>
 #include <Graphics/Context.h>
 #include "opengl_ColorBufferReaderWithBufferStorage.h"
-#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 using namespace graphics;
 using namespace opengl;
@@ -25,14 +24,14 @@ void ColorBufferReaderWithBufferStorage::_initBuffers()
 		m_numPBO = _maxPBO;
 
 	// Generate Pixel Buffer Objects
-	FunctionWrapper::glGenBuffers(m_numPBO, m_PBO);
+	glGenBuffers(m_numPBO, m_PBO);
 	m_curIndex = 0;
 
 	// Initialize Pixel Buffer Objects
 	for (u32 index = 0; index < m_numPBO; ++index) {
 		m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[index]));
-		FunctionWrapper::glBufferStorage(GL_PIXEL_PACK_BUFFER, m_pTexture->textureBytes, nullptr, GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT | GL_CLIENT_STORAGE_BIT);
-		m_PBOData[index] = FunctionWrapper::glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, m_pTexture->textureBytes, GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+		glBufferStorage(GL_PIXEL_PACK_BUFFER, m_pTexture->textureBytes, nullptr, GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT | GL_CLIENT_STORAGE_BIT);
+		m_PBOData[index] = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, m_pTexture->textureBytes, GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 	}
 
 	m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle::null);
@@ -40,7 +39,7 @@ void ColorBufferReaderWithBufferStorage::_initBuffers()
 
 void ColorBufferReaderWithBufferStorage::_destroyBuffers()
 {
-	FunctionWrapper::glDeleteBuffers(m_numPBO, m_PBO);
+	glDeleteBuffers(m_numPBO, m_PBO);
 
 	for (u32 index = 0; index < m_numPBO; ++index) {
 		m_PBO[index] = 0;
@@ -55,12 +54,12 @@ const u8 * ColorBufferReaderWithBufferStorage::_readPixels(const ReadColorBuffer
 
 	m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[m_curIndex]));
 
-	FunctionWrapper::glReadPixels(_params.x0, _params.y0, m_pTexture->realWidth, _params.height, format, type, nullptr);
+	glReadPixels(_params.x0, _params.y0, m_pTexture->realWidth, _params.height, format, type, nullptr);
 
 	if (!_params.sync) {
 		m_curIndex = (m_curIndex + 1) % m_numPBO;
 	} else {
-		FunctionWrapper::glFinish();
+		glFinish();
 	}
 
 	_heightOffset = 0;

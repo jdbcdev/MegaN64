@@ -5,7 +5,6 @@
 #include "GLFunctions.h"
 #include "opengl_Attributes.h"
 #include "opengl_BufferedDrawer.h"
-#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 using namespace graphics;
 using namespace opengl;
@@ -26,20 +25,20 @@ BufferedDrawer::BufferedDrawer(const GLInfo & _glinfo, CachedVertexAttribArray *
 {
 	m_vertices.resize(VERTBUFF_SIZE);
 	/* Init buffers for rects */
-	FunctionWrapper::glGenVertexArrays(1, &m_rectsBuffers.vao);
-	FunctionWrapper::glBindVertexArray(m_rectsBuffers.vao);
+	glGenVertexArrays(1, &m_rectsBuffers.vao);
+	glBindVertexArray(m_rectsBuffers.vao);
 	_initBuffer(m_rectsBuffers.vbo, m_bufMaxSize);
 	m_cachedAttribArray->enableVertexAttribArray(rectAttrib::position, true);
 	m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord0, true);
 	m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord1, true);
 
-	FunctionWrapper::glVertexAttribPointer(rectAttrib::position, 4, GL_FLOAT, GL_FALSE, sizeof(RectVertex), (const GLvoid *)offsetof(RectVertex, x));
-	FunctionWrapper::glVertexAttribPointer(rectAttrib::texcoord0, 2, GL_FLOAT, GL_FALSE, sizeof(RectVertex), (const GLvoid *)offsetof(RectVertex, s0));
-	FunctionWrapper::glVertexAttribPointer(rectAttrib::texcoord1, 2, GL_FLOAT, GL_FALSE, sizeof(RectVertex), (const GLvoid *)offsetof(RectVertex, s1));
+	glVertexAttribPointer(rectAttrib::position, 4, GL_FLOAT, GL_FALSE, sizeof(RectVertex), (const GLvoid *)offsetof(RectVertex, x));
+	glVertexAttribPointer(rectAttrib::texcoord0, 2, GL_FLOAT, GL_FALSE, sizeof(RectVertex), (const GLvoid *)offsetof(RectVertex, s0));
+	glVertexAttribPointer(rectAttrib::texcoord1, 2, GL_FLOAT, GL_FALSE, sizeof(RectVertex), (const GLvoid *)offsetof(RectVertex, s1));
 
 	/* Init buffers for triangles */
-	FunctionWrapper::glGenVertexArrays(1, &m_trisBuffers.vao);
-	FunctionWrapper::glBindVertexArray(m_trisBuffers.vao);
+	glGenVertexArrays(1, &m_trisBuffers.vao);
+	glBindVertexArray(m_trisBuffers.vao);
 	_initBuffer(m_trisBuffers.vbo, m_bufMaxSize);
 	_initBuffer(m_trisBuffers.ebo, m_bufMaxSize);
 	m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::position, true);
@@ -47,22 +46,22 @@ BufferedDrawer::BufferedDrawer(const GLInfo & _glinfo, CachedVertexAttribArray *
 	m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::texcoord, true);
 	m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::modify, true);
 	m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::numlights, false);
-	FunctionWrapper::glVertexAttribPointer(triangleAttrib::position, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid *)offsetof(Vertex, x));
-	FunctionWrapper::glVertexAttribPointer(triangleAttrib::color, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid *)offsetof(Vertex, r));
-	FunctionWrapper::glVertexAttribPointer(triangleAttrib::texcoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid *)offsetof(Vertex, s));
-	FunctionWrapper::glVertexAttribPointer(triangleAttrib::modify, 4, GL_BYTE, GL_TRUE, sizeof(Vertex), (const GLvoid *)offsetof(Vertex, modify));
+	glVertexAttribPointer(triangleAttrib::position, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid *)offsetof(Vertex, x));
+	glVertexAttribPointer(triangleAttrib::color, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid *)offsetof(Vertex, r));
+	glVertexAttribPointer(triangleAttrib::texcoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid *)offsetof(Vertex, s));
+	glVertexAttribPointer(triangleAttrib::modify, 4, GL_BYTE, GL_TRUE, sizeof(Vertex), (const GLvoid *)offsetof(Vertex, modify));
 }
 
 void BufferedDrawer::_initBuffer(Buffer & _buffer, GLuint _bufSize)
 {
 	_buffer.size = _bufSize;
-	FunctionWrapper::glGenBuffers(1, &_buffer.handle);
+	glGenBuffers(1, &_buffer.handle);
 	m_bindBuffer->bind(Parameter(_buffer.type), ObjectHandle(_buffer.handle));
 	if (m_glInfo.bufferStorage) {
-		FunctionWrapper::glBufferStorage(_buffer.type, _bufSize, nullptr, m_bufAccessBits);
-		_buffer.data = (GLubyte*)FunctionWrapper::glMapBufferRange(_buffer.type, 0, _bufSize, m_bufMapBits);
+		glBufferStorage(_buffer.type, _bufSize, nullptr, m_bufAccessBits);
+		_buffer.data = (GLubyte*)glMapBufferRange(_buffer.type, 0, _bufSize, m_bufMapBits);
 	} else {
-		FunctionWrapper::glBufferData(_buffer.type, _bufSize, nullptr, GL_DYNAMIC_DRAW);
+		glBufferData(_buffer.type, _bufSize, nullptr, GL_DYNAMIC_DRAW);
 	}
 }
 
@@ -71,10 +70,10 @@ BufferedDrawer::~BufferedDrawer()
 	m_bindBuffer->bind(Parameter(GL_ARRAY_BUFFER), ObjectHandle::null);
 	m_bindBuffer->bind(Parameter(GL_ELEMENT_ARRAY_BUFFER), ObjectHandle::null);
 	GLuint buffers[3] = { m_rectsBuffers.vbo.handle, m_trisBuffers.vbo.handle, m_trisBuffers.ebo.handle };
-	FunctionWrapper::glDeleteBuffers(3, buffers);
-	FunctionWrapper::glBindVertexArray(0);
+	glDeleteBuffers(3, buffers);
+	glBindVertexArray(0);
 	GLuint arrays[2] = { m_rectsBuffers.vao, m_trisBuffers.vao };
-	FunctionWrapper::glDeleteVertexArrays(2, arrays);
+	glDeleteVertexArrays(2, arrays);
 }
 
 void BufferedDrawer::_updateBuffer(Buffer & _buffer, u32 _count, u32 _dataSize, const void * _data)
@@ -88,14 +87,14 @@ void BufferedDrawer::_updateBuffer(Buffer & _buffer, u32 _count, u32 _dataSize, 
 		memcpy(&_buffer.data[_buffer.offset], _data, _dataSize);
 #ifdef GL_DEBUG
 		m_bindBuffer->bind(Parameter(_buffer.type), ObjectHandle(_buffer.handle));
-		FunctionWrapper::glFlushMappedBufferRange(_buffer.type, _buffer.offset, _dataSize);
+		glFlushMappedBufferRange(_buffer.type, _buffer.offset, _dataSize);
 #endif
 	} else {
 		m_bindBuffer->bind(Parameter(_buffer.type), ObjectHandle(_buffer.handle));
 		std::unique_ptr<u8[]> data((new u8[_dataSize]));
-        void* buffer_pointer = FunctionWrapper::glMapBufferRange(_buffer.type, _buffer.offset, _dataSize, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+        void* buffer_pointer = glMapBufferRange(_buffer.type, _buffer.offset, _dataSize, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
         memcpy(buffer_pointer, _data, _dataSize);
-		FunctionWrapper::glUnmapBuffer(_buffer.type);
+		glUnmapBuffer(_buffer.type);
 	}
 
 	_buffer.offset += _dataSize;
@@ -106,7 +105,7 @@ void BufferedDrawer::_updateRectBuffer(const graphics::Context::DrawRectParamete
 {
 	const BuffersType type = BuffersType::rects;
 	if (m_type != type) {
-		FunctionWrapper::glBindVertexArray(m_rectsBuffers.vao);
+		glBindVertexArray(m_rectsBuffers.vao);
 		m_type = type;
 	}
 
@@ -142,7 +141,7 @@ void BufferedDrawer::drawRects(const graphics::Context::DrawRectParameters & _pa
 	m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord0, _params.texrect);
 	m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord1, _params.texrect);
 
-	FunctionWrapper::glDrawArrays(GLenum(_params.mode), m_rectsBuffers.vbo.pos - _params.verticesCount, _params.verticesCount);
+	glDrawArrays(GLenum(_params.mode), m_rectsBuffers.vbo.pos - _params.verticesCount, _params.verticesCount);
 }
 
 void BufferedDrawer::_convertFromSPVertex(bool _flatColors, u32 _count, const SPVertex * _data)
@@ -179,7 +178,7 @@ void BufferedDrawer::_updateTrianglesBuffers(const graphics::Context::DrawTriang
 	const BuffersType type = BuffersType::triangles;
 
 	if (m_type != type) {
-		FunctionWrapper::glBindVertexArray(m_trisBuffers.vao);
+		glBindVertexArray(m_trisBuffers.vao);
 		m_type = type;
 	}
 
@@ -201,15 +200,15 @@ void BufferedDrawer::drawTriangles(const graphics::Context::DrawTriangleParamete
 	_updateTrianglesBuffers(_params);
 
 	if (isHWLightingAllowed())
-		FunctionWrapper::glVertexAttrib1f(triangleAttrib::numlights, GLfloat(_params.vertices[0].HWLight));
+		glVertexAttrib1f(triangleAttrib::numlights, GLfloat(_params.vertices[0].HWLight));
 
 	if (_params.elements == nullptr) {
-		FunctionWrapper::glDrawArrays(GLenum(_params.mode), m_trisBuffers.vbo.pos - _params.verticesCount, _params.verticesCount);
+		glDrawArrays(GLenum(_params.mode), m_trisBuffers.vbo.pos - _params.verticesCount, _params.verticesCount);
 		return;
 	}
 
 	u16* indices = (u16*)nullptr + m_trisBuffers.ebo.pos - _params.elementsCount;
-	FunctionWrapper::glDrawRangeElementsBaseVertex(GLenum(_params.mode), 0, _params.verticesCount - 1, _params.elementsCount, GL_UNSIGNED_SHORT,
+	glDrawRangeElementsBaseVertex(GLenum(_params.mode), 0, _params.verticesCount - 1, _params.elementsCount, GL_UNSIGNED_SHORT,
 		indices, m_trisBuffers.vbo.pos - _params.verticesCount);
 }
 
@@ -218,7 +217,7 @@ void BufferedDrawer::drawLine(f32 _width, SPVertex * _vertices)
 	const BuffersType type = BuffersType::triangles;
 
 	if (m_type != type) {
-		FunctionWrapper::glBindVertexArray(m_trisBuffers.vao);
+		glBindVertexArray(m_trisBuffers.vao);
 		m_type = type;
 	}
 
@@ -227,6 +226,6 @@ void BufferedDrawer::drawLine(f32 _width, SPVertex * _vertices)
 	Buffer & vboBuffer = m_trisBuffers.vbo;
 	_updateBuffer(vboBuffer, 2, vboDataSize, m_vertices.data());
 
-	FunctionWrapper::glLineWidth(_width);
-	FunctionWrapper::glDrawArrays(GL_LINES, m_trisBuffers.vbo.pos - 2, 2);
+	glLineWidth(_width);
+	glDrawArrays(GL_LINES, m_trisBuffers.vbo.pos - 2, 2);
 }

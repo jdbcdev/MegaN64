@@ -4,7 +4,6 @@
 #include "opengl_CachedFunctions.h"
 #include "opengl_Utils.h"
 #include "opengl_BufferManipulationObjectFactory.h"
-#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 #ifdef OS_ANDROID
 #include <Graphics/OpenGLContext/GraphicBuffer/GraphicBufferWrapper.h>
@@ -22,7 +21,7 @@ public:
 	graphics::ObjectHandle createFramebuffer() override
 	{
 		GLuint fbo;
-		FunctionWrapper::glGenFramebuffers(1, &fbo);
+		glGenFramebuffers(1, &fbo);
 		return graphics::ObjectHandle(fbo);
 	}
 };
@@ -41,7 +40,7 @@ public:
 	graphics::ObjectHandle createFramebuffer() override
 	{
 		GLuint fbo;
-		FunctionWrapper::glCreateFramebuffers(1, &fbo);
+		glCreateFramebuffers(1, &fbo);
 		return graphics::ObjectHandle(fbo);
 	}
 };
@@ -54,7 +53,7 @@ public:
 	graphics::ObjectHandle createRenderbuffer() override
 	{
 		GLuint renderbuffer;
-		FunctionWrapper::glGenRenderbuffers(1, &renderbuffer);
+		glGenRenderbuffers(1, &renderbuffer);
 		return graphics::ObjectHandle(renderbuffer);
 	}
 };
@@ -69,7 +68,7 @@ public:
 	void initRenderbuffer(const graphics::Context::InitRenderbufferParams & _params) override
 	{
 		m_bind->bind(_params.target, _params.handle);
-		FunctionWrapper::glRenderbufferStorage(GLenum(_params.target), GLenum(_params.format), _params.width, _params.height);
+		glRenderbufferStorage(GLenum(_params.target), GLenum(_params.format), _params.width, _params.height);
 	}
 
 private:
@@ -88,12 +87,12 @@ public:
 	{
 		m_bind->bind(_params.bufferTarget, _params.bufferHandle);
 		if (_params.textureTarget == graphics::textureTarget::RENDERBUFFER) {
-			FunctionWrapper::glFramebufferRenderbuffer(GLenum(_params.bufferTarget),
+			glFramebufferRenderbuffer(GLenum(_params.bufferTarget),
 				GLenum(_params.attachment),
 				GLenum(_params.textureTarget),
 				GLuint(_params.textureHandle));
 		} else {
-			FunctionWrapper::glFramebufferTexture2D(GLenum(_params.bufferTarget),
+			glFramebufferTexture2D(GLenum(_params.bufferTarget),
 				GLenum(_params.attachment),
 				GLenum(_params.textureTarget),
 				GLuint(_params.textureHandle),
@@ -118,7 +117,7 @@ public:
 
 	void addFrameBufferRenderTarget(const graphics::Context::FrameBufferRenderTarget & _params) override
 	{
-		FunctionWrapper::glNamedFramebufferTexture(GLuint(_params.bufferHandle),
+		glNamedFramebufferTexture(GLuint(_params.bufferHandle),
 			GLenum(_params.attachment),
 			GLuint(_params.textureHandle),
 			0);
@@ -134,32 +133,32 @@ public:
 		: m_bind(_bind)
 		, m_size(_size)
 	{
-		FunctionWrapper::glGenBuffers(1, &m_PBO);
+		glGenBuffers(1, &m_PBO);
 		m_bind->bind(graphics::Parameter(GL_PIXEL_PACK_BUFFER), graphics::ObjectHandle(m_PBO));
-		FunctionWrapper::glBufferData(GL_PIXEL_PACK_BUFFER, m_size, nullptr, GL_DYNAMIC_READ);
+		glBufferData(GL_PIXEL_PACK_BUFFER, m_size, nullptr, GL_DYNAMIC_READ);
 		m_bind->bind(graphics::Parameter(GL_PIXEL_PACK_BUFFER), graphics::ObjectHandle::null);
 	}
 
 	~PBOReadBuffer() {
-		FunctionWrapper::glDeleteBuffers(1, &m_PBO);
+		glDeleteBuffers(1, &m_PBO);
 		m_PBO = 0;
 	}
 
 	void readPixels(s32 _x,s32 _y, u32 _width, u32 _height, graphics::Parameter _format, graphics::Parameter _type) override
 	{
-		FunctionWrapper::glReadPixels(_x, _y, _width, _height, GLenum(_format), GLenum(_type), 0);
+		glReadPixels(_x, _y, _width, _height, GLenum(_format), GLenum(_type), 0);
 	}
 
 	void * getDataRange(u32 _offset, u32 _range) override
 	{
 		if (_range > m_size)
 			_range = static_cast<u32>(m_size);
-		return FunctionWrapper::glMapBufferRange(GL_PIXEL_PACK_BUFFER, _offset, _range, GL_MAP_READ_BIT);
+		return glMapBufferRange(GL_PIXEL_PACK_BUFFER, _offset, _range, GL_MAP_READ_BIT);
 	}
 
 	void closeReadBuffer() override
 	{
-		FunctionWrapper::glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 	}
 
 	void bind() override {
@@ -219,7 +218,7 @@ public:
 
 		m_enableScissor->enable(false);
 
-		FunctionWrapper::glBlitFramebuffer(
+		glBlitFramebuffer(
 			adrenoCoordFix + _params.srcX0, _params.srcY0, _params.srcX1, _params.srcY1,
 			adrenoCoordFix + _params.dstX0, _params.dstY0, _params.dstX1, _params.dstY1,
 			GLbitfield(_params.mask), GLenum(_params.filter)

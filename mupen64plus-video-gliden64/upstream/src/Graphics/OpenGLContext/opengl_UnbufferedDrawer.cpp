@@ -3,7 +3,6 @@
 #include "opengl_Attributes.h"
 #include "opengl_CachedFunctions.h"
 #include "opengl_UnbufferedDrawer.h"
-#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 #include <algorithm>
 
 using namespace opengl;
@@ -45,7 +44,7 @@ void UnbufferedDrawer::drawTriangles(const graphics::Context::DrawTriangleParame
 
 		const void * ptr = &_params.vertices->x;
 		if (_updateAttribPointer(triangleAttrib::position, ptr)) {
-			FunctionWrapper::glVertexAttribPointer(triangleAttrib::position, 4, GL_FLOAT, GL_FALSE,
+			glVertexAttribPointer(triangleAttrib::position, 4, GL_FLOAT, GL_FALSE,
 				sizeof(SPVertex), ptr);
 		}
 	}
@@ -54,7 +53,7 @@ void UnbufferedDrawer::drawTriangles(const graphics::Context::DrawTriangleParame
 		m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::color, true);
 		const void * ptr = _params.flatColors ? &_params.vertices->flat_r : &_params.vertices->r;
 		if (_updateAttribPointer(triangleAttrib::color, ptr)) {
-			FunctionWrapper::glVertexAttribPointer(triangleAttrib::color, 4, GL_FLOAT, GL_FALSE,
+			glVertexAttribPointer(triangleAttrib::color, 4, GL_FLOAT, GL_FALSE,
 				sizeof(SPVertex), ptr);
 		}
 	}
@@ -65,7 +64,7 @@ void UnbufferedDrawer::drawTriangles(const graphics::Context::DrawTriangleParame
 		m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::texcoord, true);
 		const void * ptr = &_params.vertices->s;
 		if (_updateAttribPointer(triangleAttrib::texcoord, ptr)) {
-			FunctionWrapper::glVertexAttribPointer(triangleAttrib::texcoord, 2, GL_FLOAT, GL_FALSE,
+			glVertexAttribPointer(triangleAttrib::texcoord, 2, GL_FLOAT, GL_FALSE,
 				sizeof(SPVertex), ptr);
 		}
 	} else
@@ -75,24 +74,24 @@ void UnbufferedDrawer::drawTriangles(const graphics::Context::DrawTriangleParame
 		m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::modify, true);
 		const void * ptr = &_params.vertices->modify;
 		if (_updateAttribPointer(triangleAttrib::modify, ptr)) {
-			FunctionWrapper::glVertexAttribPointer(triangleAttrib::modify, 4, GL_BYTE, GL_FALSE,
+			glVertexAttribPointer(triangleAttrib::modify, 4, GL_BYTE, GL_FALSE,
 				sizeof(SPVertex), ptr);
 		}
 	}
 
 	if (isHWLightingAllowed())
-		FunctionWrapper::glVertexAttrib1f(triangleAttrib::numlights, GLfloat(_params.vertices[0].HWLight));
+		glVertexAttrib1f(triangleAttrib::numlights, GLfloat(_params.vertices[0].HWLight));
 
 	m_cachedAttribArray->enableVertexAttribArray(rectAttrib::position, false);
 	m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord0, false);
 	m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord1, false);
 
 	if (_params.elements == nullptr) {
-		FunctionWrapper::glDrawArrays(GLenum(_params.mode), 0, _params.verticesCount);
+		glDrawArrays(GLenum(_params.mode), 0, _params.verticesCount);
 		return;
 	}
 
-	FunctionWrapper::glDrawElements(GLenum(_params.mode), _params.elementsCount, GL_UNSIGNED_SHORT, _params.elements);
+	glDrawElements(GLenum(_params.mode), _params.elementsCount, GL_UNSIGNED_SHORT, _params.elements);
 }
 
 void UnbufferedDrawer::drawRects(const graphics::Context::DrawRectParameters & _params)
@@ -105,7 +104,7 @@ void UnbufferedDrawer::drawRects(const graphics::Context::DrawRectParameters & _
 		m_cachedAttribArray->enableVertexAttribArray(rectAttrib::position, true);
 		const void * ptr = &_params.vertices->x;
 		if (_updateAttribPointer(rectAttrib::position, ptr)) {
-			FunctionWrapper::glVertexAttribPointer(rectAttrib::position, 4, GL_FLOAT, GL_FALSE, sizeof(RectVertex),
+			glVertexAttribPointer(rectAttrib::position, 4, GL_FLOAT, GL_FALSE, sizeof(RectVertex),
 				ptr);
 		}
 	}
@@ -114,7 +113,7 @@ void UnbufferedDrawer::drawRects(const graphics::Context::DrawRectParameters & _
 		m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord0, true);
 		const void * ptr = &_params.vertices->s0;
 		if (_updateAttribPointer(rectAttrib::texcoord0, ptr)) {
-			FunctionWrapper::glVertexAttribPointer(rectAttrib::texcoord0, 2, GL_FLOAT, GL_FALSE, sizeof(RectVertex),
+			glVertexAttribPointer(rectAttrib::texcoord0, 2, GL_FLOAT, GL_FALSE, sizeof(RectVertex),
 				ptr);
 		}
 	} else
@@ -124,7 +123,7 @@ void UnbufferedDrawer::drawRects(const graphics::Context::DrawRectParameters & _
 		m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord1, true);
 		const void * ptr = &_params.vertices->s1;
 		if (_updateAttribPointer(rectAttrib::texcoord1, ptr)) {
-			FunctionWrapper::glVertexAttribPointer(rectAttrib::texcoord1, 2, GL_FLOAT, GL_FALSE, sizeof(RectVertex),
+			glVertexAttribPointer(rectAttrib::texcoord1, 2, GL_FLOAT, GL_FALSE, sizeof(RectVertex),
 				ptr);
 		}
 	} else
@@ -135,7 +134,7 @@ void UnbufferedDrawer::drawRects(const graphics::Context::DrawRectParameters & _
 	m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::texcoord, false);
 	m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::modify, false);
 
-	FunctionWrapper::glDrawArrays(GLenum(_params.mode), 0, _params.verticesCount);
+	glDrawArrays(GLenum(_params.mode), 0, _params.verticesCount);
 }
 
 void UnbufferedDrawer::drawLine(f32 _width, SPVertex * _vertices)
@@ -148,7 +147,7 @@ void UnbufferedDrawer::drawLine(f32 _width, SPVertex * _vertices)
 		m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::position, true);
 		const void * ptr = &_vertices->x;
 		if (_updateAttribPointer(triangleAttrib::position, ptr)) {
-			FunctionWrapper::glVertexAttribPointer(triangleAttrib::position, 4, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
+			glVertexAttribPointer(triangleAttrib::position, 4, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
 				ptr);
 		}
 	}
@@ -157,7 +156,7 @@ void UnbufferedDrawer::drawLine(f32 _width, SPVertex * _vertices)
 		m_cachedAttribArray->enableVertexAttribArray(triangleAttrib::color, true);
 		const void * ptr = &_vertices->r;
 		if (_updateAttribPointer(triangleAttrib::color, ptr)) {
-			FunctionWrapper::glVertexAttribPointer(triangleAttrib::color, 4, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
+			glVertexAttribPointer(triangleAttrib::color, 4, GL_FLOAT, GL_FALSE, sizeof(SPVertex),
 				ptr);
 		}
 	}
@@ -169,6 +168,6 @@ void UnbufferedDrawer::drawLine(f32 _width, SPVertex * _vertices)
 	m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord0, false);
 	m_cachedAttribArray->enableVertexAttribArray(rectAttrib::texcoord1, false);
 
-	FunctionWrapper::glLineWidth(_width);
-	FunctionWrapper::glDrawArrays(GL_LINES, 0, 2);
+	glLineWidth(_width);
+	glDrawArrays(GL_LINES, 0, 2);
 }

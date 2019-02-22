@@ -12,7 +12,6 @@
 #include <gSP.h>
 #include <gDP.h>
 #include <VI.h>
-#include <Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h>
 
 #include <algorithm>
 using namespace opengl;
@@ -27,7 +26,7 @@ struct iUniform	{
 	void set(int _val, bool _force) {
 		if (loc >= 0 && (_force || val != _val)) {
 			val = _val;
-			FunctionWrapper::glUniform1i(loc, _val);
+			glUniform1i(loc, _val);
 		}
 	}
 };
@@ -38,7 +37,7 @@ struct fUniform {
 	void set(float _val, bool _force) {
 		if (loc >= 0 && (_force || val != _val)) {
 			val = _val;
-			FunctionWrapper::glUniform1f(loc, _val);
+			glUniform1f(loc, _val);
 		}
 	}
 };
@@ -50,7 +49,7 @@ struct fv2Uniform {
 		if (loc >= 0 && (_force || val1 != _val1 || val2 != _val2)) {
 			val1 = _val1;
 			val2 = _val2;
-			FunctionWrapper::glUniform2f(loc, _val1, _val2);
+			glUniform2f(loc, _val1, _val2);
 		}
 	}
 };
@@ -62,7 +61,7 @@ struct fv3Uniform {
 		const size_t szData = sizeof(float)* 3;
 		if (loc >= 0 && (_force || memcmp(val, _pVal, szData) != 0)) {
 			memcpy(val, _pVal, szData);
-			FunctionWrapper::glUniform3fv(loc, 1, _pVal);
+			glUniform3fv(loc, 1, _pVal);
 		}
 	}
 };
@@ -74,7 +73,7 @@ struct fv4Uniform {
 		const size_t szData = sizeof(float)* 4;
 		if (loc >= 0 && (_force || memcmp(val, _pVal, szData) != 0)) {
 			memcpy(val, _pVal, szData);
-			FunctionWrapper::glUniform4fv(loc, 1, _pVal);
+			glUniform4fv(loc, 1, _pVal);
 		}
 	}
 };
@@ -86,7 +85,7 @@ struct iv2Uniform {
 		if (loc >= 0 && (_force || val1 != _val1 || val2 != _val2)) {
 			val1 = _val1;
 			val2 = _val2;
-			FunctionWrapper::glUniform2i(loc, _val1, _val2);
+			glUniform2i(loc, _val1, _val2);
 		}
 	}
 };
@@ -102,7 +101,7 @@ struct i4Uniform {
 			val1 = _val1;
 			val2 = _val2;
 			val3 = _val3;
-			FunctionWrapper::glUniform4i(loc, val0, val1, val2, val3);
+			glUniform4i(loc, val0, val1, val2, val3);
 		}
 	}
 };
@@ -111,7 +110,7 @@ struct i4Uniform {
 /*---------------UniformGroup-------------*/
 
 #define LocateUniform(A) \
-	A.loc = FunctionWrapper::glGetUniformLocation(_program, #A);
+	A.loc = glGetUniformLocation(_program, #A);
 
 class UNoiseTex : public UniformGroup
 {
@@ -912,9 +911,9 @@ public:
 		char buf[32];
 		for (s32 i = 0; i < 8; ++i) {
 			sprintf(buf, "uLightDirection[%d]", i);
-			uLightDirection[i].loc = FunctionWrapper::glGetUniformLocation(_program, buf);
+			uLightDirection[i].loc = glGetUniformLocation(_program, buf);
 			sprintf(buf, "uLightColor[%d]", i);
-			uLightColor[i].loc = FunctionWrapper::glGetUniformLocation(_program, buf);
+			uLightColor[i].loc = glGetUniformLocation(_program, buf);
 		}
 	}
 

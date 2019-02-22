@@ -3,7 +3,6 @@
 #include <GBI.h>
 #include <Graphics/Context.h>
 #include "opengl_ColorBufferReaderWithEGLImage.h"
-#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 using namespace opengl;
 using namespace graphics;
@@ -50,7 +49,7 @@ const u8 * ColorBufferReaderWithEGLImage::_readPixels(const ReadColorBufferParam
 
 	if (!_params.sync) {
 		m_bindTexture->bind(graphics::Parameter(0), graphics::Parameter(GL_TEXTURE_2D), m_pTexture->name);
-		FunctionWrapper::glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, m_image);
+		glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, m_image);
 		m_bindTexture->bind(graphics::Parameter(0), graphics::Parameter(GL_TEXTURE_2D), ObjectHandle());
 
 		m_hardwareBuffer.lock(m_usage, &gpuData);
@@ -59,7 +58,7 @@ const u8 * ColorBufferReaderWithEGLImage::_readPixels(const ReadColorBufferParam
 		_stride = m_pTexture->realWidth;
 	} else {
 		gpuData = m_pixelData.data();
-		FunctionWrapper::glReadPixels(_params.x0, _params.y0, _params.width, _params.height, format, type, gpuData);
+		glReadPixels(_params.x0, _params.y0, _params.width, _params.height, format, type, gpuData);
 		_heightOffset = 0;
 		_stride = m_pTexture->realWidth;
 	}

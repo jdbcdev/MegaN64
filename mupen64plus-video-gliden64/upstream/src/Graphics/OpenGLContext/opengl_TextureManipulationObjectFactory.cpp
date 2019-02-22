@@ -5,7 +5,6 @@
 #include "opengl_CachedFunctions.h"
 #include "opengl_Utils.h"
 #include "opengl_TextureManipulationObjectFactory.h"
-#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 #include <algorithm>
 
 #ifndef GL_EXT_texture_filter_anisotropic
@@ -26,7 +25,7 @@ namespace opengl {
 		graphics::ObjectHandle createTexture(graphics::Parameter _target) override
 		{
 			GLuint glName;
-			FunctionWrapper::glGenTextures(1, &glName);
+			glGenTextures(1, &glName);
 			return graphics::ObjectHandle(glName);
 		}
 	};
@@ -45,7 +44,7 @@ namespace opengl {
 		graphics::ObjectHandle createTexture(graphics::Parameter _target) override
 		{
 			GLuint glName;
-			FunctionWrapper::glCreateTextures(GLenum(_target), 1, &glName);
+			glCreateTextures(GLenum(_target), 1, &glName);
 			return graphics::ObjectHandle(glName);
 		}
 	};
@@ -62,7 +61,7 @@ namespace opengl {
 			if (_params.msaaLevel == 0) {
 
 				m_bind->bind(_params.textureUnitIndex, graphics::textureTarget::TEXTURE_2D, _params.handle);
-				FunctionWrapper::glTexImage2D(GL_TEXTURE_2D,
+				glTexImage2D(GL_TEXTURE_2D,
 							 _params.mipMapLevel,
 							 GLuint(_params.internalFormat),
 							 _params.width,
@@ -73,7 +72,7 @@ namespace opengl {
 							 _params.data);
 			} else {
 				m_bind->bind(_params.textureUnitIndex, graphics::textureTarget::TEXTURE_2D_MULTISAMPLE, _params.handle);
-				FunctionWrapper::glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
 										_params.msaaLevel,
 										GLenum(_params.internalFormat),
 										_params.width,
@@ -110,7 +109,7 @@ namespace opengl {
 				m_bind->bind(_params.textureUnitIndex, graphics::textureTarget::TEXTURE_2D, _params.handle);
 				if (m_handle != _params.handle) {
 					m_handle = _params.handle;
-					FunctionWrapper::glTexStorage2D(GL_TEXTURE_2D,
+					glTexStorage2D(GL_TEXTURE_2D,
 								   _params.mipMapLevels,
 								   GLenum(_params.internalFormat),
 								   _params.width,
@@ -118,7 +117,7 @@ namespace opengl {
 				}
 
 				if (_params.data != nullptr) {
-					FunctionWrapper::glTexSubImage2D(GL_TEXTURE_2D,
+					glTexSubImage2D(GL_TEXTURE_2D,
 						_params.mipMapLevel,
 						0, 0,
 						_params.width,
@@ -130,7 +129,7 @@ namespace opengl {
 			}
 			else {
 				m_bind->bind(_params.textureUnitIndex, graphics::textureTarget::TEXTURE_2D_MULTISAMPLE, _params.handle);
-				FunctionWrapper::glTexStorage2DMultisample(
+				glTexStorage2DMultisample(
 							GL_TEXTURE_2D_MULTISAMPLE,
 							_params.msaaLevel,
 							GLenum(_params.internalFormat),
@@ -169,7 +168,7 @@ namespace opengl {
 			if (_params.msaaLevel == 0) {
 				if (m_handle != _params.handle) {
 					m_handle = _params.handle;
-					FunctionWrapper::glTextureStorage2D(GLuint(_params.handle),
+					glTextureStorage2D(GLuint(_params.handle),
 								   _params.mipMapLevels,
 								   GLenum(_params.internalFormat),
 								   _params.width,
@@ -177,7 +176,7 @@ namespace opengl {
 				}
 
 				if (_params.data != nullptr) {
-					FunctionWrapper::glTextureSubImage2D(GLuint(_params.handle),
+					glTextureSubImage2D(GLuint(_params.handle),
 						_params.mipMapLevel,
 						0, 0,
 						_params.width,
@@ -188,7 +187,7 @@ namespace opengl {
 				}
 			}
 			else {
-				FunctionWrapper::glTexStorage2DMultisample(GLuint(_params.handle),
+				glTexStorage2DMultisample(GLuint(_params.handle),
 										  _params.msaaLevel,
 										  GLenum(_params.internalFormat),
 										  _params.width,
@@ -219,7 +218,7 @@ namespace opengl {
 		{
 			m_bind->bind(_params.textureUnitIndex, GL_TEXTURE_2D, _params.handle);
 
-            FunctionWrapper::glTexSubImage2D(GL_TEXTURE_2D,
+            glTexSubImage2D(GL_TEXTURE_2D,
                 _params.mipMapLevel,
                 _params.x,
                 _params.y,
@@ -247,7 +246,7 @@ namespace opengl {
 
 		void update2DTexture(const graphics::Context::UpdateTextureDataParams & _params) override
 		{
-            FunctionWrapper::glTextureSubImage2D(GLuint(_params.handle),
+            glTextureSubImage2D(GLuint(_params.handle),
                 _params.mipMapLevel,
                 _params.x,
                 _params.y,
@@ -278,27 +277,27 @@ namespace opengl {
 			const bool iterValid = iter != m_texparams->end();
 			const GLenum target(_parameters.target);
 			if (_parameters.magFilter.isValid() && !(iterValid && iter->second.magFilter == GLint(_parameters.magFilter))) {
-				FunctionWrapper::glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GLint(_parameters.magFilter));
+				glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GLint(_parameters.magFilter));
 				(*m_texparams)[u32(_parameters.handle)].magFilter = GLint(_parameters.magFilter);
 			}
 			if (_parameters.minFilter.isValid() && !(iterValid && iter->second.minFilter == GLint(_parameters.minFilter))) {
-				FunctionWrapper::glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GLint(_parameters.minFilter));
+				glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GLint(_parameters.minFilter));
 				(*m_texparams)[u32(_parameters.handle)].minFilter = GLint(_parameters.minFilter);
 			}
 			if (_parameters.wrapS.isValid() && !(iterValid && iter->second.wrapS == GLint(_parameters.wrapS))) {
-				FunctionWrapper::glTexParameteri(target, GL_TEXTURE_WRAP_S, GLint(_parameters.wrapS));
+				glTexParameteri(target, GL_TEXTURE_WRAP_S, GLint(_parameters.wrapS));
 				(*m_texparams)[u32(_parameters.handle)].wrapS = GLint(_parameters.wrapS);
 			}
 			if (_parameters.wrapT.isValid() && !(iterValid && iter->second.wrapT == GLint(_parameters.wrapT))) {
-				FunctionWrapper::glTexParameteri(target, GL_TEXTURE_WRAP_T, GLint(_parameters.wrapT));
+				glTexParameteri(target, GL_TEXTURE_WRAP_T, GLint(_parameters.wrapT));
 				(*m_texparams)[u32(_parameters.handle)].wrapT = GLint(_parameters.wrapT);
 			}
 			if (m_supportMipmapLevel && _parameters.maxMipmapLevel.isValid() && !(iterValid && iter->second.maxMipmapLevel == GLint(_parameters.maxMipmapLevel))) {
-				FunctionWrapper::glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, GLint(_parameters.maxMipmapLevel));
+				glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, GLint(_parameters.maxMipmapLevel));
 				(*m_texparams)[u32(_parameters.handle)].maxMipmapLevel = GLint(_parameters.maxMipmapLevel);
 			}
 			if (_parameters.maxAnisotropy.isValid() && !(iterValid && iter->second.maxAnisotropy == GLfloat(_parameters.maxAnisotropy))) {
-				FunctionWrapper::glTexParameterf(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, GLfloat(_parameters.maxMipmapLevel));
+				glTexParameterf(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, GLfloat(_parameters.maxMipmapLevel));
 				(*m_texparams)[u32(_parameters.handle)].maxAnisotropy = GLfloat(_parameters.maxMipmapLevel);
 			}
 		}
@@ -335,17 +334,17 @@ namespace opengl {
 			}
 
 			if (_parameters.magFilter.isValid())
-				FunctionWrapper::glTextureParameteri(handle, GL_TEXTURE_MAG_FILTER, GLint(_parameters.magFilter));
+				glTextureParameteri(handle, GL_TEXTURE_MAG_FILTER, GLint(_parameters.magFilter));
 			if (_parameters.minFilter.isValid())
-				FunctionWrapper::glTextureParameteri(handle, GL_TEXTURE_MIN_FILTER, GLint(_parameters.minFilter));
+				glTextureParameteri(handle, GL_TEXTURE_MIN_FILTER, GLint(_parameters.minFilter));
 			if (_parameters.wrapS.isValid())
-				FunctionWrapper::glTextureParameteri(handle, GL_TEXTURE_WRAP_S, GLint(_parameters.wrapS));
+				glTextureParameteri(handle, GL_TEXTURE_WRAP_S, GLint(_parameters.wrapS));
 			if (_parameters.wrapT.isValid())
-				FunctionWrapper::glTextureParameteri(handle, GL_TEXTURE_WRAP_T, GLint(_parameters.wrapT));
+				glTextureParameteri(handle, GL_TEXTURE_WRAP_T, GLint(_parameters.wrapT));
 			if (_parameters.maxMipmapLevel.isValid())
-				FunctionWrapper::glTextureParameteri(handle, GL_TEXTURE_MAX_LEVEL, GLint(_parameters.maxMipmapLevel));
+				glTextureParameteri(handle, GL_TEXTURE_MAX_LEVEL, GLint(_parameters.maxMipmapLevel));
 			if (_parameters.maxAnisotropy.isValid())
-				FunctionWrapper::glTextureParameterf(handle, GL_TEXTURE_MAX_ANISOTROPY_EXT, GLfloat(_parameters.maxAnisotropy));
+				glTextureParameterf(handle, GL_TEXTURE_MAX_ANISOTROPY_EXT, GLfloat(_parameters.maxAnisotropy));
 		}
 
 	private:

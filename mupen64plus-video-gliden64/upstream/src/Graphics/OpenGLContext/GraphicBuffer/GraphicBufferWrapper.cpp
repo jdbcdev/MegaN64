@@ -2,7 +2,6 @@
 
 #include "GraphicBufferWrapper.h"
 #include <Graphics/OpenGLContext/GraphicBuffer/PublicApi/android_hardware_buffer_compat.h>
-#include <Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h>
 #include "../GLFunctions.h"
 
 #include <dlfcn.h>
@@ -88,7 +87,7 @@ EGLClientBuffer GraphicBufferWrapper::getClientBuffer() {
 	if (m_private) {
 		clientBuffer = (EGLClientBuffer)m_privateGraphicBuffer->getNativeBuffer();
 	} else {
-		clientBuffer = FunctionWrapper::eglGetNativeClientBufferANDROID(m_publicGraphicBuffer);
+		clientBuffer = eglGetNativeClientBufferANDROID(m_publicGraphicBuffer);
 	}
 
 	return clientBuffer;

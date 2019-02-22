@@ -7,7 +7,6 @@
 #include "glsl_CombinerProgramImpl.h"
 #include "glsl_CombinerProgramBuilder.h"
 #include "glsl_CombinerProgramUniformFactory.h"
-#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 using namespace glsl;
 using namespace opengl;
@@ -2397,28 +2396,28 @@ graphics::CombinerProgram * CombinerProgramBuilder::buildCombinerProgram(Combine
 	const std::string strFragmentShader(std::move(ssShader.str()));
 
 	/* Create shader program */
-	GLuint fragmentShader = FunctionWrapper::glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	const GLchar * strShaderData = strFragmentShader.data();
-	FunctionWrapper::glShaderSource(fragmentShader, 1, &strShaderData, nullptr);
-	FunctionWrapper::glCompileShader(fragmentShader);
+	glShaderSource(fragmentShader, 1, &strShaderData, nullptr);
+	glCompileShader(fragmentShader);
 	if (!Utils::checkShaderCompileStatus(fragmentShader))
 	Utils::logErrorShader(GL_FRAGMENT_SHADER, strFragmentShader);
 
-	GLuint program = FunctionWrapper::glCreateProgram();
+	GLuint program = glCreateProgram();
 	Utils::locateAttributes(program, bIsRect, bUseTextures);
 	if (bIsRect)
-		FunctionWrapper::glAttachShader(program, bUseTextures ? m_vertexShaderTexturedRect : m_vertexShaderRect);
+		glAttachShader(program, bUseTextures ? m_vertexShaderTexturedRect : m_vertexShaderRect);
 	else
-		FunctionWrapper::glAttachShader(program, bUseTextures ? m_vertexShaderTexturedTriangle : m_vertexShaderTriangle);
-	FunctionWrapper::glAttachShader(program, fragmentShader);
+		glAttachShader(program, bUseTextures ? m_vertexShaderTexturedTriangle : m_vertexShaderTriangle);
+	glAttachShader(program, fragmentShader);
 	if (CombinerInfo::get().isShaderCacheSupported()) {
-		if (IS_GL_FUNCTION_VALID(glProgramParameteri))
-			FunctionWrapper::glProgramParameteri(program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
+		if (IS_GL_FUNCTION_VALID(ProgramParameteri))
+			glProgramParameteri(program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 	}
-	FunctionWrapper::glLinkProgram(program);
+	glLinkProgram(program);
 
 	assert(Utils::checkProgramLinkStatus(program));
-	FunctionWrapper::glDeleteShader(fragmentShader);
+	glDeleteShader(fragmentShader);
 
 	UniformGroups uniforms;
 	m_uniformFactory->buildUniforms(program, combinerInputs, _key, uniforms);
@@ -2451,9 +2450,9 @@ GLuint _createVertexShader(ShaderPart * _header, ShaderPart * _body, ShaderPart 
 	const std::string strShader(std::move(ssShader.str()));
 	const GLchar * strShaderData = strShader.data();
 
-	GLuint shader_object = FunctionWrapper::glCreateShader(GL_VERTEX_SHADER);
-	FunctionWrapper::glShaderSource(shader_object, 1, &strShaderData, nullptr);
-	FunctionWrapper::glCompileShader(shader_object);
+	GLuint shader_object = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(shader_object, 1, &strShaderData, nullptr);
+	glCompileShader(shader_object);
 	if (!Utils::checkShaderCompileStatus(shader_object))
 		Utils::logErrorShader(GL_VERTEX_SHADER, strShaderData);
 	return shader_object;
@@ -2519,10 +2518,10 @@ CombinerProgramBuilder::CombinerProgramBuilder(const opengl::GLInfo & _glinfo, o
 
 CombinerProgramBuilder::~CombinerProgramBuilder()
 {
-	FunctionWrapper::glDeleteShader(m_vertexShaderRect);
-	FunctionWrapper::glDeleteShader(m_vertexShaderTriangle);
-	FunctionWrapper::glDeleteShader(m_vertexShaderTexturedRect);
-	FunctionWrapper::glDeleteShader(m_vertexShaderTexturedTriangle);
+	glDeleteShader(m_vertexShaderRect);
+	glDeleteShader(m_vertexShaderTriangle);
+	glDeleteShader(m_vertexShaderTexturedRect);
+	glDeleteShader(m_vertexShaderTexturedTriangle);
 }
 
 bool CombinerProgramBuilder::isObsolete() const

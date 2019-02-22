@@ -1,7 +1,6 @@
 #include <Config.h>
 #include <Graphics/Context.h>
 #include "opengl_ColorBufferReaderWithPixelBuffer.h"
-#include "Graphics/OpenGLContext/ThreadedOpenGl/opengl_Wrapper.h"
 
 using namespace graphics;
 using namespace opengl;
@@ -21,7 +20,7 @@ ColorBufferReaderWithPixelBuffer::~ColorBufferReaderWithPixelBuffer()
 
 void ColorBufferReaderWithPixelBuffer::_destroyBuffers()
 {
-	FunctionWrapper::glDeleteBuffers(m_numPBO, m_PBO);
+	glDeleteBuffers(m_numPBO, m_PBO);
 
 	for (u32 index = 0; index < m_numPBO; ++index)
 		m_PBO[index] = 0;
@@ -34,13 +33,13 @@ void ColorBufferReaderWithPixelBuffer::_initBuffers()
 		m_numPBO = _maxPBO;
 
 	// Generate Pixel Buffer Objects
-	FunctionWrapper::glGenBuffers(m_numPBO, m_PBO);
+	glGenBuffers(m_numPBO, m_PBO);
 	m_curIndex = 0;
 
 	// Initialize Pixel Buffer Objects
 	for (u32 i = 0; i < m_numPBO; ++i) {
 		m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[i]));
-		FunctionWrapper::glBufferData(GL_PIXEL_PACK_BUFFER, m_pTexture->textureBytes, nullptr, GL_DYNAMIC_READ);
+		glBufferData(GL_PIXEL_PACK_BUFFER, m_pTexture->textureBytes, nullptr, GL_DYNAMIC_READ);
 	}
 	m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle::null);
 }
@@ -52,7 +51,7 @@ const u8 * ColorBufferReaderWithPixelBuffer::_readPixels(const ReadColorBufferPa
     GLenum type = GLenum(_params.colorType);
 
     m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[m_curIndex]));
-    FunctionWrapper::glReadPixels(_params.x0,
+    glReadPixels(_params.x0,
             _params.y0, m_pTexture->realWidth, _params.height, format, type, 0);
     // If Sync, read pixels from the buffer, copy them to RDRAM.
     // If not Sync, read pixels from the buffer, copy pixels from the previous buffer to RDRAM.
@@ -64,13 +63,13 @@ const u8 * ColorBufferReaderWithPixelBuffer::_readPixels(const ReadColorBufferPa
     _heightOffset = 0;
     _stride = m_pTexture->realWidth;
 
-    return reinterpret_cast<u8*>(FunctionWrapper::glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0,
+    return reinterpret_cast<u8*>(glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0,
                                                   m_pTexture->realWidth * _params.height * _params.colorFormatBytes, GL_MAP_READ_BIT));
 
 }
 
 void ColorBufferReaderWithPixelBuffer::cleanUp()
 {
-	FunctionWrapper::glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+	glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
 	m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle::null);
 }
