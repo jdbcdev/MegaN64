@@ -74,7 +74,7 @@ namespace opengl {
 
 		static GLuint glCreateShader(GLenum type);
 		static void glCompileShader(GLuint shader);
-		static void glShaderSource(GLuint shader, const std::string& string);
+		static void glShaderSource(GLuint shader, GLsizei count, const GLchar *const*string, const GLint *length);
 		static GLuint glCreateProgram();
 		static void glAttachShader(GLuint program, GLuint shader);
 		static void glLinkProgram(GLuint program);
@@ -100,7 +100,7 @@ namespace opengl {
 		static void glEnableVertexAttribArray(GLuint index);
 		static void glDisableVertexAttribArray(GLuint index);
 		static void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
-		static void glBindAttribLocation(GLuint program, GLuint index, const std::string& name);
+		static void glBindAttribLocation(GLuint program, GLuint index, const GLchar *name);
 		static void glVertexAttrib1f(GLuint index, GLfloat x);
 		static void glVertexAttrib4f(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 		static void glVertexAttrib4fv(GLuint index, const GLfloat *v);
@@ -127,20 +127,18 @@ namespace opengl {
 		static void glDeleteVertexArrays(GLsizei n, const GLuint *arrays);
 		static void glGenBuffers(GLsizei n, GLuint* buffers);
 		static void glBindBuffer(GLenum target, GLuint buffer);
-		template <class dataType>
-		static void glBufferData(GLenum target, GLsizeiptr size, std::unique_ptr<dataType[]> data, GLenum usage);
+		static void glBufferData(GLenum target, GLsizeiptr size, const void *data, GLenum usage);
 		static void glMapBuffer(GLenum target, GLenum access);
 		static void* glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
 		static GLboolean glUnmapBuffer(GLenum target);
-		static void glDeleteBuffers(GLsizei n, std::unique_ptr<GLuint[]> buffers);
+		static void glDeleteBuffers(GLsizei n, const GLuint *buffers);
 		static void glBindImageTexture(GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format);
 		static void glMemoryBarrier(GLbitfield barriers);
 		static void glTextureBarrier();
 		static void glTextureBarrierNV();
 		static const GLubyte* glGetStringi(GLenum name, GLuint index);
-		static void glInvalidateFramebuffer(GLenum target, GLsizei numAttachments, std::unique_ptr<GLenum[]> attachments);
-		template <class dataType>
-		static void glBufferStorage(GLenum target, GLsizeiptr size, std::unique_ptr<dataType[]> data, GLbitfield flags);
+		static void glInvalidateFramebuffer(GLenum target, GLsizei numAttachments, const GLenum *attachments);
+		static void glBufferStorage(GLenum target, GLsizeiptr size, const void *data, GLbitfield flags);
 		static GLsync glFenceSync(GLenum condition, GLbitfield flags);
 		static void glClientWaitSync(GLsync sync, GLbitfield flags, GLuint64 timeout);
 		static void glDeleteSync(GLsync sync);
@@ -151,12 +149,10 @@ namespace opengl {
 		static void glGetUniformIndices(GLuint program, GLsizei uniformCount, const GLchar *const*uniformNames, GLuint* uniformIndices);
 		static void glGetActiveUniformsiv(GLuint program, GLsizei uniformCount, const GLuint *uniformIndices, GLenum pname, GLint* params);
 		static void glBindBufferBase(GLenum target, GLuint index, GLuint buffer);
-		template <class dataType>
-		static void glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, std::unique_ptr<dataType[]> data);
+		static void glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void *data);
 
 		static void glGetProgramBinary(GLuint program, GLsizei bufSize, GLsizei* length, GLenum* binaryFormat, void *binary);
-		template <class dataType>
-		static void glProgramBinary(GLuint program, GLenum binaryFormat, std::unique_ptr<dataType[]> binary, GLsizei length);
+		static void glProgramBinary(GLuint program, GLenum binaryFormat, const void *binary, GLsizei length);
 		static void glProgramParameteri(GLuint program, GLenum pname, GLint value);
 
 		static void glTexStorage2D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height);
@@ -198,44 +194,4 @@ namespace opengl {
 
 		static int getFormatBytesPerPixel(GLenum format, GLenum type);
 	};
-
-	template <class dataType>
-	void  FunctionWrapper::glBufferData(GLenum target, GLsizeiptr size, std::unique_ptr<dataType[]> data, GLenum usage)
-	{
-		if(m_threaded_wrapper) {
-		    if (target == GL_ARRAY_BUFFER || target == GL_ELEMENT_ARRAY_BUFFER)
-                m_fastVertexAttributes = true;
-            executeCommand(GlBufferDataCommand<dataType>::get(target, size, std::move(data), usage));
-        } else
-			g_glBufferData(target, size, data.get(), usage);
-	}
-
-	template <class dataType>
-	void  FunctionWrapper::glBufferStorage(GLenum target, GLsizeiptr size, std::unique_ptr<dataType[]> data, GLbitfield flags)
-	{
-		if(m_threaded_wrapper) {
-            if (target == GL_ARRAY_BUFFER || target == GL_ELEMENT_ARRAY_BUFFER)
-                m_fastVertexAttributes = true;
-            executeCommand(GlBufferStorageCommand<dataType>::get(target, size, std::move(data), flags));
-        } else
-			g_glBufferStorage(target, size, data.get(), flags);
-	}
-
-	template <class dataType>
-	void  FunctionWrapper::glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, std::unique_ptr<dataType[]> data)
-	{
-		if(m_threaded_wrapper)
-			executeCommand(GlBufferSubDataCommand<dataType>::get(target, offset, size, std::move(data)));
-		else
-			g_glBufferSubData(target, offset, size, data.get());
-	}
-
-	template <class dataType>
-	void  FunctionWrapper::glProgramBinary(GLuint program, GLenum binaryFormat, std::unique_ptr<dataType[]> binary, GLsizei length)
-	{
-		if(m_threaded_wrapper)
-			executeCommand(GlProgramBinaryCommand<dataType>::get(program, binaryFormat, std::move(binary), length));
-		else
-			g_glProgramBinary(program, binaryFormat, binary.get(), length);
-	}
 }

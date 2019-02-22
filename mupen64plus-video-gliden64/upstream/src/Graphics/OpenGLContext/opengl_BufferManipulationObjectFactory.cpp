@@ -136,15 +136,12 @@ public:
 	{
 		FunctionWrapper::glGenBuffers(1, &m_PBO);
 		m_bind->bind(graphics::Parameter(GL_PIXEL_PACK_BUFFER), graphics::ObjectHandle(m_PBO));
-		FunctionWrapper::glBufferData(GL_PIXEL_PACK_BUFFER, m_size, std::move(std::unique_ptr<u8[]>(nullptr)), GL_DYNAMIC_READ);
+		FunctionWrapper::glBufferData(GL_PIXEL_PACK_BUFFER, m_size, nullptr, GL_DYNAMIC_READ);
 		m_bind->bind(graphics::Parameter(GL_PIXEL_PACK_BUFFER), graphics::ObjectHandle::null);
 	}
 
 	~PBOReadBuffer() {
-		auto buffers = std::unique_ptr<GLuint[]>(new GLuint[1]);
-		buffers[0] = m_PBO;
-
-		FunctionWrapper::glDeleteBuffers(1, std::move(buffers));
+		FunctionWrapper::glDeleteBuffers(1, &m_PBO);
 		m_PBO = 0;
 	}
 

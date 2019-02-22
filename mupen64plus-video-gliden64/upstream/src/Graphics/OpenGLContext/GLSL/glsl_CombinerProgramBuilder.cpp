@@ -2398,7 +2398,8 @@ graphics::CombinerProgram * CombinerProgramBuilder::buildCombinerProgram(Combine
 
 	/* Create shader program */
 	GLuint fragmentShader = FunctionWrapper::glCreateShader(GL_FRAGMENT_SHADER);
-	FunctionWrapper::glShaderSource(fragmentShader, strFragmentShader);
+	const GLchar * strShaderData = strFragmentShader.data();
+	FunctionWrapper::glShaderSource(fragmentShader, 1, &strShaderData, nullptr);
 	FunctionWrapper::glCompileShader(fragmentShader);
 	if (!Utils::checkShaderCompileStatus(fragmentShader))
 	Utils::logErrorShader(GL_FRAGMENT_SHADER, strFragmentShader);
@@ -2451,7 +2452,7 @@ GLuint _createVertexShader(ShaderPart * _header, ShaderPart * _body, ShaderPart 
 	const GLchar * strShaderData = strShader.data();
 
 	GLuint shader_object = FunctionWrapper::glCreateShader(GL_VERTEX_SHADER);
-	FunctionWrapper::glShaderSource(shader_object, strShader);
+	FunctionWrapper::glShaderSource(shader_object, 1, &strShaderData, nullptr);
 	FunctionWrapper::glCompileShader(shader_object);
 	if (!Utils::checkShaderCompileStatus(shader_object))
 		Utils::logErrorShader(GL_VERTEX_SHADER, strShaderData);

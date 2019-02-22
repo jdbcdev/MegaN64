@@ -21,13 +21,7 @@ ColorBufferReaderWithPixelBuffer::~ColorBufferReaderWithPixelBuffer()
 
 void ColorBufferReaderWithPixelBuffer::_destroyBuffers()
 {
-	auto buffers = std::unique_ptr<GLuint[]>(new GLuint[m_numPBO]);
-
-	for(unsigned int index = 0; index < m_numPBO; ++index) {
-		buffers[index] = m_PBO[index];
-	}
-
-	FunctionWrapper::glDeleteBuffers(m_numPBO, std::move(buffers));
+	FunctionWrapper::glDeleteBuffers(m_numPBO, m_PBO);
 
 	for (u32 index = 0; index < m_numPBO; ++index)
 		m_PBO[index] = 0;
@@ -46,7 +40,7 @@ void ColorBufferReaderWithPixelBuffer::_initBuffers()
 	// Initialize Pixel Buffer Objects
 	for (u32 i = 0; i < m_numPBO; ++i) {
 		m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[i]));
-		FunctionWrapper::glBufferData(GL_PIXEL_PACK_BUFFER, m_pTexture->textureBytes, std::move(std::unique_ptr<u8[]>(nullptr)), GL_DYNAMIC_READ);
+		FunctionWrapper::glBufferData(GL_PIXEL_PACK_BUFFER, m_pTexture->textureBytes, nullptr, GL_DYNAMIC_READ);
 	}
 	m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle::null);
 }

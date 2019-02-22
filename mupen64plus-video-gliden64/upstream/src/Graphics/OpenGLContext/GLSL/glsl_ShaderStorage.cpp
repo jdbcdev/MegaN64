@@ -202,13 +202,13 @@ CombinerProgramImpl * _readCominerProgramFromStream(std::istream & _is,
 	GLint  binaryLength;
 	_is.read((char*)&binaryFormat, sizeof(binaryFormat));
 	_is.read((char*)&binaryLength, sizeof(binaryLength));
-	std::unique_ptr<char[]> binary(new char[binaryLength]);
-	_is.read(binary.get(), binaryLength);
+	std::vector<char> binary(binaryLength);
+	_is.read(binary.data(), binaryLength);
 
 	GLuint program = FunctionWrapper::glCreateProgram();
 	const bool isRect = cmbKey.isRectKey();
 	glsl::Utils::locateAttributes(program, isRect, cmbInputs.usesTexture());
-	FunctionWrapper::glProgramBinary(program, binaryFormat, std::move(binary), binaryLength);
+	FunctionWrapper::glProgramBinary(program, binaryFormat, binary.data(), binaryLength);
 	assert(glsl::Utils::checkProgramLinkStatus(program));
 
 	UniformGroups uniforms;

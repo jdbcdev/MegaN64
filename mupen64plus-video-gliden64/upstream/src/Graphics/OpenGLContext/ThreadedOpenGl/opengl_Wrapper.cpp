@@ -1,5 +1,7 @@
 #include "opengl_Wrapper.h"
 #include "opengl_WrappedFunctions.h"
+#include "splice-pool.hpp"
+#include <memory>
 
 namespace opengl {
 
@@ -166,7 +168,7 @@ namespace opengl {
 
 	void FunctionWrapper::glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels)
 	{
-		if(m_threaded_wrapper) {
+		if (m_threaded_wrapper) {
 			std::unique_ptr<u8[]> data(nullptr);
 			int totalBytes = getFormatBytesPerPixel(format, type)*width*height;
 			if(totalBytes > 0 && pixels != nullptr) {
@@ -228,7 +230,7 @@ namespace opengl {
 
 	void  FunctionWrapper::glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
 	{
-		if(m_threaded_wrapper) {
+		if (m_threaded_wrapper) {
 			int totalBytes = getFormatBytesPerPixel(format, type)*width*height;
 			std::unique_ptr<u8[]> data(nullptr);
 			if(totalBytes > 0 && pixels != nullptr) {
@@ -279,7 +281,7 @@ namespace opengl {
 
 	void FunctionWrapper::glDrawElements(GLenum mode, GLsizei count, GLenum type, const void *indices)
 	{
-		if(m_threaded_wrapper)
+		if (m_threaded_wrapper)
         {
             int typeSizeBytes;
             unsigned int maxElementIndex;
@@ -448,14 +450,26 @@ namespace opengl {
 			g_glCompileShader(shader);
 	}
 
-	void FunctionWrapper::glShaderSource(GLuint shader, const std::string& string)
+	void FunctionWrapper::glShaderSource(GLuint shader, GLsizei count, const GLchar *const*string, const GLint *length)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlShaderSourceCommand::get(shader, string));
-		else {
-			const GLchar* strShaderData = string.data();
-			g_glShaderSource(shader, 1, &strShaderData, nullptr);
-		}
+		if (m_threaded_wrapper) {
+			std::vector<std::string> stringData(count);
+
+			if (length == nullptr) {
+				for (unsigned int index = 0; index < stringData.size(); ++index) {
+					stringData[index] = string[index];
+				}
+			} else {
+				for (unsigned int index = 0; index < stringData.size(); ++index) {
+					std::string tempString;
+					tempString.assign(string[index], length[index]);
+					stringData[index] = tempString;
+				}
+			}
+
+            executeCommand(GlShaderSourceCommand::get(shader, stringData));
+        } else
+			g_glShaderSource(shader, count, string, length);
 	}
 
 	GLuint FunctionWrapper::glCreateProgram()
@@ -664,12 +678,12 @@ namespace opengl {
             g_glVertexAttribPointer(index, size, type, normalized, stride, pointer);
     }
 
-	void FunctionWrapper::glBindAttribLocation(GLuint program, GLuint index, const std::string& name)
+	void FunctionWrapper::glBindAttribLocation(GLuint program, GLuint index, const GLchar *name)
 	{
 		if (m_threaded_wrapper)
-			executeCommand(GlBindAttribLocationCommand::get(program, index, std::move(name)));
+			executeCommand(GlBindAttribLocationCommand::get(program, index, name));
 		else
-			g_glBindAttribLocation(program, index, name.data());
+			g_glBindAttribLocation(program, index, name);
 	}
 
 	void FunctionWrapper::glVertexAttrib1f(GLuint index, GLfloat x)
@@ -884,6 +898,22 @@ namespace opengl {
 			g_glBindBuffer(target, buffer);
 	}
 
+	void  FunctionWrapper::glBufferData(GLenum target, GLsizeiptr size, const void *data, GLenum usage)
+	{
+		if (m_threaded_wrapper) {
+			if (target == GL_ARRAY_BUFFER || target == GL_ELEMENT_ARRAY_BUFFER)
+				m_fastVertexAttributes = true;
+
+            std::unique_ptr<u8[]> dataPtr;
+            if (data != nullptr) {
+                dataPtr.reset(new u8[size]);
+                std::copy_n(reinterpret_cast<const u8*>(data), size, dataPtr.get());
+            }
+			executeCommand(GlBufferDataCommand::get(target, size, std::move(dataPtr), usage));
+		} else
+			g_glBufferData(target, size, data, usage);
+	}
+
 	void FunctionWrapper::glMapBuffer(GLenum target, GLenum access)
 	{
 		if (m_threaded_wrapper)
@@ -946,12 +976,14 @@ namespace opengl {
 		return returnValue;
 	}
 
-	void FunctionWrapper::glDeleteBuffers(GLsizei n, std::unique_ptr<GLuint[]> buffers)
+	void FunctionWrapper::glDeleteBuffers(GLsizei n, const GLuint *buffers)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlDeleteBuffersCommand::get(n, std::move(buffers)));
-		else
-			g_glDeleteBuffers(n, buffers.get());
+		if (m_threaded_wrapper) {
+            std::unique_ptr<GLuint[]> buffersPtr(new GLuint[n]);
+            std::copy_n(buffers, n, buffersPtr.get());
+            executeCommand(GlDeleteBuffersCommand::get(n, std::move(buffersPtr)));
+        } else
+			g_glDeleteBuffers(n, buffers);
 	}
 
 	void FunctionWrapper::glBindImageTexture(GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format)
@@ -998,12 +1030,31 @@ namespace opengl {
 		return returnValue;
 	}
 
-	void FunctionWrapper::glInvalidateFramebuffer(GLenum target, GLsizei numAttachments, std::unique_ptr<GLenum[]> attachments)
+	void FunctionWrapper::glInvalidateFramebuffer(GLenum target, GLsizei numAttachments, const GLenum *attachments)
 	{
-		if (m_threaded_wrapper)
-			executeCommand(GlInvalidateFramebufferCommand::get(target, numAttachments, std::move(attachments)));
-		else
-			g_glInvalidateFramebuffer(target, numAttachments, attachments.get());
+		if (m_threaded_wrapper) {
+			std::unique_ptr<GLenum[]> attachmentsPtr(new GLenum[numAttachments]);
+			std::copy_n(attachments, numAttachments, attachmentsPtr.get());
+			executeCommand(GlInvalidateFramebufferCommand::get(target, numAttachments, std::move(attachmentsPtr)));
+		} else
+			g_glInvalidateFramebuffer(target, numAttachments, attachments);
+	}
+
+	void  FunctionWrapper::glBufferStorage(GLenum target, GLsizeiptr size, const void *data, GLbitfield flags)
+	{
+		if (m_threaded_wrapper) {
+			if (target == GL_ARRAY_BUFFER || target == GL_ELEMENT_ARRAY_BUFFER)
+				m_fastVertexAttributes = true;
+
+			std::unique_ptr<u8[]> dataPtr;
+			if (data != nullptr) {
+				dataPtr.reset(new u8[size]);
+				std::copy_n(reinterpret_cast<const u8*>(data), size, dataPtr.get());
+			}
+
+			executeCommand(GlBufferStorageCommand::get(target, size, std::move(dataPtr), flags));
+		} else
+			g_glBufferStorage(target, size, data, flags);
 	}
 
 	GLsync FunctionWrapper::glFenceSync(GLenum condition, GLbitfield flags)
@@ -1086,12 +1137,36 @@ namespace opengl {
 			g_glBindBufferBase(target, index, buffer);
 	}
 
+    void  FunctionWrapper::glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void *data)
+    {
+        if (m_threaded_wrapper) {
+            std::unique_ptr<u8[]> dataPtr;
+            if (data != nullptr) {
+                dataPtr.reset(new u8[size]);
+                std::copy_n(reinterpret_cast<const u8*>(data), size, dataPtr.get());
+            }
+            
+            executeCommand(GlBufferSubDataCommand::get(target, offset, size, std::move(dataPtr)));
+        } else
+            g_glBufferSubData(target, offset, size, data);
+    }
+
 	void FunctionWrapper::glGetProgramBinary(GLuint program, GLsizei bufSize, GLsizei* length, GLenum* binaryFormat, void *binary)
 	{
 		if (m_threaded_wrapper)
 			executeCommand(GlGetProgramBinaryCommand::get(program, bufSize, length, binaryFormat, binary));
 		else
 			g_glGetProgramBinary(program, bufSize, length, binaryFormat, binary);
+	}
+
+	void  FunctionWrapper::glProgramBinary(GLuint program, GLenum binaryFormat, const void *binary, GLsizei length)
+	{
+		if (m_threaded_wrapper) {
+			std::unique_ptr<u8[]> binaryPtr(new u8[length]);
+			std::copy_n(reinterpret_cast<const u8*>(binary), length, binaryPtr.get());
+			executeCommand(GlProgramBinaryCommand::get(program, binaryFormat, std::move(binaryPtr), length));
+		} else
+			g_glProgramBinary(program, binaryFormat, binary, length);
 	}
 
 	void FunctionWrapper::glProgramParameteri(GLuint program, GLenum pname, GLint value)
@@ -1120,7 +1195,7 @@ namespace opengl {
 
 	void  FunctionWrapper::glTextureSubImage2D(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
 	{
-		if(m_threaded_wrapper) {
+		if (m_threaded_wrapper) {
 			std::unique_ptr<u8[]> data(nullptr);
 
 			int totalBytes = getFormatBytesPerPixel(format, type)*width*height;

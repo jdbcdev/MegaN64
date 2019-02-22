@@ -59,10 +59,10 @@ void BufferedDrawer::_initBuffer(Buffer & _buffer, GLuint _bufSize)
 	FunctionWrapper::glGenBuffers(1, &_buffer.handle);
 	m_bindBuffer->bind(Parameter(_buffer.type), ObjectHandle(_buffer.handle));
 	if (m_glInfo.bufferStorage) {
-		FunctionWrapper::glBufferStorage(_buffer.type, _bufSize, std::move(std::unique_ptr<u8[]>(nullptr)), m_bufAccessBits);
+		FunctionWrapper::glBufferStorage(_buffer.type, _bufSize, nullptr, m_bufAccessBits);
 		_buffer.data = (GLubyte*)FunctionWrapper::glMapBufferRange(_buffer.type, 0, _bufSize, m_bufMapBits);
 	} else {
-		FunctionWrapper::glBufferData(_buffer.type, _bufSize, std::move(std::unique_ptr<u8[]>(nullptr)), GL_DYNAMIC_DRAW);
+		FunctionWrapper::glBufferData(_buffer.type, _bufSize, nullptr, GL_DYNAMIC_DRAW);
 	}
 }
 
@@ -70,16 +70,9 @@ BufferedDrawer::~BufferedDrawer()
 {
 	m_bindBuffer->bind(Parameter(GL_ARRAY_BUFFER), ObjectHandle::null);
 	m_bindBuffer->bind(Parameter(GL_ELEMENT_ARRAY_BUFFER), ObjectHandle::null);
-
-	int numDeleteBuffers = 3;
-	std::unique_ptr<GLuint[]> buffers(new GLuint[numDeleteBuffers]);
-	buffers[0] = m_rectsBuffers.vbo.handle;
-	buffers[1] = m_trisBuffers.vbo.handle;
-	buffers[2] = m_trisBuffers.ebo.handle;
-
-	FunctionWrapper::glDeleteBuffers(numDeleteBuffers, std::move(buffers));
+	GLuint buffers[3] = { m_rectsBuffers.vbo.handle, m_trisBuffers.vbo.handle, m_trisBuffers.ebo.handle };
+	FunctionWrapper::glDeleteBuffers(3, buffers);
 	FunctionWrapper::glBindVertexArray(0);
-
 	GLuint arrays[2] = { m_rectsBuffers.vao, m_trisBuffers.vao };
 	FunctionWrapper::glDeleteVertexArrays(2, arrays);
 }

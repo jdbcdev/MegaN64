@@ -31,7 +31,7 @@ void ColorBufferReaderWithBufferStorage::_initBuffers()
 	// Initialize Pixel Buffer Objects
 	for (u32 index = 0; index < m_numPBO; ++index) {
 		m_bindBuffer->bind(Parameter(GL_PIXEL_PACK_BUFFER), ObjectHandle(m_PBO[index]));
-		FunctionWrapper::glBufferStorage(GL_PIXEL_PACK_BUFFER, m_pTexture->textureBytes, std::move(std::unique_ptr<u8[]>(nullptr)), GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT | GL_CLIENT_STORAGE_BIT);
+		FunctionWrapper::glBufferStorage(GL_PIXEL_PACK_BUFFER, m_pTexture->textureBytes, nullptr, GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT | GL_CLIENT_STORAGE_BIT);
 		m_PBOData[index] = FunctionWrapper::glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, m_pTexture->textureBytes, GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 	}
 
@@ -40,13 +40,7 @@ void ColorBufferReaderWithBufferStorage::_initBuffers()
 
 void ColorBufferReaderWithBufferStorage::_destroyBuffers()
 {
-	auto buffers = std::unique_ptr<GLuint[]>(new GLuint[m_numPBO]);
-
-	for(unsigned int index = 0; index < m_numPBO; ++index) {
-		buffers[index] = m_PBO[index];
-	}
-
-	FunctionWrapper::glDeleteBuffers(m_numPBO, std::move(buffers));
+	FunctionWrapper::glDeleteBuffers(m_numPBO, m_PBO);
 
 	for (u32 index = 0; index < m_numPBO; ++index) {
 		m_PBO[index] = 0;

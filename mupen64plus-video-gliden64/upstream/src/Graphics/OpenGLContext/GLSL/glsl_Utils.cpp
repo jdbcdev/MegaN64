@@ -81,10 +81,10 @@ void Utils::logErrorShader(GLenum _shaderType, const std::string & _strShader)
 	}
 }
 
-GLuint Utils::createRectShaderProgram(const std::string& _strVertex, const std::string& _strFragment)
+GLuint Utils::createRectShaderProgram(const char * _strVertex, const char * _strFragment)
 {
 	GLuint vertex_shader_object = FunctionWrapper::glCreateShader(GL_VERTEX_SHADER);
-	FunctionWrapper::glShaderSource(vertex_shader_object, _strVertex);
+	FunctionWrapper::glShaderSource(vertex_shader_object, 1, &_strVertex, nullptr);
 	FunctionWrapper::glCompileShader(vertex_shader_object);
 	assert(checkShaderCompileStatus(vertex_shader_object));
 
@@ -92,7 +92,7 @@ GLuint Utils::createRectShaderProgram(const std::string& _strVertex, const std::
 		logErrorShader(GL_VERTEX_SHADER, _strVertex);
 
 	GLuint fragment_shader_object = FunctionWrapper::glCreateShader(GL_FRAGMENT_SHADER);
-	FunctionWrapper::glShaderSource(fragment_shader_object, _strFragment);
+	FunctionWrapper::glShaderSource(fragment_shader_object, 1, &_strFragment, nullptr);
 	FunctionWrapper::glCompileShader(fragment_shader_object);
 	assert(checkShaderCompileStatus(fragment_shader_object));
 

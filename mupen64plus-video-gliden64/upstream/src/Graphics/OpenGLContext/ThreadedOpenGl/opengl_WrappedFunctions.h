@@ -1483,28 +1483,32 @@ namespace opengl {
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(GLuint shader, const std::string& string)
+		static std::shared_ptr<OpenGlCommand> get(GLuint shader, std::vector<std::string>& strings)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlShaderSourceCommand>(poolId);
-			ptr->set(shader, string);
+			ptr->set(shader, strings);
 			return ptr;
 		}
 
 		void commandToExecute() override
 		{
-			const GLchar* strShaderData = m_string.data();
-			g_glShaderSource(m_shader, 1, &strShaderData, nullptr);
+            const GLchar **stringData = new const GLchar*[m_strings.size()];
+            for (unsigned int index = 0; index < m_strings.size(); ++index) {
+                stringData[index] = m_strings[index].data();
+            }
+
+			g_glShaderSource(m_shader, m_strings.size(), stringData, nullptr);
 		}
 	private:
-		void set(GLuint shader, const std::string& string)
+		void set(GLuint shader, std::vector<std::string>& strings)
 		{
 			m_shader = shader;
-			m_string = std::move(string);
+            m_strings = std::move(strings);
 		}
 
 		GLuint m_shader;
-		std::string m_string;
+        std::vector<std::string> m_strings;
 	};
 
 	class GlCreateProgramCommand : public OpenGlCommand
@@ -2260,7 +2264,7 @@ namespace opengl {
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(GLuint program, GLuint index, const std::string& name)
+		static std::shared_ptr<OpenGlCommand> get(GLuint program, GLuint index, const std::string name)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlBindAttribLocationCommand>(poolId);
@@ -2273,11 +2277,11 @@ namespace opengl {
 			g_glBindAttribLocation(m_program, m_index, m_name.data());
 		}
 	private:
-		void set(GLuint program, GLuint index, const std::string& name)
+		void set(GLuint program, GLuint index, const std::string name)
 		{
 			m_program = program;
 			m_index = index;
-			m_name = std::move(name);
+			m_name = name;
 		}
 
 		GLuint m_program;
@@ -3103,7 +3107,6 @@ namespace opengl {
         static std::unordered_map<GLenum, GLuint> m_boundBuffers;
 	};
 
-	template <class dataType>
 	class GlBufferDataCommand : public OpenGlCommand
 	{
 	public:
@@ -3112,7 +3115,7 @@ namespace opengl {
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLsizeiptr size, std::unique_ptr<dataType[]> data, GLenum usage)
+		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLsizeiptr size, std::unique_ptr<u8[]> data, GLenum usage)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlBufferDataCommand>(poolId);
@@ -3125,7 +3128,7 @@ namespace opengl {
 			g_glBufferData(m_target, m_size, m_data.get(), m_usage);
 		}
 	private:
-		void set(GLenum target, GLsizeiptr size, std::unique_ptr<dataType[]> data, GLenum usage)
+		void set(GLenum target, GLsizeiptr size, std::unique_ptr<u8[]> data, GLenum usage)
 		{
 			m_target = target;
 			m_size = size;
@@ -3135,7 +3138,7 @@ namespace opengl {
 
 		GLenum m_target;
 		GLsizeiptr m_size;
-		std::unique_ptr<dataType[]> m_data;
+		std::unique_ptr<u8[]> m_data;
 		GLenum m_usage;
 	};
 
@@ -3646,7 +3649,6 @@ namespace opengl {
 		std::unique_ptr<GLenum[]> m_attachments;
 	};
 
-	template <class dataType>
 	class GlBufferStorageCommand : public OpenGlCommand
 	{
 	public:
@@ -3655,7 +3657,7 @@ namespace opengl {
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLsizeiptr size, std::unique_ptr<dataType[]> data, GLbitfield flags)
+		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLsizeiptr size, std::unique_ptr<u8[]> data, GLbitfield flags)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlBufferStorageCommand>(poolId);
@@ -3668,7 +3670,7 @@ namespace opengl {
 			g_glBufferStorage(m_target, m_size, m_data.get(), m_flags);
 		}
 	private:
-		void set(GLenum target, GLsizeiptr size, std::unique_ptr<dataType[]> data, GLbitfield flags)
+		void set(GLenum target, GLsizeiptr size, std::unique_ptr<u8[]> data, GLbitfield flags)
 		{
 			m_target = target;
 			m_size = size;
@@ -3678,7 +3680,7 @@ namespace opengl {
 
 		GLenum m_target;
 		GLsizeiptr m_size;
-		std::unique_ptr<dataType[]> m_data;
+		std::unique_ptr<u8[]> m_data;
 		GLbitfield m_flags;
 	};
 
@@ -3987,7 +3989,6 @@ namespace opengl {
 		GLuint m_buffer;
 	};
 
-	template <class dataType>
 	class GlBufferSubDataCommand : public OpenGlCommand
 	{
 	public:
@@ -3996,7 +3997,7 @@ namespace opengl {
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLintptr offset, GLsizeiptr size, std::unique_ptr<dataType[]> data)
+		static std::shared_ptr<OpenGlCommand> get(GLenum target, GLintptr offset, GLsizeiptr size, std::unique_ptr<u8[]> data)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlBufferSubDataCommand>(poolId);
@@ -4009,7 +4010,7 @@ namespace opengl {
 			g_glBufferSubData(m_target, m_offset, m_size, m_data.get());
 		}
 	private:
-		void set(GLenum target, GLintptr offset, GLsizeiptr size, std::unique_ptr<dataType[]> data)
+		void set(GLenum target, GLintptr offset, GLsizeiptr size, std::unique_ptr<u8[]> data)
 		{
 			m_target = target;
 			m_offset = offset;
@@ -4020,7 +4021,7 @@ namespace opengl {
 		GLenum m_target;
 		GLintptr m_offset;
 		GLsizeiptr m_size;
-		std::unique_ptr<dataType[]> m_data;
+		std::unique_ptr<u8[]> m_data;
 	};
 
 	class GlGetProgramBinaryCommand : public OpenGlCommand
@@ -4060,7 +4061,6 @@ namespace opengl {
 		void* m_binary;
 	};
 
-	template <class dataType>
 	class GlProgramBinaryCommand : public OpenGlCommand
 	{
 	public:
@@ -4069,7 +4069,7 @@ namespace opengl {
 		{
 		}
 
-		static std::shared_ptr<OpenGlCommand> get(GLuint program, GLenum binaryFormat, std::unique_ptr<dataType[]> binary, GLsizei length)
+		static std::shared_ptr<OpenGlCommand> get(GLuint program, GLenum binaryFormat, std::unique_ptr<u8[]> binary, GLsizei length)
 		{
 			static int poolId = OpenGlCommandPool::get().getNextAvailablePool();
 			auto ptr = getFromPool<GlProgramBinaryCommand>(poolId);
@@ -4082,7 +4082,7 @@ namespace opengl {
 			g_glProgramBinary(m_program, m_binaryFormat, m_binary.get(), m_length);
 		}
 	private:
-		void set(GLuint program, GLenum binaryFormat, std::unique_ptr<dataType[]> binary, GLsizei length)
+		void set(GLuint program, GLenum binaryFormat, std::unique_ptr<u8[]> binary, GLsizei length)
 		{
 			m_program = program;
 			m_binaryFormat = binaryFormat;
@@ -4092,7 +4092,7 @@ namespace opengl {
 
 		GLuint m_program;
 		GLenum m_binaryFormat;
-		std::unique_ptr<dataType[]> m_binary;
+		std::unique_ptr<u8[]> m_binary;
 		GLsizei m_length;
 	};
 
