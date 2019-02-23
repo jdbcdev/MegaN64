@@ -193,6 +193,6 @@ namespace opengl {
 		static void ReduceSwapBuffersQueued();
 		static void WaitForSwapBuffersQueued();
 
-		static int getFormatBytesPerPixel(GLenum format, GLenum type);
+		static int getTextureBytes(GLenum format, GLenum type, int width, int height);
 	};
 }

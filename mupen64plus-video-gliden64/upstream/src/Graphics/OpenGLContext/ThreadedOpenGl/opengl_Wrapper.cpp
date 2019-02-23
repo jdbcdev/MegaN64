@@ -170,7 +170,7 @@ namespace opengl {
 	{
 		if (m_threaded_wrapper) {
 			std::unique_ptr<u8[]> data(nullptr);
-			int totalBytes = getFormatBytesPerPixel(format, type)*width*height;
+			int totalBytes = getTextureBytes(format, type, width, height);
 			if(totalBytes > 0 && pixels != nullptr) {
 				data = std::unique_ptr<u8[]>(new u8[totalBytes]);
 				std::copy_n(reinterpret_cast<const char*>(pixels), totalBytes, data.get());
@@ -231,7 +231,7 @@ namespace opengl {
 	void  FunctionWrapper::wrTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
 	{
 		if (m_threaded_wrapper) {
-			int totalBytes = getFormatBytesPerPixel(format, type)*width*height;
+			int totalBytes = getTextureBytes(format, type, width, height);
 			std::unique_ptr<u8[]> data(nullptr);
 			if(totalBytes > 0 && pixels != nullptr) {
 				data = std::unique_ptr<u8[]>(new u8[totalBytes]);
@@ -1198,7 +1198,7 @@ namespace opengl {
 		if (m_threaded_wrapper) {
 			std::unique_ptr<u8[]> data(nullptr);
 
-			int totalBytes = getFormatBytesPerPixel(format, type)*width*height;
+			int totalBytes = getTextureBytes(format, type, width, height);
 			if(totalBytes > 0 && pixels != nullptr) {
 				data = std::unique_ptr<u8[]>(new u8[totalBytes]);
 				std::copy_n(reinterpret_cast<const char*>(pixels), totalBytes, data.get());
@@ -1440,10 +1440,10 @@ namespace opengl {
 	}
 
 
-	int FunctionWrapper::getFormatBytesPerPixel(GLenum format, GLenum type)
+	int FunctionWrapper::getTextureBytes(GLenum format, GLenum type, int width, int height)
 	{
 		int components = 0;
-		int bytesPerComponent = 0;
+		int bytesPerPixel = 0;
 
 		switch(format)
 		{
@@ -1483,32 +1483,32 @@ namespace opengl {
 				components = 2;
 				break;
 			default:
-				components = 1;
+				components = -1;
 		}
 
 		switch(type)
 		{
 			case GL_UNSIGNED_BYTE:
 			case GL_BYTE:
-				bytesPerComponent = 1;
+				bytesPerPixel = components*1;
 				break;
 			case GL_UNSIGNED_SHORT:
 			case GL_SHORT:
-				bytesPerComponent = 2;
+				bytesPerPixel = components*2;
 				break;
 			case GL_UNSIGNED_INT:
 			case GL_INT:
-				bytesPerComponent = 4;
+				bytesPerPixel = components*4;
 				break;
 			case GL_HALF_FLOAT:
-				bytesPerComponent = 2;
+				bytesPerPixel = components*2;
 				break;
 			case GL_FLOAT:
-				bytesPerComponent = 4;
+				bytesPerPixel = components*4;
 				break;
 			case GL_UNSIGNED_BYTE_3_3_2:
 			case GL_UNSIGNED_BYTE_2_3_3_REV:
-				bytesPerComponent = 1;
+				bytesPerPixel = 1;
 				break;
 			case GL_UNSIGNED_SHORT_5_6_5:
 			case GL_UNSIGNED_SHORT_5_6_5_REV:
@@ -1516,18 +1516,33 @@ namespace opengl {
 			case GL_UNSIGNED_SHORT_4_4_4_4_REV:
 			case GL_UNSIGNED_SHORT_5_5_5_1:
 			case GL_UNSIGNED_SHORT_1_5_5_5_REV:
-				bytesPerComponent = 2;
+				bytesPerPixel = 2;
 				break;
 			case GL_UNSIGNED_INT_8_8_8_8:
 			case GL_UNSIGNED_INT_8_8_8_8_REV:
 			case GL_UNSIGNED_INT_10_10_10_2:
 			case GL_UNSIGNED_INT_2_10_10_10_REV:
-				bytesPerComponent = 4;
+				bytesPerPixel = 4;
 				break;
 			default:
-				bytesPerComponent = -1;
+				bytesPerPixel = -1;
 		}
 
-        return components*bytesPerComponent;
+		int textureSize = bytesPerPixel*width*height;
+
+		if (textureSize < 0)
+		{
+			std::stringstream log;
+			log << "Invalid texture params: component=" << std::dec << components
+			   << " bytesPerPixel=" << bytesPerPixel
+			   << " format=0x" << std::hex << format
+			   << " type=0x" << type
+			   << " width=" << std::dec << width
+			   << " height=" << height
+			   << " size=" << bytesPerPixel*width*height;
+			LOG(LOG_ERROR, log.str().c_str());
+		}
+
+        return textureSize;
 	}
 }
