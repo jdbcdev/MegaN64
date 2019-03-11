@@ -110,7 +110,7 @@
     <string name="profile_manage_profiles">Manage profiles</string>
 
     <!-- Popup Dialogs -->
-    <string name="popup_faq">Mupen64Plus is developed and maintained by volunteers.<small>\n\nTo fix graphical glitches, try changing the <i>video plugin</i>.\n\nTo fix lag, try changing the <i>video frameskip</i> setting or the <i>video plugin</i>.\n\nFor unplayable ROMS, try unzipping the ROM first or trying a different version of the ROM.\n\nFor touchscreen control issues, try changing the <i>button scale</i> or <i>button layout</i>.\n\nFor other issues, or if you\'re still stuck, please click the <i>FAQ</i> button below.  For non-game-specific bugs, click the <i>Report bug</i> button below.  We respond to the vast majority of posts within 24 hours.  Honest.\n\n</small>Thank you for helping us improve the app!</string>
+    <string name="popup_faq">MegaN64 is developed and maintained by volunteers.<small>\n\nTo fix graphical glitches, try changing the <i>video plugin</i>.\n\nTo fix lag, try changing the <i>video frameskip</i> setting or the <i>video plugin</i>.\n\nFor unplayable ROMS, try unzipping the ROM first or trying a different version of the ROM.\n\nFor touchscreen control issues, try changing the <i>button scale</i> or <i>button layout</i>.\n\nFor other issues, or if you\'re still stuck, please click the <i>FAQ</i> button below.  For non-game-specific bugs, click the <i>Report bug</i> button below.  We respond to the vast majority of posts within 24 hours.  Honest.\n\n</small>Thank you for helping us improve the app!</string>
     <string name="popup_version">Version: %1$s\nVersion code: %2$d</string>
 
     <!-- Lists -->
@@ -159,7 +159,7 @@
     <string name="toast_nativeMainFailure03">Failed to start core library.</string>
     <string name="toast_nativeMainFailure04">Failed to open configuration handles.</string>
     <string name="toast_nativeMainFailure05">Failed to parse final command line parameters.</string>
-    <string name="toast_nativeMainFailure06">Cannot use --core-compare feature with this Mupen64Plus core library.</string>
+    <string name="toast_nativeMainFailure06">Cannot use --core-compare feature with this MegaN64 core library.</string>
     <string name="toast_nativeMainFailure07">Failed to open ROM file for reading.</string>
     <string name="toast_nativeMainFailure08">Failed to allocate buffer for ROM image file.</string>
     <string name="toast_nativeMainFailure09">Failed to read bytes from ROM image file.</string>
@@ -596,7 +596,7 @@
     <string name="audioPlugin_title">Audio plugin</string>
     <string name="audioPlugin_entryNone">None (audio disabled)</string>
     <string name="audioPlugin_entryNoneNoSpeedLimit">None-debug (audio disabled, no speed limit)</string>
-    <string name="audioPlugin_entrySles">mupen64plus-audio-sles, v2.0</string>
+    <string name="audioPlugin_entrySles">MegaN64-audio-sles, v2.0</string>
     <string name="audioSLESBufferNbr_title">Audio buffer number</string>
     <string name="audioSLESRate_title">Sampling Rate</string>
     <string name="audioSLESRate_entry_orig">Set by game</string>
@@ -699,7 +699,7 @@
     <string name="assetExtractor_error">Error</string>
     <string name="assetExtractor_failed_permissions">This app cannot proceed without these permissions</string>
     <string name="assetExtractor_permissions_title">Permissions</string>
-    <string name="assetExtractor_permissions_rationale">Mupen64Plus AE needs to be able to: \nRead your storage to read ROM files, save states, and configuration.\nWrite to your storage to write configuration and save data.</string>
+    <string name="assetExtractor_permissions_rationale">MegaN64 AE needs to be able to: \nRead your storage to read ROM files, save states, and configuration.\nWrite to your storage to write configuration and save data.</string>
 
     <!-- Cheats Configuration -->
     <string name="cheats_defaultName">Cheat %1$d</string>

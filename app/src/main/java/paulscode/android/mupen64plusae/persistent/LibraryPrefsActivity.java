@@ -24,7 +24,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import org.mupen64plusae.v3.alpha.R;
+import app.megaemulators.megan64.beta.R;
 
 import paulscode.android.mupen64plusae.compat.AppCompatPreferenceActivity;
 import paulscode.android.mupen64plusae.util.LocaleContextWrapper;

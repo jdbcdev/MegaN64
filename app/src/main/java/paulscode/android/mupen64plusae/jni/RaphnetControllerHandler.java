@@ -51,7 +51,7 @@ class RaphnetControllerHandler
         void onDeviceReady();
     }
 
-    private static final String ACTION_USB_PERMISSION = "org.mupen64plusae.v3.alpha.USB_PERMISSION";
+    private static final String ACTION_USB_PERMISSION = "app.megaemulators.megan64.beta.USB_PERMISSION";
     private static final int RAPHNET_VENDOR_ID = 0x289b;
 
     private Context mContext;

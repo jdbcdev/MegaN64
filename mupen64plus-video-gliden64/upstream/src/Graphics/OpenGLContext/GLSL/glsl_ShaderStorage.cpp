@@ -21,54 +21,31 @@
 
 using namespace glsl;
 
-#define SHADER_STORAGE_FOLDER_NAME "shaders"
+#define SHADER_STORAGE_FOLDER_NAME L"shaders"
 
 static
-std::string getStorageFileName(const opengl::GLInfo & _glinfo, const char * _fileExtension)
+void getStorageFileName(const opengl::GLInfo & _glinfo, wchar_t * _shadersFileName, const wchar_t * _fileExtension)
 {
-	class SetLocale
-	{
-	public:
-		SetLocale() : m_locale(setlocale(LC_CTYPE, NULL)) { setlocale(LC_CTYPE, ""); }
-		~SetLocale() { setlocale(LC_CTYPE, m_locale.c_str()); }
-	private:
-		std::string m_locale;
-	} setLocale;
-
 	wchar_t strCacheFolderPath[PLUGIN_PATH_SIZE];
 	api().GetUserCachePath(strCacheFolderPath);
-
-	// Convert wchar string to multibyte string
-	// Use large enough buffer to hold multibyte conversion of wchar string
-	char strCacheFolderPathChar[PLUGIN_PATH_SIZE * 4];
-	std::wcstombs(strCacheFolderPathChar, strCacheFolderPath, sizeof(strCacheFolderPathChar));
-
-	std::stringstream path;
-	path << strCacheFolderPathChar << "/" << SHADER_STORAGE_FOLDER_NAME;
-
-	// Convert back to wide chars before using osal
 	wchar_t strShaderFolderPath[PLUGIN_PATH_SIZE];
-	std::mbstowcs(strShaderFolderPath, path.str().c_str(), PLUGIN_PATH_SIZE);
-
+	swprintf(strShaderFolderPath, PLUGIN_PATH_SIZE, L"%ls/%ls", strCacheFolderPath, SHADER_STORAGE_FOLDER_NAME);
+	wchar_t * pPath = strShaderFolderPath;
 	if (!osal_path_existsW(strShaderFolderPath) || !osal_is_directory(strShaderFolderPath)) {
-		if (osal_mkdirp(strShaderFolderPath) != 0) {
-			path.str("");
-			path << strCacheFolderPathChar;
-		}
+		if (osal_mkdirp(strShaderFolderPath) != 0)
+			pPath = strCacheFolderPath;
 	}
 
-	std::string strOpenGLType;
+	std::wstring strOpenGLType;
 
 	if(_glinfo.isGLESX) {
-		strOpenGLType = "GLES";
+		strOpenGLType = L"GLES";
 	} else {
-		strOpenGLType = "OpenGL";
+		strOpenGLType = L"OpenGL";
 	}
 
-	path << "/GLideN64." << std::hex << static_cast<u32>(std::hash<std::string>()(RSP.romname))
-		<< "." << strOpenGLType << "." << _fileExtension;
-
-	return path.str();
+	swprintf(_shadersFileName, PLUGIN_PATH_SIZE, L"%ls/GLideN64.%08x.%ls.%ls",
+			pPath, static_cast<u32>(std::hash<std::string>()(RSP.romname)), strOpenGLType.c_str(), _fileExtension);
 }
 
 /*
@@ -80,12 +57,15 @@ line_4..line_Count+3  combiners keys in hex form, one key per line
 */
 bool ShaderStorage::_saveCombinerKeys(const graphics::Combiners & _combiners) const
 {
-	std::string keysFileName = getStorageFileName(m_glinfo, "keys");
+	wchar_t keysFileName[PLUGIN_PATH_SIZE];
+	getStorageFileName(m_glinfo, keysFileName, L"keys");
 
 #if defined(OS_WINDOWS) && !defined(MINGW)
 	std::ofstream keysOut(keysFileName, std::ofstream::trunc);
 #else
-	std::ofstream keysOut(keysFileName.c_str(), std::ofstream::trunc);
+	char filename_c[PATH_MAX];
+	wcstombs(filename_c, keysFileName, PATH_MAX);
+	std::ofstream keysOut(filename_c, std::ofstream::trunc);
 #endif
 	if (!keysOut)
 		return false;
@@ -134,12 +114,15 @@ bool ShaderStorage::saveShadersStorage(const graphics::Combiners & _combiners) c
 		// Shaders storage is not supported, but we saved combiners keys.
 		return true;
 
-	std::string shadersFileName = getStorageFileName(m_glinfo, "shaders");
+	wchar_t shadersFileName[PLUGIN_PATH_SIZE];
+	getStorageFileName(m_glinfo, shadersFileName, L"shaders");
 
 #if defined(OS_WINDOWS) && !defined(MINGW)
 	std::ofstream shadersOut(shadersFileName, std::ofstream::binary | std::ofstream::trunc);
 #else
-	std::ofstream shadersOut(shadersFileName.c_str(), std::ofstream::binary | std::ofstream::trunc);
+	char filename_c[PATH_MAX];
+	wcstombs(filename_c, shadersFileName, PATH_MAX);
+	std::ofstream shadersOut(filename_c, std::ofstream::binary | std::ofstream::trunc);
 #endif
 	if (!shadersOut)
 		return false;
@@ -234,11 +217,14 @@ CombinerProgramImpl * _readCominerProgramFromStream(std::istream & _is,
 
 bool ShaderStorage::_loadFromCombinerKeys(graphics::Combiners & _combiners)
 {
-	std::string keysFileName = getStorageFileName(m_glinfo, "keys");
+	wchar_t keysFileName[PLUGIN_PATH_SIZE];
+	getStorageFileName(m_glinfo, keysFileName, L"keys");
 #if defined(OS_WINDOWS) && !defined(MINGW)
 	std::ifstream fin(keysFileName);
 #else
-	std::ifstream fin(keysFileName.c_str());
+	char fileName_c[PATH_MAX];
+	wcstombs(fileName_c, keysFileName, PATH_MAX);
+	std::ifstream fin(fileName_c);
 #endif
 	if (!fin)
 		return false;
@@ -291,13 +277,16 @@ bool ShaderStorage::loadShadersStorage(graphics::Combiners & _combiners)
 		// Shaders storage is not supported, load from combiners keys.
 		return _loadFromCombinerKeys(_combiners);
 
-	std::string shadersFileName = getStorageFileName(m_glinfo, "shaders");
+	wchar_t shadersFileName[PLUGIN_PATH_SIZE];
+	getStorageFileName(m_glinfo, shadersFileName, L"shaders");
 	const u32 configOptionsBitSet = graphics::CombinerProgram::getShaderCombinerOptionsBits();
 
 #if defined(OS_WINDOWS) && !defined(MINGW)
 	std::ifstream fin(shadersFileName, std::ofstream::binary);
 #else
-	std::ifstream fin(shadersFileName.c_str(), std::ofstream::binary);
+	char fileName_c[PATH_MAX];
+	wcstombs(fileName_c, shadersFileName, PATH_MAX);
+	std::ifstream fin(fileName_c, std::ofstream::binary);
 #endif
 
 	if (!fin)

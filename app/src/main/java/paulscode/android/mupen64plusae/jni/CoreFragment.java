@@ -34,7 +34,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.Surface;
 
-import org.mupen64plusae.v3.alpha.R;
+import app.megaemulators.megan64.beta.R;
 
 import java.io.File;
 import java.util.ArrayList;

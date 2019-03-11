@@ -197,7 +197,7 @@ private:
 		bool update(RdpUpdateResult & _result);
 
 	private:
-		s32 oldvstart = 0;
+		u32 oldvstart = 0U;
 		u32 prevvicurrent = 0U;
 		bool prevwasblank = false;
 		bool prevserrate = false;

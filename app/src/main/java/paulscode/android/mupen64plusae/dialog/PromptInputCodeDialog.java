@@ -16,7 +16,7 @@ import android.widget.ImageView;
 
 import com.bda.controller.Controller;
 
-import org.mupen64plusae.v3.alpha.R;
+import app.megaemulators.megan64.beta.R;
 
 import java.util.ArrayList;
 import java.util.List;

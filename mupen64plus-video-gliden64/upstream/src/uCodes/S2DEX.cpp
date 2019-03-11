@@ -466,7 +466,7 @@ struct ObjCoordinates
 		f32 scaleW = gSP.bgImage.scaleW;
 		f32 scaleH = gSP.bgImage.scaleH;
 
-		// BgRectCopyOnePiece() does not support scaleW and scaleH
+		// gSPBgRectCopy() does not support scaleW and scaleH
 		if (gDP.otherMode.cycleType == G_CYC_COPY) {
 			scaleW = 1.0f;
 			scaleH = 1.0f;
@@ -498,7 +498,7 @@ struct ObjCoordinates
 		gSP.bgImage.clampS = lrs <= (imageW - 1) ? 1 : 0 ;
 		gSP.bgImage.clampT = lrt <= (imageH - 1) ? 1 : 0 ;
 
-		// G_CYC_COPY (BgRectCopyOnePiece()) does not allow texture filtering
+		// G_CYC_COPY (gSPBgRectCopy()) does not allow texture filtering
 		if (gDP.otherMode.cycleType != G_CYC_COPY) {
 			// Correct texture coordinates -0.5f and +0.5 if G_OBJRM_BILERP 
 			// bilinear interpolation is set
@@ -537,7 +537,7 @@ struct ObjCoordinates
 			lry += 1.0f / scaleH;
 		}
 
-		// BgRect1CycOnePiece() and BgRectCopyOnePiece() do only support
+		// gSPBgRect1Cyc() and gSPBgRectCopy() do only support 
 		// imageFlip in horizontal direction
 		if ((_pObjScaleBg->imageFlip & G_BG_FLAG_FLIPS) != 0) {
 			std::swap(ulx, lrx);
@@ -881,7 +881,7 @@ void _copyDepthBuffer()
 }
 
 static
-void _loadBGImage(const uObjScaleBg * _pBgInfo, bool _loadScale, bool _fbImage)
+void _loadBGImage(const uObjScaleBg * _pBgInfo, bool _loadScale)
 {
 	gSP.bgImage.address = RSP_SegmentToPhysical(_pBgInfo->imagePtr);
 
@@ -909,8 +909,9 @@ void _loadBGImage(const uObjScaleBg * _pBgInfo, bool _loadScale, bool _fbImage)
 
 	gDP.tiles[0].textureMode = TEXTUREMODE_BGIMAGE;
 
-	if (_fbImage) {
-		FrameBuffer *pBuffer = frameBufferList().findBuffer(gSP.bgImage.address);
+	FrameBuffer *pBuffer = frameBufferList().findBuffer(RSP_SegmentToPhysical(_pBgInfo->imagePtr));
+	if (pBuffer != nullptr) {
+
 		gDP.tiles[0].frameBufferAddress = pBuffer->m_startAddress;
 		gDP.tiles[0].textureMode = TEXTUREMODE_FRAMEBUFFER_BG;
 		gDP.tiles[0].loadType = LOADTYPE_TILE;
@@ -921,39 +922,47 @@ void _loadBGImage(const uObjScaleBg * _pBgInfo, bool _loadScale, bool _fbImage)
 				frameBufferList().setCopyBuffer(frameBufferList().getCurrent());
 		}
 	}
+
 }
 
 static
-bool _useOnePieceBgCode(u32 address, bool & fbImage)
+bool _useOldBgCode(u32 address)
 {
-	fbImage = false;
-	if (config.frameBufferEmulation.enable != 0) {
-		uObjScaleBg *pObjScaleBg = (uObjScaleBg*)&RDRAM[address];
-		FrameBuffer *pBuffer = frameBufferList().findBuffer(RSP_SegmentToPhysical(pObjScaleBg->imagePtr));
-		fbImage = pBuffer != nullptr &&
-			pBuffer->m_size == pObjScaleBg->imageSiz &&
-			(!pBuffer->m_isDepthBuffer || pBuffer->m_changed) &&
-			(pObjScaleBg->imageFmt != G_IM_FMT_CI || pObjScaleBg->imageSiz != G_IM_SIZ_8b);
-		if (fbImage && (pBuffer->m_cfb || !pBuffer->isValid(false))) {
-			frameBufferList().removeBuffer(pBuffer->m_startAddress);
-			fbImage = false;
-		}
-	}
-
 	if (config.graphics2D.bgMode == Config::BGMode::bgOnePiece)
 		return true;
 
 	if ((config.generalEmulation.hacks & hack_RE2) != 0)
 		return true;
 
-	return fbImage;
+	if (config.frameBufferEmulation.enable == 0)
+		return false;
+
+	uObjScaleBg *pObjScaleBg = (uObjScaleBg*)&RDRAM[address];
+	FrameBuffer *pBuffer = frameBufferList().findBuffer(RSP_SegmentToPhysical(pObjScaleBg->imagePtr));
+	if (pBuffer != nullptr &&
+		pBuffer->m_size == pObjScaleBg->imageSiz &&
+		(!pBuffer->m_isDepthBuffer || pBuffer->m_changed)) {
+		if (gSP.bgImage.format == G_IM_FMT_CI && gSP.bgImage.size == G_IM_SIZ_8b) {
+			// Can't use 8bit CI buffer as texture
+			return false;
+		}
+
+		if (pBuffer->m_cfb || !pBuffer->isValid(false)) {
+			frameBufferList().removeBuffer(pBuffer->m_startAddress);
+			return false;
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 static
-void BgRect1CycOnePiece(u32 _bg, bool _fbImage)
+void gSPBgRect1Cyc(u32 _bg)
 {
 	uObjScaleBg *pObjScaleBg = (uObjScaleBg*)&RDRAM[_bg];
-	_loadBGImage(pObjScaleBg, true, _fbImage);
+	_loadBGImage(pObjScaleBg, true);
 
 	// Zelda MM uses depth buffer copy in LoT and in pause screen.
 	// In later case depth buffer is used as temporal color buffer, and usual rendering must be used.
@@ -970,16 +979,16 @@ void BgRect1CycOnePiece(u32 _bg, bool _fbImage)
 	ObjCoordinates objCoords(pObjScaleBg);
 	gSPDrawObjRect(objCoords);
 
-	DebugMsg(DEBUG_NORMAL, "BgRect1CycOnePiece\n");
+	DebugMsg(DEBUG_NORMAL, "gSPBgRect1Cyc\n");
 }
 
 static
-void BgRectCopyOnePiece(u32 _bg, bool _fbImage)
+void gSPBgRectCopy(u32 _bg)
 {
 	uObjScaleBg *pObjBg = (uObjScaleBg*)&RDRAM[_bg];
-	_loadBGImage(pObjBg, false, _fbImage);
+	_loadBGImage(pObjBg, false);
 
-	// See comment to BgRect1CycOnePiece
+	// See comment to gSPBgRect1Cyc
 	if ((config.generalEmulation.hacks & hack_ZeldaMM) != 0 &&
 		(gSP.bgImage.address == gDP.depthImageAddress || depthBufferList().findBuffer(gSP.bgImage.address) != nullptr)
 		)
@@ -992,7 +1001,7 @@ void BgRectCopyOnePiece(u32 _bg, bool _fbImage)
 	ObjCoordinates objCoords(pObjBg);
 	gSPDrawObjRect(objCoords);
 
-	DebugMsg(DEBUG_NORMAL, "BgRectCopyOnePiece\n");
+	DebugMsg(DEBUG_NORMAL, "gSPBgRectCopy\n");
 }
 
 //#define runCommand(w0, w1) GBI.cmd[_SHIFTR(w0, 24, 8)](w0, w1)
@@ -1003,7 +1012,7 @@ void runCommand(u32 w0, u32 w1)
 };
 
 static
-void BgRect1CycStripped(u32 _bgAddr)
+void BG1CycNew(u32 _bgAddr)
 {
 	uObjScaleBg objBg = *reinterpret_cast<const uObjScaleBg*>(RDRAM + _bgAddr);
 	const u32 imagePtr = RSP_SegmentToPhysical(objBg.imagePtr);
@@ -1353,7 +1362,7 @@ void BgRect1CycStripped(u32 _bgAddr)
 }
 
 static
-void BgRectCopyStripped(u32 _bgAddr)
+void BGCopyNew(u32 _bgAddr)
 {
 	// Step 1
 	uObjBg objBg = *reinterpret_cast<const uObjBg*>(RDRAM + _bgAddr);
@@ -1537,21 +1546,19 @@ void BgRectCopyStripped(u32 _bgAddr)
 void S2DEX_BG_1Cyc(u32 w0, u32 w1)
 {
 	const u32 bgAddr = RSP_SegmentToPhysical(w1);
-	bool fbImage = false;
-	if (_useOnePieceBgCode(bgAddr, fbImage))
-		BgRect1CycOnePiece(bgAddr, fbImage);
+	if (_useOldBgCode(bgAddr))
+		gSPBgRect1Cyc(bgAddr);
 	else
-		BgRect1CycStripped(bgAddr);
+		BG1CycNew(bgAddr);
 }
 
 void S2DEX_BG_Copy(u32 w0, u32 w1)
 {
 	const u32 bgAddr = RSP_SegmentToPhysical(w1);
-	bool fbImage = false;
-	if (_useOnePieceBgCode(bgAddr, fbImage))
-		BgRectCopyOnePiece(bgAddr, fbImage);
+	if (_useOldBgCode(bgAddr))
+		gSPBgRectCopy(bgAddr);
 	else
-		BgRectCopyStripped(bgAddr);
+		BGCopyNew(bgAddr);
 }
 
 void S2DEX_Obj_MoveMem(u32 w0, u32 w1)

@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.mupen64plusae.v3.alpha.R;
+import app.megaemulators.megan64.beta.R;
 
 import java.io.File;
 import java.util.Collections;
@@ -107,6 +107,9 @@ public class GamePrefs
     
     /** Legacy save file name */
     public final String legacySaveFileName;
+    
+    /** The subdirectory containing user screenshots. */
+    private String screenshotDir;
 
     /** The subdirectory returned from the core's ConfigGetUserConfigPath() method. Location of core config file. */
     private String coreUserConfigDir;
@@ -308,6 +311,7 @@ public class GamePrefs
     public static final String AUTO_SAVES_DIR = "AutoSaves";
     private static final String SLOT_SAVES_DIR = "SlotSaves";
     private static final String USER_SAVES_DIR = "UserSaves";
+    private static final String SCREENSHOTS_DIR = "Screenshots";
     private static final String CORE_CONFIG_DIR = "CoreConfig";
     private static final String MUPEN_CONFIG_FILE = "mupen64plus.cfg";
 
@@ -661,6 +665,11 @@ public class GamePrefs
         return slotSaveDir;
     }
 
+    public String getScreenshotDir()
+    {
+        return screenshotDir;
+    }
+
     public void useAlternateGameDataDir()
     {
         gameDataDir = getAlternateGameDataPath( romMd5, gameHeaderName, gameCountrySymbol, mAppData);
@@ -683,12 +692,14 @@ public class GamePrefs
         {
             sramDataDir = appData.gameDataDir;
             slotSaveDir = appData.gameDataDir;
+            screenshotDir = appData.gameDataDir;
             userSaveDir = appData.gameDataDir;
         }
         else
         {
             sramDataDir = baseDir + "/" + SRAM_DATA_DIR;
             slotSaveDir = baseDir + "/" + SLOT_SAVES_DIR;
+            screenshotDir = baseDir + "/" + SCREENSHOTS_DIR;
             userSaveDir = baseDir + "/" + USER_SAVES_DIR;
         }
     }
@@ -817,13 +828,7 @@ public class GamePrefs
     {
         try
         {
-            String stringReturn = preferences.getString( key, String.valueOf( defaultValue ));
-
-            if (stringReturn == null) {
-                return defaultValue;
-            } else {
-                return Integer.parseInt(stringReturn);
-            }
+            return Integer.parseInt( preferences.getString( key, String.valueOf( defaultValue ) ) );
         }
         catch( final NumberFormatException ex )
         {

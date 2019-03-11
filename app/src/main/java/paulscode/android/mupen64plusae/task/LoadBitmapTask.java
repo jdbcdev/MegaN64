@@ -23,7 +23,7 @@ package paulscode.android.mupen64plusae.task;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
-import org.mupen64plusae.v3.alpha.R;
+import app.megaemulators.megan64.beta.R;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;

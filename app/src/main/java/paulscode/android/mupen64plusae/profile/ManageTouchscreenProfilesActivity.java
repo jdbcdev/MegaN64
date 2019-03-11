@@ -20,7 +20,7 @@
  */
 package paulscode.android.mupen64plusae.profile;
 
-import org.mupen64plusae.v3.alpha.R;
+import app.megaemulators.megan64.beta.R;
 
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.persistent.ConfigFile;

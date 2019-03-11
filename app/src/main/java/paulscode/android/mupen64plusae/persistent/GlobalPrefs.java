@@ -35,7 +35,7 @@ import android.view.WindowManager;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.text.WordUtils;
-import org.mupen64plusae.v3.alpha.R;
+import app.megaemulators.megan64.beta.R;
 
 import java.io.File;
 import java.io.IOException;
@@ -123,9 +123,6 @@ public class GlobalPrefs
 
     /** The subdirectory containing unzipped ROM files. */
     public final String unzippedRomsDir;
-
-    /** The subdirectory containing screenshot files. */
-    public final String screenshotsDir;
 
     /** The subdirectory containing crash logs. */
     public final String crashLogDir;
@@ -438,7 +435,6 @@ public class GlobalPrefs
         String galleryCacheDir = appData.userDataDir + "/GalleryCache";
         coverArtDir = galleryCacheDir + "/CoverArt";
         unzippedRomsDir = galleryCacheDir + "/UnzippedRoms";
-        screenshotsDir = appData.userDataDir + "/Screenshots";
         String profilesDir = appData.userDataDir + "/Profiles";
         crashLogDir = appData.userDataDir + "/CrashLogs";
         final String coreConfigDir = appData.userDataDir + "/CoreConfig";
